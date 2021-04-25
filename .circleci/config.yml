@@ -6,7 +6,8 @@ orbs:
 
 jobs:
   build:
-    machine: ubuntu-2004:202101-01
+    machine: 
+      image: ubuntu-2004:202101-01
     steps:
       - checkout
       - docker/build:
