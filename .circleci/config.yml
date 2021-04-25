@@ -9,7 +9,6 @@ jobs:
     machine: ubuntu-2004:202101-01
     steps:
       - checkout
-      - node/test
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
@@ -18,5 +17,8 @@ jobs:
 workflows:
   build-deploy:
     jobs:
+      - node/test
       - build
+          requires:
+            - node/test
       
