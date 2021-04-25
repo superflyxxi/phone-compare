@@ -13,7 +13,7 @@ jobs:
       - node/install-packages
       - run:
           command: npm test
-  build:
+  build-docker:
     machine: 
       image: ubuntu-2004:202101-01
     steps:
@@ -27,7 +27,7 @@ workflows:
   build-deploy:
     jobs:
       - test
-      - build:
+      - build-docker:
           requires:
             - test
       
