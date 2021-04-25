@@ -11,9 +11,9 @@ jobs:
       - checkout
       - node/test
       - docker/build:
-        image: ${CIRCLE_PROJECT_REPONAME}
-        registry: ${DOCKER_REGISTRY}
-        tag: ${CIRCLE_BRANCH}
+          image: ${CIRCLE_PROJECT_REPONAME}
+          registry: ${DOCKER_REGISTRY}
+          tag: ${CIRCLE_BRANCH}
 
 workflows:
   build-deploy:
