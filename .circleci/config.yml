@@ -8,11 +8,11 @@ jobs:
   test:
     executor: 
       name: node/default
-      steps:
-        - checkout
-        - node/install-packages
-        - run:
-            command: npm test
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm test
   build:
     machine: 
       image: ubuntu-2004:202101-01
