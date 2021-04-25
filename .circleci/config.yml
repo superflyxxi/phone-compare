@@ -2,11 +2,17 @@ version: 2.1
 
 orbs:
   node: circleci/node@4
+  docker: circleci/docker@1.5.0
 
 jobs:
   - test:
     steps:
+      - checkout
       - node/test
+      - docker/build:
+        image: ${CIRCLE_PROJECT_REPONAME}
+        registry: ${DOCKER_REGISTRY}
+        tag: ${CIRCLE_BRANCH}
 
 workflows:
   build-deploy:
