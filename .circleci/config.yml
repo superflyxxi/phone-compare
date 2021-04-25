@@ -5,6 +5,14 @@ orbs:
   docker: circleci/docker@1.5.0
 
 jobs:
+  test:
+    executor: 
+      name: node/default
+      steps:
+        - checkout
+        - node/install-packages
+        - run:
+            command: npm test
   build:
     machine: 
       image: ubuntu-2004:202101-01
@@ -18,8 +26,8 @@ jobs:
 workflows:
   build-deploy:
     jobs:
-      - node/test
+      - test
       - build:
           requires:
-            - node/test
+            - test
       
