@@ -10,7 +10,6 @@ describe('Basic test', () => {
 		chai.request(app)
 			.get('/')
 			.end((err, res) => {
-				console.log(res.body);
 				expect(res).to.have.status(200);
 				expect(res.body.message).to.equals("Hello world!");
 				done();
