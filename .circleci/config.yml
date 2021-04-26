@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@4
-  docker: circleci/docker@1.5.0
+  docker: circleci/docker@1
 
 jobs:
   test:
@@ -18,8 +18,10 @@ jobs:
     machine: 
       image: ubuntu-2004:202101-01
     steps:
+      - run: |
+          echo "DOCKER_REGISTRY=${DOCKER_REGISTRY}"
       - docker/check:
-        registry: ${DOCKER_REGISTRY}
+          registry: ${DOCKER_REGISTRY}
       - checkout
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
