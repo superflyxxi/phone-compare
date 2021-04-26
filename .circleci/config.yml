@@ -18,7 +18,8 @@ jobs:
     machine: 
       image: ubuntu-2004:202101-01
     steps:
-      - docker/check
+      - docker/check:
+        registry: ${DOCKER_REGISTRY}
       - checkout
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
