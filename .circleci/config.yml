@@ -46,10 +46,10 @@ workflows:
           requires:
             - test
       - release:
-          filters:
-            branches:
-              only:
-                - master
+#          filters:
+#            branches:
+#              only:
+#                - master
           requires:
             - docker
       
