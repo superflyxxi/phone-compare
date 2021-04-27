@@ -29,41 +29,49 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${CIRCLE_BRANCH}
-  prerelease:
+  release:
     docker:
       - image: circleci/node
+    parameters:
+      prerelease:
+        description: Whether it's a pre-release and not actually release.
+        type: boolean
+        default: true
     steps:
       - checkout
       - run: npm install
+      - run: npm install -D @semantic-release/exec
       - attach_workspace:
           at: /tmp/workspace
-      - run: |
+      - when:
+          condition: << paramters.prerelease >>
+          steps:
+            run:
+              name: Define version
+              command: |
+                echo "ADDITIONAL_ARGS=--dry-run" >> ${BASH_ENV}
+      - run:
           name: Define version
           command: |
-            npx semantic-release --dry-run > /tmp/workspace/version.txt
+            npx semantic-release ${ADDITIONAL_ARGS}
             if [[ "" == "$(cat /tmp/workspace/version.txt)" ]]; then echo "${CIRCLE_BRANCH}" > /tmp/workspace/version.txt; fi
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - version.txt
-  release:
-    docker:
-      - image: circleci/node
-    steps:
-      - checkout
-      - run: npm install
-      - run: npx semantic-release
 
 workflows:
   build-deploy:
     jobs:
-      - prerelease
+      - release:
+          name: pre-release
       - test
       - docker:
           requires:
             - test
-            - prerelease
+            - pre-release
       - release:
+          prerelease: false
 #          filters:
 #            branches:
 #              only:
