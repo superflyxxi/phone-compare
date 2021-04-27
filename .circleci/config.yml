@@ -18,8 +18,6 @@ jobs:
     machine: 
       image: ubuntu-2004:202101-01
     steps:
-      - run: |
-          echo "DOCKER_REGISTRY=${DOCKER_REGISTRY}"
       - docker/check:
           registry: ${DOCKER_REGISTRY}
       - checkout
