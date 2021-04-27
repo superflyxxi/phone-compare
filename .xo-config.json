@@ -1,0 +1,17 @@
+{
+	"ignores":[
+		"test/"
+	],
+	"prettier": true,
+	"rules":{
+		"unicorn/prevent-abbreviations":[
+			"error",
+			{
+				"replacements":{
+					"res": false,
+					"req": false
+				}
+			}
+		]
+	}
+}

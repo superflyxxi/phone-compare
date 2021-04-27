@@ -6,4 +6,4 @@ ENTRYPOINT ["npm"]
 CMD ["start"]
 ADD . /app
 WORKDIR /app
-RUN npm install
+RUN npm --only=production install

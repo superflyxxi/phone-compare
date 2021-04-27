@@ -2,20 +2,85 @@ version: 2.1
 
 orbs:
   node: circleci/node@4
-  docker: circleci/docker@1.5.0
+  docker: circleci/docker@1
 
 jobs:
-  - test:
+  test:
+    executor: 
+      name: node/default
     steps:
       - checkout
-      - node/test
+      - node/install-packages:
+          override-ci-command: npm install
+      - run:
+          command: npm test
+  docker:
+    machine: 
+      image: ubuntu-2004:202101-01
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Determine docker tag
+          command: echo "DOCKER_TAG=$(cat /tmp/workspace/version.txt)" >> ${BASH_ENV}
+      - docker/check:
+          registry: ${DOCKER_REGISTRY}
+      - checkout
       - docker/build:
-        image: ${CIRCLE_PROJECT_REPONAME}
-        registry: ${DOCKER_REGISTRY}
-        tag: ${CIRCLE_BRANCH}
+          image: ${CIRCLE_PROJECT_REPONAME}
+          registry: ${DOCKER_REGISTRY}
+          tag: ${DOCKER_TAG}
+      - docker/push:
+          image: ${CIRCLE_PROJECT_REPONAME}
+          registry: ${DOCKER_REGISTRY}
+          tag: ${DOCKER_TAG}
+  release:
+    docker:
+      - image: circleci/node
+    parameters:
+      prerelease:
+        description: Whether it's a pre-release and not actually release.
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm install -D @semantic-release/exec
+      - attach_workspace:
+          at: /tmp/workspace
+      - when:
+          condition: << parameters.prerelease >>
+          steps:
+            run:
+              name: Define additional args
+              command: |
+                echo "ADDITIONAL_ARGS=--dry-run" >> ${BASH_ENV}
+      - run:
+          name: Run semantic-release
+          command: |
+            npx semantic-release ${ADDITIONAL_ARGS}
+            if [[ "" == "$(cat /tmp/workspace/version.txt)" ]]; then echo "${CIRCLE_BRANCH}" > /tmp/workspace/version.txt; fi
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - version.txt
 
 workflows:
   build-deploy:
     jobs:
-      - build
-      
+      - release:
+          name: pre-release
+          prerelease: true
+      - test
+      - docker:
+          requires:
+            - test
+            - pre-release
+      - release:
+          prerelease: false
+#          filters:
+#            branches:
+#              only:
+#                - main
+          requires:
+            - docker
