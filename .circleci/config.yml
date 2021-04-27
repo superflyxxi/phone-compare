@@ -47,11 +47,11 @@ jobs:
           condition: << parameters.prerelease >>
           steps:
             run:
-              name: Define version
+              name: Define additional args
               command: |
                 echo "ADDITIONAL_ARGS=--dry-run" >> ${BASH_ENV}
       - run:
-          name: Define version
+          name: Run semantic-release
           command: |
             npx semantic-release ${ADDITIONAL_ARGS}
             if [[ "" == "$(cat /tmp/workspace/version.txt)" ]]; then echo "${CIRCLE_BRANCH}" > /tmp/workspace/version.txt; fi
