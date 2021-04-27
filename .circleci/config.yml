@@ -18,17 +18,22 @@ jobs:
     machine: 
       image: ubuntu-2004:202101-01
     steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Determine docker tag
+          command: echo "DOCKER_TAG=$(cat /tmp/workspace/version.txt)" >> ${BASH_ENV}
       - docker/check:
           registry: ${DOCKER_REGISTRY}
       - checkout
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${CIRCLE_BRANCH}
+          tag: ${DOCKER_TAG}
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${CIRCLE_BRANCH}
+          tag: ${DOCKER_TAG}
   release:
     docker:
       - image: circleci/node
