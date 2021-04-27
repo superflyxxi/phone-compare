@@ -47,8 +47,9 @@ workflows:
             - test
       - release:
           filters:
-            only:
-              - master
+            branches:
+              only:
+                - master
           requires:
             - docker
       
