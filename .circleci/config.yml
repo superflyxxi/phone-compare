@@ -29,21 +29,40 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${CIRCLE_BRANCH}
+  prerelease:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run: npm install
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: |
+          name: Define version
+          command: |
+            npx semantic-release --dry-run > /tmp/workspace/version.txt
+            if [[ "" == "$(cat /tmp/workspace/version.txt)" ]]; then echo "${CIRCLE_BRANCH}" > /tmp/workspace/version.txt; fi
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - version.txt
   release:
     docker:
       - image: circleci/node
     steps:
       - checkout
       - run: npm install
-      - run: npx semantic-release --dry-run
+      - run: npx semantic-release
 
 workflows:
   build-deploy:
     jobs:
+      - prerelease
       - test
       - docker:
           requires:
             - test
+            - prerelease
       - release:
 #          filters:
 #            branches:
@@ -51,4 +70,3 @@ workflows:
 #                - main
           requires:
             - docker
-      
