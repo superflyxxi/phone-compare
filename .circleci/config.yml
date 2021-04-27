@@ -29,10 +29,9 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${CIRCLE_BRANCH}
-
   release:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node
     steps:
       - checkout
       - run: npm install
