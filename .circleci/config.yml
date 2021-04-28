@@ -59,7 +59,11 @@ jobs:
           name: Run semantic-release
           command: |
             npx semantic-release ${ADDITIONAL_ARGS}
-            if [[ "" == "$(cat /tmp/workspace/version.txt)" ]]; then echo "${CIRCLE_BRANCH}" > /tmp/workspace/version.txt; fi
+            if [[ "" == "$(cat version.txt)" ]]; then 
+              echo "${CIRCLE_BRANCH}" > /tmp/workspace/version.txt
+            else
+              cp -v version.txt /tmp/workspace
+            fi
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
