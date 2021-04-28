@@ -1,7 +1,6 @@
 const router = require('express').Router();
+const controller = require('../../controllers/phone-controller.js');
 
-router.get('/:id', (req,res) => {
-	res.status(200).send(req.params.id);
-});
+router.get('/:id', controller.getPhone);
 
 module.exports = router;
