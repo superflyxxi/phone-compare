@@ -34,6 +34,21 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG}
+      - run:
+          name: Determine alternate tag
+          command: |
+            if [[ "${DOCKER_TAG}" == v* ]]; then
+              echo "ALTERNATE_TAG=latest" >> ${BASH_ENV}
+            else
+              echo "ALTERNATE_TAG=${DOCKER_TAG}" >> ${BASH_ENV}
+            fi
+      - run:
+          name: Tag alternate
+          command: docker tag ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${DOCKER_TAG} ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${ALTERNATE_TAG}
+      - docker/push:
+          image: ${CIRCLE_PROJECT_REPONAME}
+          registry: ${DOCKER_REGISTRY}
+          tag: ${ALTERNATE_TAG}
   release:
     docker:
       - image: circleci/node
