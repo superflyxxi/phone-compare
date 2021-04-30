@@ -36,9 +36,6 @@ jobs:
                   if [[ "${DOCKER_TAG}" == v* ]]; then
                     echo "ALTERNATE_TAG=latest" >> ${BASH_ENV}
                   fi
-            - run:
-                name: Tag alternate
-                command: docker tag ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${DOCKER_TAG} ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${ALTERNATE_TAG}
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
