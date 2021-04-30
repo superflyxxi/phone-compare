@@ -12,6 +12,14 @@
 					"req": false
 				}
 			}
+		],
+		"new-cap":[
+			"error",
+			{
+				"capIsNewExceptions":[
+					"Router"
+				]
+			}
 		]
 	}
 }
