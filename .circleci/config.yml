@@ -6,9 +6,14 @@ orbs:
 
 jobs:
   test:
+    parameters:
+      nodeVersion:
+        description: The version of node to build.
+        type: string
+        default: '14.16'
     executor: 
       name: node/default
-      tag: '14.16'
+      tag: << parameters.nodeVersion >>
     steps:
       - checkout
       - node/install-packages
@@ -34,6 +39,11 @@ jobs:
               exit 1
             fi
   docker:
+    parameters:
+      nodeVersion:
+        description: The version of node to build.
+        type: string
+        default: '14.16'
     machine: 
       image: ubuntu-2004:202101-01
     steps:
@@ -59,6 +69,7 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${ALTERNATE_TAG}
+          extra_build_args: --build-arg NODE_VERSION=<< parameters.nodeVersion >>
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
