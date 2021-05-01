@@ -21,6 +21,8 @@ jobs:
           path: ./test-results.xml
       - store_artifacts:
           path: ./test-results.xml
+      - store_artifacts:
+          path: ./coverage/
       - run:
           name: Ensure only not used
           command: |
