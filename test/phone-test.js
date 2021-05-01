@@ -18,4 +18,28 @@ describe('Phones positive tests', () => {
 				done();
 			});
 	});
+
+	it('Ensure ETag for same URL returns 304', (done) => {
+		chai
+			.request(app)
+			.get('/v1/phones/123')
+			.set('etag', 'W/"22-j/NJaav22Ac0qJZ3KUHdfXliRMM"')
+			.end((error, res) => {
+				expect(res).to.have.status(304);
+				done();
+			});
+	});
+});
+
+describe('Phones positive tests', () => {
+	it('Ensure ETag for diff URL returns 304', (done) => {
+		chai
+			.request(app)
+			.get('/v1/phones/123')
+			.set('etag', 'W/"22-GLCX57B92Bz7OyYhZd6yzXaJlbg"')
+			.end((error, res) => {
+				expect(res).to.have.status(304);
+				done();
+			});
+	});
 });
