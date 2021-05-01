@@ -7,4 +7,4 @@ module.exports = class RootError extends Error {
 		this.status = status;
 		this.detail = detail;
 	}
-}
+};
