@@ -16,10 +16,11 @@ jobs:
           command: npm test
           environment:
             MOCHA_FILE: ~/junit/test-results.xml
+            MOCHA_REPORTER_ARGS: --reporter mocha-junit-reporter
       - store_test_results:
-          path: test-results.xml
+          path: ~/junit/test-results.xml
       - store_artifacts:
-          path: test-results.xml
+          path: ~/junit/test-results.xml
       - run:
           name: Ensure only not used
           command: |
