@@ -17,7 +17,9 @@ jobs:
       - run:
           name: Ensure only not used
           command: |
-            if [[ $(grep ".only" -Rq test/) -eq 0 ]]; then
+            grep ".only" -Rq test/
+            RESULT=$?
+            if [[ ${RESULT} -eq 0 ]]; then
               echo "Tests include only; failng"
               exit 1
             fi
