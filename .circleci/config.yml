@@ -13,7 +13,10 @@ jobs:
       - node/install-packages:
           override-ci-command: npm install
       - run:
-          command: npm test
+          command: |
+            npm test
+            ls -lha
+            ls -lha ~/junit
           environment:
             MOCHA_FILE: ~/junit/test-results.xml
             MOCHA_REPORTER_ARGS: --reporter mocha-junit-reporter
