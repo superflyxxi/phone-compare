@@ -18,14 +18,14 @@ jobs:
             echo "MOCHA_REPORTER_ARGS=${MOCHA_REPORTER_ARGS}"
             npm test
             ls -lha
-            ls -lha ~/junit
+            ls -lha ./junit
           environment:
-            MOCHA_FILE: ~/junit/test-results.xml
+            MOCHA_FILE: ./junit/test-results.xml
             MOCHA_REPORTER_ARGS: --reporter mocha-junit-reporter
       - store_test_results:
-          path: ~/junit/test-results.xml
+          path: ./junit/test-results.xml
       - store_artifacts:
-          path: ~/junit/test-results.xml
+          path: ./junit/test-results.xml
       - run:
           name: Ensure only not used
           command: |
