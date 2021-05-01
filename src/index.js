@@ -6,7 +6,6 @@ app.use(require('morgan')('common'));
 app.use(express.json());
 app.disable('x-powered-by');
 
-
 app.get('/', (req, res) => {
 	res.status(200).send({message: 'Hello world!'});
 });
