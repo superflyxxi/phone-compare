@@ -31,7 +31,7 @@ describe('Phones positive tests', () => {
 	});
 });
 
-describe('Phones positive tests', () => {
+describe('Phones negative tests', () => {
 	it('Ensure ETag for diff URL returns 304', (done) => {
 		chai
 			.request(app)
