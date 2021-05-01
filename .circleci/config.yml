@@ -14,12 +14,12 @@ jobs:
       - run:
           command: npm test
           environment:
-            MOCHA_FILE: ./test-results.xml
+            MOCHA_FILE: ./mocha/test-results.xml
             MOCHA_REPORTER_ARGS: --reporter mocha-junit-reporter
       - store_test_results:
-          path: ./test-results.xml
+          path: ./mocha
       - store_artifacts:
-          path: ./test-results.xml
+          path: ./mocha/test-results.xml
       - store_artifacts:
           path: ./coverage/
       - run:
