@@ -1,6 +1,9 @@
 {
 	"ignores":[
-		"test/"
+	],
+	"env": [
+		"es2021",
+		"mocha"
 	],
 	"prettier": true,
 	"rules":{
