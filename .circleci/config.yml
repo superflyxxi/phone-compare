@@ -95,7 +95,7 @@ jobs:
             - version.txt
 
 workflows:
-  build-deploy:
+  default:
     jobs:
       - release:
           name: pre-release
@@ -107,9 +107,5 @@ workflows:
             - pre-release
       - release:
           prerelease: false
-#          filters:
-#            branches:
-#              only:
-#                - main
           requires:
             - docker
