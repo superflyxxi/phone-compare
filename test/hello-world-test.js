@@ -6,7 +6,7 @@ const {expect} = chai;
 chai.use(chaiHttp);
 
 describe('Basic test', () => {
-	it.only('Should get 404', (done) => {
+	it('Should get 404', (done) => {
 		chai
 			.request(app)
 			.get('/')
