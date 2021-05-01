@@ -9,7 +9,7 @@ app.get('/', (req, res) => {
 	res.status(200).send({message: 'Hello world!'});
 });
 
-app.use('/phones', require('./routers/v1/phones.js'));
+app.use('/v1/phones', require('./routers/v1/phones.js'));
 
 app.listen(port, () => {
 	console.log('Started listening on', port);
