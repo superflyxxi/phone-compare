@@ -15,6 +15,4 @@ exports.getPhoneByManufacturerAndModel = function (req, res, next) {
 			throw new NotFoundError(`${req.params.manufacturer}/${req.params.model} not found.`);
 		}
 	}
-
-	next();
 };
