@@ -120,3 +120,7 @@ workflows:
           prerelease: false
           requires:
             - docker
+          filters:
+            branches:
+              only:
+                - main
