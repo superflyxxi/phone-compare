@@ -1,4 +1,4 @@
-const RouteNotFoundError = require('./error-handler/RouteNotFoundError.js');
+const RouteNotFoundError = require('./error-handler/route-not-found-error.js');
 const express = require('express');
 const app = express();
 const port = 3000;

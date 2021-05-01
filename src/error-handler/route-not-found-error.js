@@ -1,4 +1,4 @@
-const NotFoundError = require('./NotFoundError.js');
+const NotFoundError = require('./not-found-error.js');
 
 module.exports = class RouteNotFoundError extends NotFoundError {
 	constructor(req) {

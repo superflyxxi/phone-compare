@@ -1,4 +1,4 @@
-const RootError = require('./RootError.js');
+const RootError = require('./root-error.js');
 
 module.exports = class NotFoundError extends RootError {
 	constructor(detail) {
