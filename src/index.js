@@ -13,7 +13,7 @@ app.use((req, res, next) => {
 		title: 'Not Found',
 		status: 404,
 		detail: `${req.method} ${req.path} not a valid API.`
-	}
+	};
 });
 app.use(require('morgan')('short'));
 app.use(require('./error-handler/index.js').errorHandler);
