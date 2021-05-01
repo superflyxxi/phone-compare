@@ -1,3 +1,3 @@
-exports.getPhone = async function (id) {
-	return {id, name: 'Sample Phone'};
+exports.getPhone = function (manufacturer, model) {
+	return {manufacturer, model, name: 'Sample Phone'};
 };

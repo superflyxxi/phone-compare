@@ -1,17 +1,18 @@
 const model = require('../models/phone-model.js');
+const NotFoundError = require('../error-handler/not-found-error.js');
 
-exports.getPhone = async function (req, res, next) {
+exports.getPhoneByManufacturerAndModel = function (req, res, next) {
 	if (req.get('etag')) {
 		res.status(304).send();
 	} else {
-		const phone = await model.getPhone(req.params.id);
+		const phone = model.getPhone(req.params.manufacturer, req.params.model);
 		if (phone) {
 			res
 				.set('cache-control', 'public, max-age=2419200')
 				.status(200)
 				.send(phone);
 		} else {
-			res.status(404).send();
+			throw new NotFoundError(`${req.params.manufacturer}/${req.params.model} not found.`);
 		}
 	}
 
