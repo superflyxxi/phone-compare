@@ -10,8 +10,8 @@ jobs:
       name: node/default
     steps:
       - checkout
-      - run:
-          command: npm install
+      - node/install-packages:
+          override-ci-command: npm install
       - run:
           command: npm test
           environment:
