@@ -14,6 +14,7 @@ describe('Phones positive tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body.id).to.equals('123');
 				expect(res.body.name).to.equals('Sample Phone');
+				expect(res.get('etag')).to.equals('W/"22-j/NJaav22Ac0qJZ3KUHdfXliRMM"');
 				done();
 			});
 	});
