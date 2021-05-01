@@ -14,6 +14,13 @@ jobs:
           override-ci-command: npm install
       - run:
           command: npm test
+      - run:
+          name: Ensure only not used
+          command: |
+            if [[ $(grep ".only" -Rq test/) -eq 0 ]]; then
+              echo "Tests include only; failng"
+              exit 1
+            fi
   docker:
     machine: 
       image: ubuntu-2004:202101-01
