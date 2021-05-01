@@ -12,16 +12,14 @@ jobs:
       - checkout
       - node/install-packages:
           override-ci-command: npm install
-      - node/install-packages:
-          override-ci-command: npm install -D mocha-unit-test
       - run:
           command: npm test
           environment:
             MOCHA_FILE: ~/junit/test-results.xml
       - store_test_results:
-          path: ~/junit
+          path: test-results.xml
       - store_artifacts:
-          path: ~/junit
+          path: test-results.xml
       - run:
           name: Ensure only not used
           command: |

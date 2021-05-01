@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "xo && mocha --recursive --exit",
+    "test": "xo && mocha --reporter mocha-junit-reporter --recursive --exit",
     "xo": "xo --fix"
   },
   "repository": {
@@ -25,6 +25,7 @@
     "chai": "^4.3.4",
     "chai-http": "^4.3.0",
     "mocha": "^8.3.2",
+    "mocha-junit-reporter": "^2.0.0",
     "xo": "^0.39.1"
   }
 }
