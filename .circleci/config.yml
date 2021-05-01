@@ -14,6 +14,8 @@ jobs:
           override-ci-command: npm install
       - run:
           command: |
+            echo "MOCHA_FILE=${MOCHA_FILE}"
+            echo "MOCHA_REPORTER_ARGS=${MOCHA_REPORTER_ARGS}"
             npm test
             ls -lha
             ls -lha ~/junit
