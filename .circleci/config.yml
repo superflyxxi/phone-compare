@@ -23,6 +23,9 @@ jobs:
       - store_artifacts:
           path: ./coverage/
       - run:
+          name: Verify XO
+          command: npm run xo-verify
+      - run:
           name: Ensure only not used
           command: |
             if grep ".only" -Rq test/; then

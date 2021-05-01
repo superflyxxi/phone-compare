@@ -5,8 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "xo && nyc --reporter text --reporter html mocha ${MOCHA_REPORTER_ARGS} --recursive --exit",
-    "xo": "xo --fix"
+    "test": "nyc --reporter text --reporter html mocha ${MOCHA_REPORTER_ARGS} --recursive --exit",
+    "xo-fix": "xo --fix"
+    "xo-verify": "xo"
   },
   "repository": {
     "type": "git",
