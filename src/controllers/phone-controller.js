@@ -1,7 +1,7 @@
 const model = require('../models/phone-model.js');
 const NotFoundError = require('../error-handler/not-found-error.js');
 
-exports.getPhoneByManufacturerAndModel = function (req, res, next) {
+exports.getPhoneByManufacturerAndModel = function (req, res) {
 	if (req.get('etag')) {
 		res.status(304).send();
 	} else {
@@ -12,7 +12,9 @@ exports.getPhoneByManufacturerAndModel = function (req, res, next) {
 				.status(200)
 				.send(phone);
 		} else {
-			throw new NotFoundError(`${req.params.manufacturer}/${req.params.model} not found.`);
+			throw new NotFoundError(
+				`${req.params.manufacturer}/${req.params.model} not found.`
+			);
 		}
 	}
 };
