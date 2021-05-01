@@ -7,6 +7,7 @@ app.disable('x-powered-by');
 
 app.use('/v1/phones', require('./routers/v1/phones.js'));
 
+// eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
 	throw {
 		type: '/errors/NOT_FOUND',
