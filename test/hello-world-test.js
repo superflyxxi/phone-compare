@@ -12,10 +12,12 @@ describe('Basic test', () => {
 			.get('/')
 			.end((error, res) => {
 				expect(res).to.have.status(404);
-				expect(res.body.type).to.equals('/errors/NOT_FOUND');
-				expect(res.body.title).to.equals('Not Found');
-				expect(res.body.status).to.equals(res.status);
-				expect(res.body.detail).to.equals('GET / not a valid API.');
+				expect(res.body).to.deep.include({
+					type: '/errors/NOT_FOUND',
+					title: 'Not Found',
+					status: res.status,
+					detail: 'GET / not a valid API.'
+				});
 				expect(res.body).to.have.property('instance');
 				done();
 			});

@@ -17,7 +17,6 @@ describe('Phones positive tests', () => {
 				lineageos: '18.1'
 			})
 			.end((error, res) => {
-				console.log(res.body);
 				expect(res).to.have.status(204);
 				done();
 			});
@@ -50,17 +49,15 @@ describe('Phones positive tests', () => {
 					name: 'Google Pixel 5',
 					gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
 					lineageos: '18.1',
-					gsmArena: {
-						dimensions: {
-							height: 144.7,
-							width: 70.4,
-							depth: 8
-						},
-						ram: 8,
-						nfc: true,
-						sensors: {
-							fingerprint: true
-						}
+					dimensions: {
+						height: 144.7,
+						width: 70.4,
+						depth: 8
+					},
+					ram: 8,
+					nfc: true,
+					sensors: {
+						fingerprint: true
 					}
 				});
 				pixel5Etag = res.get('etag');
@@ -101,7 +98,6 @@ describe('Phones negative tests', () => {
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'
 			})
 			.end((error, res) => {
-				console.log(res.body);
 				expect(res).to.have.status(400);
 				expect(res.body).to.deep.include({
 					type: '/errors/MISSING_REQUIRED_INPUT',

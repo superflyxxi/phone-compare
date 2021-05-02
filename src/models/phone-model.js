@@ -13,9 +13,7 @@ exports.getPhone = async function (manufacturer, model) {
 		throw new NotFoundError(error.message);
 	}
 
-	phone.gsmArena = await require('../helpers/gsm-arena.js').getGsmArenaData(
-		phone.gsmArenaUrl
-	);
+	Object.assign(phone, await require('../helpers/gsm-arena.js').getGsmArenaData(phone.gsmArenaUrl));
 	return phone;
 };
 
