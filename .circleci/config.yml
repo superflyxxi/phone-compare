@@ -20,7 +20,7 @@ jobs:
       - node/install-packages
       - run:
           command: |
-            mkdir $HOME/data
+            export DATA_DIR=$(mktemp -d)
             npm test
           environment:
             MOCHA_FILE: ./mocha/test-results.xml
