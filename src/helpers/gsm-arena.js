@@ -12,5 +12,7 @@ exports.getGsmArenaData = async function (gsmUrl) {
 		width: Number.parseFloat(dimensions[1]),
 		depth: Number.parseFloat(dimensions[2])
 	};
+	let ram = dom.window.document.querySelector('[data-spec="internalmemory"]').innerHTML.match(/\d+GB RAM/g);
+	data.ram = Number.parseFloat(ram[0].match(/\d/g)[0]);
 	return data;
 };

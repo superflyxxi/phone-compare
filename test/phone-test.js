@@ -3,6 +3,7 @@ const chaiHttp = require('chai-http');
 const app = require('../src/index.js');
 const {expect} = chai;
 
+const pixel5Etag = 'W/"ce-uYa/pte0C0Q8gieH2jR+I4g+FIE"';
 chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
@@ -15,7 +16,6 @@ describe('Phones positive tests', () => {
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'
 			})
 			.end((error, res) => {
-				console.log('Response', res.body);
 				expect(res).to.have.status(204);
 				done();
 			});
@@ -30,7 +30,6 @@ describe('Phones positive tests', () => {
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'
 			})
 			.end((error, res) => {
-				console.log('Response', res.body);
 				expect(res).to.have.status(204);
 				done();
 			});
@@ -51,7 +50,8 @@ describe('Phones positive tests', () => {
 				expect(res.body.gsmArena.dimensions.height).to.equals(144.7);
 				expect(res.body.gsmArena.dimensions.width).to.equals(70.4);
 				expect(res.body.gsmArena.dimensions.depth).to.equals(8);
-				expect(res.get('etag')).to.equals('W/"c6-xROeBMfDYH1yquBFK2oW8h4WS1Y"');
+				expect(res.body.gsmArena.ram).to.equals(8);
+				expect(res.get('etag')).to.equals(pixel5Etag);
 				done();
 			});
 	});
@@ -60,7 +60,7 @@ describe('Phones positive tests', () => {
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturer/google/model/pixel5')
-			.set('etag', 'W/"c6-xROeBMfDYH1yquBFK2oW8h4WS1Y"')
+			.set('etag', pixel5Etag)
 			.end((error, res) => {
 				expect(res).to.have.status(304);
 				done();
@@ -73,7 +73,7 @@ describe('Phones negative tests', () => {
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturer/google/model/pixel4')
-			.set('etag', 'W/"c6-xROeBMfDYH1yquBFK2oW8h4WS1Y"')
+			.set('etag', pixel5Etag)
 			.end((error, res) => {
 				expect(res).to.have.status(304);
 				done();
