@@ -14,17 +14,19 @@ const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data/`;
 const fs = require('fs/promises');
 
 exports.getPhone = async function (manufacturer, model) {
+	let phone;
 	try {
-		const phone = JSON.parse(
+		phone = JSON.parse(
 			await fs.readFile(`${rootDirectory}${manufacturer}-${model}.json`)
 		);
-		phone.gsmArena = await require('../helpers/gsm-arena.js').getGsmArenaData(
-			phone.gsmArenaUrl
-		);
-		return phone;
 	} catch (error) {
 		throw new NotFoundError(error.message);
 	}
+
+	phone.gsmArena = await require('../helpers/gsm-arena.js').getGsmArenaData(
+		phone.gsmArenaUrl
+	);
+	return phone;
 };
 
 exports.savePhone = async function (phone) {

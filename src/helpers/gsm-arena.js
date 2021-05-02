@@ -12,7 +12,26 @@ exports.getGsmArenaData = async function (gsmUrl) {
 		width: Number.parseFloat(dimensions[1]),
 		depth: Number.parseFloat(dimensions[2])
 	};
-	let ram = dom.window.document.querySelector('[data-spec="internalmemory"]').innerHTML.match(/\d+GB RAM/g);
+	const ram = dom.window.document
+		.querySelector('[data-spec="internalmemory"]')
+		.innerHTML.match(/\d+GB RAM/g);
 	data.ram = Number.parseFloat(ram[0].match(/\d/g)[0]);
+	data.nfc =
+		dom.window.document
+			.querySelector('[data-spec="nfc"]')
+			.innerHTML.match(/yes/i) !== undefined;
+	data.sensors = {
+		fingerprint:
+			dom.window.document
+				.querySelector('[data-spec="sensors"]')
+				.innerHTML.match(/fingerprint/i) !== undefined
+	};
+	data.charging = {
+		usbSpeed: undefined,
+		wirelessSpeed: undefined
+	};
+	data.prices = {
+		// Usd: Number.parseFloat(dom.window.document.querySelector('[data-spec="price"]').innerHTML.match(/\$&thinsp;\d\.\d/g)[0])
+	};
 	return data;
 };

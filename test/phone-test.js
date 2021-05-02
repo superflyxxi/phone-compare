@@ -3,7 +3,7 @@ const chaiHttp = require('chai-http');
 const app = require('../src/index.js');
 const {expect} = chai;
 
-const pixel5Etag = 'W/"ce-uYa/pte0C0Q8gieH2jR+I4g+FIE"';
+let pixel5Etag;
 chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
@@ -35,11 +35,12 @@ describe('Phones positive tests', () => {
 			});
 	});
 
-	it('Ensure it gets a valid id', (done) => {
+	it('Ensure it gets a valid phone', (done) => {
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturer/google/model/pixel5')
 			.end((error, res) => {
+				console.log('Res', res.body);
 				expect(res).to.have.status(200);
 				expect(res.body.manufacturer).to.equals('google');
 				expect(res.body.model).to.equals('pixel5');
@@ -51,7 +52,9 @@ describe('Phones positive tests', () => {
 				expect(res.body.gsmArena.dimensions.width).to.equals(70.4);
 				expect(res.body.gsmArena.dimensions.depth).to.equals(8);
 				expect(res.body.gsmArena.ram).to.equals(8);
-				expect(res.get('etag')).to.equals(pixel5Etag);
+				expect(res.body.gsmArena.nfc).to.equals(true);
+				expect(res.body.gsmArena.sensors.fingerprint).to.equals(true);
+				pixel5Etag = res.get('etag');
 				done();
 			});
 	});
