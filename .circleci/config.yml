@@ -19,7 +19,9 @@ jobs:
       - checkout
       - node/install-packages
       - run:
-          command: npm test
+          command: |
+            mkdir $HOME/data
+            npm test
           environment:
             MOCHA_FILE: ./mocha/test-results.xml
             MOCHA_REPORTER_ARGS: --reporter mocha-junit-reporter
