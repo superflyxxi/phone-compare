@@ -10,9 +10,12 @@ describe('Phones positive tests', () => {
 		chai
 			.request(app)
 			.put('/v1/phones/manufacturer/google/model/pixel5')
-			.send({name: 'Google Pixel 5 Initial', gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'})
+			.send({
+				name: 'Google Pixel 5 Initial',
+				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'
+			})
 			.end((error, res) => {
-				console.log("Response", res.body);
+				console.log('Response', res.body);
 				expect(res).to.have.status(204);
 				done();
 			});
@@ -22,9 +25,12 @@ describe('Phones positive tests', () => {
 		chai
 			.request(app)
 			.put('/v1/phones/manufacturer/google/model/pixel5')
-			.send({name: 'Google Pixel 5', gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'})
+			.send({
+				name: 'Google Pixel 5',
+				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'
+			})
 			.end((error, res) => {
-				console.log("Response", res.body);
+				console.log('Response', res.body);
 				expect(res).to.have.status(204);
 				done();
 			});
@@ -39,7 +45,9 @@ describe('Phones positive tests', () => {
 				expect(res.body.manufacturer).to.equals('google');
 				expect(res.body.model).to.equals('pixel5');
 				expect(res.body.name).to.equals('Google Pixel 5');
-				expect(res.body.gsmArenaUrl).to.equals('https://www.gsmarena.com/google_pixel_5-10386.php');
+				expect(res.body.gsmArenaUrl).to.equals(
+					'https://www.gsmarena.com/google_pixel_5-10386.php'
+				);
 				expect(res.body.gsmArena.dimensions.height).to.equals(144.7);
 				expect(res.body.gsmArena.dimensions.width).to.equals(70.4);
 				expect(res.body.gsmArena.dimensions.depth).to.equals(8);

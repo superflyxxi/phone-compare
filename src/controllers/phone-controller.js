@@ -5,7 +5,10 @@ exports.getPhoneByManufacturerAndModel = async function (req, res) {
 	if (req.get('etag')) {
 		res.status(304).send();
 	} else {
-		const phone = await model.getPhone(req.params.manufacturer, req.params.model);
+		const phone = await model.getPhone(
+			req.params.manufacturer,
+			req.params.model
+		);
 		if (phone) {
 			res
 				.set('cache-control', 'public, max-age=2419200')
@@ -23,7 +26,6 @@ exports.savePhoneByManufacturerAndModel = async function (req, res) {
 	const phone = req.body;
 	phone.manufacturer = req.params.manufacturer;
 	phone.model = req.params.model;
-	await model.savePhone(phone)
-	res
-		.status(204).send();
+	await model.savePhone(phone);
+	res.status(204).send();
 };

@@ -4,12 +4,13 @@ exports.getGsmArenaData = async function (gsmUrl) {
 	const res = await got(gsmUrl);
 	const jsdom = require('jsdom');
 	const dom = new jsdom.JSDOM(res.body);
-	let dimensions = dom.window.document.querySelector('[data-spec="dimensions"]').innerHTML;
-	dimensions = dimensions.match(/[0-9]+\.*[0-9]*/g);
+	let dimensions = dom.window.document.querySelector('[data-spec="dimensions"]')
+		.innerHTML;
+	dimensions = dimensions.match(/\d+\.*\d*/g);
 	data.dimensions = {
-		height: parseFloat(dimensions[0]),
-		width: parseFloat(dimensions[1]),
-		depth: parseFloat(dimensions[2])
+		height: Number.parseFloat(dimensions[0]),
+		width: Number.parseFloat(dimensions[1]),
+		depth: Number.parseFloat(dimensions[2])
 	};
 	return data;
-}
+};
