@@ -6,6 +6,30 @@ const {expect} = chai;
 chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
+	it('Create pixel5 phone', (done) => {
+		chai
+			.request(app)
+			.put('/v1/phones/manufacturer/google/model/pixel5')
+			.send({name: 'Google Pixel 5 Initial', gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'})
+			.end((error, res) => {
+				console.log("Response", res.body);
+				expect(res).to.have.status(204);
+				done();
+			});
+	});
+
+	it('Replace pixel5 phone', (done) => {
+		chai
+			.request(app)
+			.put('/v1/phones/manufacturer/google/model/pixel5')
+			.send({name: 'Google Pixel 5', gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'})
+			.end((error, res) => {
+				console.log("Response", res.body);
+				expect(res).to.have.status(204);
+				done();
+			});
+	});
+
 	it('Ensure it gets a valid id', (done) => {
 		chai
 			.request(app)
@@ -14,8 +38,12 @@ describe('Phones positive tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body.manufacturer).to.equals('google');
 				expect(res.body.model).to.equals('pixel5');
-				expect(res.body.name).to.equals('Sample Phone');
-				expect(res.get('etag')).to.equals('W/"40-uQiyFwqx8D7WQEgArP9VoQpGVQE"');
+				expect(res.body.name).to.equals('Google Pixel 5');
+				expect(res.body.gsmArenaUrl).to.equals('https://www.gsmarena.com/google_pixel_5-10386.php');
+				expect(res.body.gsmArena.dimensions.height).to.equals(144.7);
+				expect(res.body.gsmArena.dimensions.width).to.equals(70.4);
+				expect(res.body.gsmArena.dimensions.depth).to.equals(8);
+				expect(res.get('etag')).to.equals('W/"c6-xROeBMfDYH1yquBFK2oW8h4WS1Y"');
 				done();
 			});
 	});
@@ -24,7 +52,7 @@ describe('Phones positive tests', () => {
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturer/google/model/pixel5')
-			.set('etag', 'W/"40-uQiyFwqx8D7WQEgArP9VoQpGVQE"')
+			.set('etag', 'W/"c6-xROeBMfDYH1yquBFK2oW8h4WS1Y"')
 			.end((error, res) => {
 				expect(res).to.have.status(304);
 				done();
@@ -37,7 +65,7 @@ describe('Phones negative tests', () => {
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturer/google/model/pixel4')
-			.set('etag', 'W/"40-uQiyFwqx8D7WQEgArP9VoQpGVQE"')
+			.set('etag', 'W/"c6-xROeBMfDYH1yquBFK2oW8h4WS1Y"')
 			.end((error, res) => {
 				expect(res).to.have.status(304);
 				done();
