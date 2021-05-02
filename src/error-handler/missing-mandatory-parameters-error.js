@@ -2,13 +2,19 @@ const RootError = require('./root-error.js');
 
 module.exports = class MissingMandatoryParametersError extends RootError {
 	constructor(json) {
-		super('/errors/MISSING_REQUIRED_INPUT', 'Missing Required Attributes', 400, undefined);
+		super(
+			'/errors/MISSING_REQUIRED_INPUT',
+			'Missing Required Attributes',
+			400,
+			undefined
+		);
 		const detail = {};
-		for (let attr in json) {
-			if (!json[attr]) {
-				detail[attr] = null;
+		for (const attribute in json) {
+			if (!json[attribute]) {
+				detail[attribute] = null;
 			}
 		}
+
 		this.detail = detail;
 	}
 };

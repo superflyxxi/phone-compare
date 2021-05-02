@@ -26,12 +26,12 @@ exports.getGsmArenaData = async function (gsmUrl) {
 				.querySelector('[data-spec="sensors"]')
 				.innerHTML.match(/fingerprint/i) !== undefined
 	};
-	data.charging = {
+	/* Data.charging = {
 		usbSpeed: undefined,
 		wirelessSpeed: undefined
 	};
 	data.prices = {
 		// Usd: Number.parseFloat(dom.window.document.querySelector('[data-spec="price"]').innerHTML.match(/\$&thinsp;\d\.\d/g)[0])
-	};
+	}; */
 	return data;
 };
