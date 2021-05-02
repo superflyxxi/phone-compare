@@ -21,6 +21,7 @@
   "homepage": "https://github.com/superflyxxi/phone-compare#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
     "got": "^11.8.2",
     "jsdom": "^16.5.3",
     "morgan": "^1.10.0",
