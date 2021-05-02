@@ -82,4 +82,43 @@ describe('Phones negative tests', () => {
 				done();
 			});
 	});
+	
+	it.only('Missing lineageos', (done) => {
+		chai
+			.request(app)
+			.put('/v1/phones/manufacturer/test/model/missing')
+			.send({
+				name: 'Test Missing Input',
+				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'
+			})
+			.end((error, res) => {
+				console.log(res.body);
+				expect(res).to.have.status(400);
+				expect(res.body).to.deep.include({
+					type: '/errors/MISSING_REQUIRED_INPUT',
+					title: 'Missing Required Attributes',
+					status: res.status,
+					detail: {
+						lineageos: null
+					}
+				});
+				expect(res.body).to.have.property('instance');
+				done();
+			});
+	});
+	
+	it('Missing gsmArena', (done) => {
+		chai
+			.request(app)
+			.put('/v1/phones/manufacturer/test/model/missing')
+			.send({
+				name: 'Test Missing Input',
+				lineageos: '18.1'
+			})
+			.end((error, res) => {
+				expect(res).to.have.status(400);
+				done();
+			});
+	});
+
 });
