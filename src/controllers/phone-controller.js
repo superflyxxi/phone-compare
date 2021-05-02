@@ -18,3 +18,12 @@ exports.getPhoneByManufacturerAndModel = async function (req, res) {
 		}
 	}
 };
+
+exports.savePhoneByManufacturerAndModel = async function (req, res) {
+	const phone = req.body;
+	phone.manufacturer = req.params.manufacturer;
+	phone.model = req.params.model;
+	await model.savePhone(phone)
+	res
+		.status(204).send();
+};

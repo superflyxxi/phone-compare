@@ -7,4 +7,9 @@ router.get(
 	asyncHandler(controller.getPhoneByManufacturerAndModel)
 );
 
+router.put(
+	'/manufacturer/:manufacturer/model/:model',
+	asyncHandler(controller.savePhoneByManufacturerAndModel)
+);
+
 module.exports = router;

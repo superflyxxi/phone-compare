@@ -11,7 +11,7 @@
  * lineageOSVersion
  */
 const NotFoundError = require('../error-handler/not-found-error.js');
-const rootDir = process.env.DATA_DIR ?? '/data/';
+const rootDir = process.env.DATA_DIR ?? `${process.env.HOME}/data/`;
 const fs = require('fs/promises');
 
 exports.getPhone = async function (manufacturer, model) {
@@ -24,6 +24,8 @@ exports.getPhone = async function (manufacturer, model) {
 	}
 };
 
-exports.savePhone = async function (manufacturer, model, phone) {
-	await fs.writeFile(phone, `${rootDir}${manufacturer}-${model}.json`);
+exports.savePhone = async function (phone) {
+	const manufacturer = phone.manufacturer;
+	const model = phone.model;
+	await fs.writeFile(`${rootDir}${manufacturer}-${model}.json`, JSON.stringify(phone));
 }
