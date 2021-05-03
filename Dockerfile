@@ -2,8 +2,9 @@ ARG NODE_VERSION=14
 FROM node:${NODE_VERSION}-alpine3.13
 EXPOSE 3000
 MAINTAINER SuperFlyXXI
+ENV NODE_ENV=production
 ENTRYPOINT ["npm"]
 CMD ["start"]
 ADD . /app
 WORKDIR /app
-RUN npm --only=production install
+RUN npm install
