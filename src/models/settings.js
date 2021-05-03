@@ -16,8 +16,7 @@ exports.getSettings = async function () {
 		settings = defaultSettings;
 	}
 
-	Object.assign(settings, defaultSettings);
-	return settings;
+	return Object.assign({}, defaultSettings, settings);
 };
 
 exports.saveSettings = async function (settings) {

@@ -42,6 +42,7 @@ describe('Phones positive tests', () => {
 			.request(app)
 			.get('/v1/phones/manufacturer/google/model/pixel5')
 			.end((error, res) => {
+				pixel5Etag = res.get('etag');
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include({
 					manufacturer: 'google',
@@ -60,7 +61,6 @@ describe('Phones positive tests', () => {
 						fingerprint: true
 					}
 				});
-				pixel5Etag = res.get('etag');
 				done();
 			});
 	});
@@ -69,7 +69,7 @@ describe('Phones positive tests', () => {
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturer/google/model/pixel5')
-			.set('etag', pixel5Etag)
+			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
 				expect(res).to.have.status(304);
 				done();
@@ -82,9 +82,9 @@ describe('Phones negative tests', () => {
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturer/google/model/pixel4')
-			.set('etag', pixel5Etag)
+			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
-				expect(res).to.have.status(304);
+				expect(res).to.have.status(404);
 				done();
 			});
 	});

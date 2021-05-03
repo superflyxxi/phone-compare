@@ -12,13 +12,13 @@ describe('Settings positive tests', () => {
 			.request(app)
 			.get('/v1/settings')
 			.end((error, res) => {
+				defaultEtag = res.get('etag');
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include({
 					rank: ['dimensions.height']
 				});
 				expect(res).to.have.header('etag');
 				expect(res).to.have.header('cache-control', 'public, max-age=3600');
-				defaultEtag = res.get('etag');
 				done();
 			});
 	});
@@ -27,7 +27,7 @@ describe('Settings positive tests', () => {
 		chai
 			.request(app)
 			.get('/v1/settings')
-			.set('etag', defaultEtag)
+			.set('if-none-match', defaultEtag)
 			.end((error, res) => {
 				expect(res).to.have.status(304);
 				done();
