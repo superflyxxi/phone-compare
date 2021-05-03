@@ -101,7 +101,7 @@ jobs:
             run:
               name: Define additional args
               command: |
-                echo "ADDITIONAL_ARGS=--dry-run" >> ${BASH_ENV}
+                echo "export ADDITIONAL_ARGS=--dry-run" >> ${BASH_ENV}
       - run:
           name: Run semantic-release
           command: |
