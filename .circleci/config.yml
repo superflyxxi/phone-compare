@@ -55,12 +55,12 @@ jobs:
       - checkout
       - when:
           condition:
-            equal: [ master, << pipeline.git.branch >> ]
+            equal: [ main, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Determine alternate tag
                 command: |
-                  if [[ "${DOCKER_TAG}" == v* ]]; then
+                  if [[ "${DOCKER_TAG}" != "main" ]]; then
                     echo "ALTERNATE_TAG=latest" >> ${BASH_ENV}
                   fi
       - docker/build:
