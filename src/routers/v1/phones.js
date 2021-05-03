@@ -73,17 +73,37 @@ const asyncHandler = require('express-async-handler');
 
 /**
  * @openapi
- * /v1/phones:
+ * /v1/phones/manufacturer/{manufacturer}/model/{model}:
  *   get:
+ *     summary: Get phone information.
+ *     parameters:
+ *       - in: path
+ *         name: manufacturer
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The manufacturer of the phone.
+ *       - in: path
+ *         name: model
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The phone model number.
  *     produces:
  *       - application/json
  *     responses:
- *       200:
+ *       '200':
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Phone'
+ *       default:
+ *         description: All other errors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get(
 	'/manufacturer/:manufacturer/model/:model',
