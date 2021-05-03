@@ -68,7 +68,7 @@ jobs:
             - run:
                 name: Set cache from args
                 command: |
-                  echo "export CACHE_FROM_ARGS=--cache-from ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest" >> ${BASH_ENV}
+                  echo "export CACHE_FROM_ARGS='--cache-from ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest'" >> ${BASH_ENV}
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
