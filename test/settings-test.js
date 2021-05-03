@@ -6,10 +6,6 @@ const {expect} = chai;
 chai.use(chaiHttp);
 
 describe('Settings positive tests', () => {
-	after(() => {
-		require('../src/models/settings.js').deleteSettings();
-	});
-
 	let defaultEtag;
 	it('Ensure it gets default settings', (done) => {
 		chai

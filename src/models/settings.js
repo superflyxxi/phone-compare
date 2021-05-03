@@ -23,7 +23,3 @@ exports.saveSettings = async function (settings) {
 	const databaseSettings = Object.assign({}, defaultSettings, settings);
 	await fs.writeFile(settingsFile, JSON.stringify(databaseSettings));
 };
-
-exports.deleteSettings = async function () {
-	fs.unlink(settingsFile);
-};
