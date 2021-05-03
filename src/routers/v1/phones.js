@@ -27,9 +27,11 @@ const asyncHandler = require('express-async-handler');
  *           type: string
  *           format: uri
  *           description: The URL reference to the GSM Arena phone page.
+ *           example: 'https://www.gsmarena.com/lg_nexus_4_e960-5048.php'
  *         lineageos:
  *           type: string
  *           description: The lastest Lineage OS version that's supported.
+ *           example: '18.1'
  *         dimensions:
  *           type: object
  *           readonly: true
@@ -38,19 +40,35 @@ const asyncHandler = require('express-async-handler');
  *               type: number
  *               description: The height of the phone in mm
  *               readonly: true
+ *               example: 133.9
  *             width:
  *               type: number
  *               description: The width of the phone in mm.
  *               readonly: true
+ *               example: 68.7
  *             depth:
  *               type: number
  *               description: The depth of the phone in mm.
  *               readonly: true
+ *               example: 9.1
  *         ram:
  *           type: integer
  *           description: The amount of ram in GB.
  *           example: 2
  *           readonly: true
+ *         nfc:
+ *           type: boolean
+ *           description: Determines whether the phone has NFC support.
+ *           example: true
+ *           readonly: true
+ *         sensors:
+ *           type: object
+ *           properties:
+ *             fingerprint:
+ *               type: boolean
+ *               description: Determines whether a fingerprint sensor exists.
+ *               example: false
+ *               readonly: true
  */
 
 /**
