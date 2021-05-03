@@ -1,6 +1,9 @@
 {
 	"ignores":[
-		"test/"
+	],
+	"env": [
+		"es2021",
+		"mocha"
 	],
 	"prettier": true,
 	"rules":{
@@ -11,6 +14,14 @@
 					"res": false,
 					"req": false
 				}
+			}
+		],
+		"new-cap":[
+			"error",
+			{
+				"capIsNewExceptions":[
+					"Router"
+				]
 			}
 		]
 	}

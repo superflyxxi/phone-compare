@@ -4,16 +4,43 @@ orbs:
   node: circleci/node@4
   docker: circleci/docker@1
 
+parameters:
+  nodeVersion:
+    description: The version of node to build.
+    type: string
+    default: '14.16'
+
 jobs:
   test:
     executor: 
       name: node/default
+      tag: << pipeline.parameters.nodeVersion >>
     steps:
       - checkout
-      - node/install-packages:
-          override-ci-command: npm install
+      - node/install-packages
       - run:
-          command: npm test
+          command: |
+            export DATA_DIR=$(mktemp -d)
+            npm test
+          environment:
+            MOCHA_FILE: ./mocha/test-results.xml
+            MOCHA_REPORTER_ARGS: --reporter mocha-junit-reporter
+      - store_test_results:
+          path: ./mocha
+      - store_artifacts:
+          path: ./mocha/test-results.xml
+      - store_artifacts:
+          path: ./coverage/
+      - run:
+          name: Verify XO
+          command: npm run xo-verify
+      - run:
+          name: Ensure only not used
+          command: |
+            if grep ".only" -Rq test/; then
+              echo "Tests include only; failng"
+              exit 1
+            fi
   docker:
     machine: 
       image: ubuntu-2004:202101-01
@@ -40,6 +67,7 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${ALTERNATE_TAG}
+          extra_build_args: --build-arg NODE_VERSION=<< pipeline.parameters.nodeVersion >>
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
@@ -54,7 +82,7 @@ jobs:
         default: false
     steps:
       - checkout
-      - run: npm install
+      - run: npm ci
       - run: npm install -D @semantic-release/exec
       - attach_workspace:
           at: /tmp/workspace
@@ -80,7 +108,7 @@ jobs:
             - version.txt
 
 workflows:
-  build-deploy:
+  default:
     jobs:
       - release:
           name: pre-release
@@ -92,9 +120,9 @@ workflows:
             - pre-release
       - release:
           prerelease: false
-#          filters:
-#            branches:
-#              only:
-#                - main
           requires:
             - docker
+          filters:
+            branches:
+              only:
+                - main
