@@ -61,11 +61,19 @@ jobs:
                   if [[ "${DOCKER_TAG}" != "main" ]]; then
                     echo "ALTERNATE_TAG=latest" >> ${BASH_ENV}
                   fi
+      - unless:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Set cache from args
+                command: |
+                  echo "export CACHE_FROM_ARGS=--cache-from ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest" >> ${BASH_ENV}
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${CIRCLE_BRANCH},${ALTERNATE_TAG}
-          extra_build_args: --build-arg NODE_VERSION=<< pipeline.parameters.nodeVersion >>
+          extra_build_args: ${CACHE_FROM_ARGS} --build-arg NODE_VERSION=<< pipeline.parameters.nodeVersion >>
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
