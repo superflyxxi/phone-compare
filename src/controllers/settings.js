@@ -1,16 +1,14 @@
-// Const model = require('../models/phone-model.js');
+const model = require('../models/settings.js');
 
-exports.getSettings = async function (req, res) {
-	/*	Const phone = await model.getPhone(
-		req.params.manufacturer,
-		req.params.model
-	); */
-	const settings = null;
+export async function getSettings(req, res) {
+	const settings = await model.getSettings();
 	res.set('cache-control', 'public, max-age=3600').status(200).send(settings);
-};
+}
 
+// Exports.getSettings = async function (req, res) {
 exports.updateSettings = async function (req, res) {
-	// Const phone = req.body;
-	//	Await model.savePhone(phone);
+	const existingSettings = await getSettings();
+	const databaseSettings = Object.assign({}, existingSettings, req.body);
+	await model.saveSettings(databaseSettings);
 	res.status(204).send();
 };
