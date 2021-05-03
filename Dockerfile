@@ -5,6 +5,6 @@ MAINTAINER SuperFlyXXI
 ENV NODE_ENV=production
 ENTRYPOINT ["npm"]
 CMD ["start"]
-ADD . /app
 WORKDIR /app
+ADD . /app
 RUN npm install
