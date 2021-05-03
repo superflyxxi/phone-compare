@@ -82,9 +82,14 @@ const asyncHandler = require('express-async-handler');
 
 /**
  * @openapi
- * /v1/phones/manufacturer/{manufacturer}/model/{model}:
+ * /v1/phones/manufacturers/{manufacturer}/models/{model}:
  *   get:
  *     summary: Get phone information.
+ *     description: |
+ *       Fetches information dynamically about a phone. Before this API can return any information
+ *       the PUT API must be called with bare minimum information. With the minimum information,
+ *       this will pull information from resources across the spectrum to come up with the output.
+ *       For performance reasons, you must cache the results honoring cache-control headers.
  *     parameters:
  *       - in: path
  *         name: manufacturer
@@ -115,13 +120,13 @@ const asyncHandler = require('express-async-handler');
  *               $ref: '#/components/schemas/Error'
  */
 router.get(
-	'/manufacturer/:manufacturer/model/:model',
+	'/manufacturers/:manufacturer/models/:model',
 	asyncHandler(controller.getPhoneByManufacturerAndModel)
 );
 
 /**
  * @openapi
- * /v1/phones/manufacturer/{manufacturer}/model/{model}:
+ * /v1/phones/manufacturers/{manufacturer}/models/{model}:
  *   put:
  *     summary: Update phone information.
  *     parameters:
@@ -155,7 +160,7 @@ router.get(
  *               $ref: '#/components/schemas/Error'
  */
 router.put(
-	'/manufacturer/:manufacturer/model/:model',
+	'/manufacturers/:manufacturer/models/:model',
 	asyncHandler(controller.savePhoneByManufacturerAndModel)
 );
 

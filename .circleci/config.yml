@@ -19,9 +19,7 @@ jobs:
       - checkout
       - node/install-packages
       - run:
-          command: |
-            export DATA_DIR=$(mktemp -d)
-            npm test
+          command: npm test
           environment:
             MOCHA_FILE: ./mocha/test-results.xml
             MOCHA_REPORTER_ARGS: --reporter mocha-junit-reporter
@@ -55,23 +53,23 @@ jobs:
       - checkout
       - when:
           condition:
-            equal: [ master, << pipeline.git.branch >> ]
+            equal: [ main, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Determine alternate tag
                 command: |
-                  if [[ "${DOCKER_TAG}" == v* ]]; then
+                  if [[ "${DOCKER_TAG}" != "main" ]]; then
                     echo "ALTERNATE_TAG=latest" >> ${BASH_ENV}
                   fi
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG},${ALTERNATE_TAG}
+          tag: ${DOCKER_TAG},${CIRCLE_BRANCH},${ALTERNATE_TAG}
           extra_build_args: --build-arg NODE_VERSION=<< pipeline.parameters.nodeVersion >>
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG},${ALTERNATE_TAG}
+          tag: ${DOCKER_TAG},${CIRCLE_BRANCH},${ALTERNATE_TAG}
   release:
     docker:
       - image: circleci/node

@@ -10,7 +10,7 @@ describe('Phones positive tests', () => {
 	it('Create pixel5 phone', (done) => {
 		chai
 			.request(app)
-			.put('/v1/phones/manufacturer/google/model/pixel5')
+			.put('/v1/phones/manufacturers/google/models/pixel5')
 			.send({
 				name: 'Google Pixel 5 Initial',
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
@@ -25,7 +25,7 @@ describe('Phones positive tests', () => {
 	it('Replace pixel5 phone', (done) => {
 		chai
 			.request(app)
-			.put('/v1/phones/manufacturer/google/model/pixel5')
+			.put('/v1/phones/manufacturers/google/models/pixel5')
 			.send({
 				name: 'Google Pixel 5',
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
@@ -40,8 +40,9 @@ describe('Phones positive tests', () => {
 	it('Ensure it gets a valid phone', (done) => {
 		chai
 			.request(app)
-			.get('/v1/phones/manufacturer/google/model/pixel5')
+			.get('/v1/phones/manufacturers/google/models/pixel5')
 			.end((error, res) => {
+				pixel5Etag = res.get('etag');
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include({
 					manufacturer: 'google',
@@ -60,7 +61,6 @@ describe('Phones positive tests', () => {
 						fingerprint: true
 					}
 				});
-				pixel5Etag = res.get('etag');
 				done();
 			});
 	});
@@ -68,8 +68,8 @@ describe('Phones positive tests', () => {
 	it('Ensure ETag for same URL returns 304', (done) => {
 		chai
 			.request(app)
-			.get('/v1/phones/manufacturer/google/model/pixel5')
-			.set('etag', pixel5Etag)
+			.get('/v1/phones/manufacturers/google/models/pixel5')
+			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
 				expect(res).to.have.status(304);
 				done();
@@ -81,10 +81,10 @@ describe('Phones negative tests', () => {
 	it('Ensure ETag for diff URL returns 304', (done) => {
 		chai
 			.request(app)
-			.get('/v1/phones/manufacturer/google/model/pixel4')
-			.set('etag', pixel5Etag)
+			.get('/v1/phones/manufacturers/google/models/pixel4')
+			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
-				expect(res).to.have.status(304);
+				expect(res).to.have.status(404);
 				done();
 			});
 	});
@@ -92,7 +92,7 @@ describe('Phones negative tests', () => {
 	it('Missing lineageos', (done) => {
 		chai
 			.request(app)
-			.put('/v1/phones/manufacturer/test/model/missing')
+			.put('/v1/phones/manufacturers/test/models/missing')
 			.send({
 				name: 'Test Missing Input',
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'
@@ -115,7 +115,7 @@ describe('Phones negative tests', () => {
 	it('Missing gsmArena', (done) => {
 		chai
 			.request(app)
-			.put('/v1/phones/manufacturer/test/model/missing')
+			.put('/v1/phones/manufacturers/test/models/missing')
 			.send({
 				name: 'Test Missing Input',
 				lineageos: '18.1'
