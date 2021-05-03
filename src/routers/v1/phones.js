@@ -82,7 +82,7 @@ const asyncHandler = require('express-async-handler');
 
 /**
  * @openapi
- * /v1/phones/manufacturer/{manufacturer}/model/{model}:
+ * /v1/phones/manufacturers/{manufacturer}/models/{model}:
  *   get:
  *     summary: Get phone information.
  *     description: |
@@ -120,13 +120,13 @@ const asyncHandler = require('express-async-handler');
  *               $ref: '#/components/schemas/Error'
  */
 router.get(
-	'/manufacturer/:manufacturer/model/:model',
+	'/manufacturers/:manufacturer/models/:model',
 	asyncHandler(controller.getPhoneByManufacturerAndModel)
 );
 
 /**
  * @openapi
- * /v1/phones/manufacturer/{manufacturer}/model/{model}:
+ * /v1/phones/manufacturers/{manufacturer}/models/{model}:
  *   put:
  *     summary: Update phone information.
  *     parameters:
@@ -160,7 +160,7 @@ router.get(
  *               $ref: '#/components/schemas/Error'
  */
 router.put(
-	'/manufacturer/:manufacturer/model/:model',
+	'/manufacturers/:manufacturer/models/:model',
 	asyncHandler(controller.savePhoneByManufacturerAndModel)
 );
 
