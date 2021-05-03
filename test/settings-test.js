@@ -22,7 +22,7 @@ describe('Settings positive tests', () => {
 				done();
 			});
 	});
-	
+
 	it('Ensure 304 since not modified', (done) => {
 		chai
 			.request(app)
@@ -38,7 +38,7 @@ describe('Settings positive tests', () => {
 		chai
 			.request(app)
 			.patch('/v1/settings')
-			.send( {
+			.send({
 				rank: ['nfc', 'dimensions.height']
 			})
 			.end((error, res) => {
@@ -46,7 +46,7 @@ describe('Settings positive tests', () => {
 				done();
 			});
 	});
-	
+
 	it('Ensure it new settings', (done) => {
 		chai
 			.request(app)
@@ -54,7 +54,7 @@ describe('Settings positive tests', () => {
 			.end((error, res) => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include({
-					rank: ['nfc','dimensions.height']
+					rank: ['nfc', 'dimensions.height']
 				});
 				expect(res).to.not.have.header('etag', defaultEtag);
 				expect(res).to.have.header('cache-control', 'public, max-age=3600');
