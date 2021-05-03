@@ -19,9 +19,7 @@ jobs:
       - checkout
       - node/install-packages
       - run:
-          command: |
-            export DATA_DIR=$(mktemp -d)
-            npm test
+          command: npm test
           environment:
             MOCHA_FILE: ./mocha/test-results.xml
             MOCHA_REPORTER_ARGS: --reporter mocha-junit-reporter
