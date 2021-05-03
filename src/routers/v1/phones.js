@@ -6,19 +6,9 @@ const asyncHandler = require('express-async-handler');
  * @openapi
  * components:
  *   schemas:
- *     Phone:
+ *     PhoneInput:
  *       type: object
  *       properties:
- *         manufacturer:
- *           type: string
- *           description: The phone manufacturer.
- *           example: LG
- *           readOnly: true
- *         model:
- *           type: string
- *           description: The phone model number.
- *           example: E960
- *           readOnly: true
  *         name:
  *           type: string
  *           description: The common name this phone is referred to.
@@ -32,43 +22,62 @@ const asyncHandler = require('express-async-handler');
  *           type: string
  *           description: The lastest Lineage OS version that's supported.
  *           example: '18.1'
- *         dimensions:
- *           type: object
- *           readonly: true
+ *       required:
+ *         - lineageos
+ *         - gsmArenaUrl
+ *
+ *     Phone:
+ *       allOf:
+ *         - $ref: '#/components/schemas/PhoneInput'
+ *         - type: object
  *           properties:
- *             height:
- *               type: number
- *               description: The height of the phone in mm
+ *             manufacturer:
+ *               type: string
+ *               description: The phone manufacturer.
+ *               example: LG
+ *               readOnly: true
+ *             model:
+ *               type: string
+ *               description: The phone model number.
+ *               example: E960
+ *               readOnly: true
+ *             dimensions:
+ *               type: object
  *               readonly: true
- *               example: 133.9
- *             width:
- *               type: number
- *               description: The width of the phone in mm.
+ *               properties:
+ *                 height:
+ *                   type: number
+ *                   description: The height of the phone in mm
+ *                   readonly: true
+ *                   example: 133.9
+ *                 width:
+ *                   type: number
+ *                   description: The width of the phone in mm.
+ *                   readonly: true
+ *                   example: 68.7
+ *                 depth:
+ *                   type: number
+ *                   description: The depth of the phone in mm.
+ *                   readonly: true
+ *                   example: 9.1
+ *             ram:
+ *               type: integer
+ *               description: The amount of ram in GB.
+ *               example: 2
  *               readonly: true
- *               example: 68.7
- *             depth:
- *               type: number
- *               description: The depth of the phone in mm.
- *               readonly: true
- *               example: 9.1
- *         ram:
- *           type: integer
- *           description: The amount of ram in GB.
- *           example: 2
- *           readonly: true
- *         nfc:
- *           type: boolean
- *           description: Determines whether the phone has NFC support.
- *           example: true
- *           readonly: true
- *         sensors:
- *           type: object
- *           properties:
- *             fingerprint:
+ *             nfc:
  *               type: boolean
- *               description: Determines whether a fingerprint sensor exists.
- *               example: false
+ *               description: Determines whether the phone has NFC support.
+ *               example: true
  *               readonly: true
+ *             sensors:
+ *               type: object
+ *               properties:
+ *                 fingerprint:
+ *                   type: boolean
+ *                   description: Determines whether a fingerprint sensor exists.
+ *                   example: false
+ *                   readonly: true
  */
 
 /**
@@ -110,6 +119,41 @@ router.get(
 	asyncHandler(controller.getPhoneByManufacturerAndModel)
 );
 
+/**
+ * @openapi
+ * /v1/phones/manufacturer/{manufacturer}/model/{model}:
+ *   put:
+ *     summary: Update phone information.
+ *     parameters:
+ *       - in: path
+ *         name: manufacturer
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The manufacturer of the phone.
+ *       - in: path
+ *         name: model
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The phone model number.
+ *     requestBody:
+ *       description: The phone data to update.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PhoneInput'
+ *     responses:
+ *       '204':
+ *         description: No Content
+ *       default:
+ *         description: All other errors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.put(
 	'/manufacturer/:manufacturer/model/:model',
 	asyncHandler(controller.savePhoneByManufacturerAndModel)
