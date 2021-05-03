@@ -1,13 +1,13 @@
 const NotFoundError = require('../error-handler/not-found-error.js');
 const MissingMandatoryParametersError = require('../error-handler/missing-mandatory-parameters-error.js');
-const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data/`;
+const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
 const fs = require('fs/promises');
 
 exports.getPhone = async function (manufacturer, model) {
 	let phone;
 	try {
 		phone = JSON.parse(
-			await fs.readFile(`${rootDirectory}${manufacturer}-${model}.json`)
+			await fs.readFile(`${rootDirectory}/${manufacturer}.${model}.json`)
 		);
 	} catch (error) {
 		throw new NotFoundError(error.message);
@@ -25,7 +25,7 @@ exports.savePhone = async function (phone) {
 	const model = phone.model;
 	if (phone.gsmArenaUrl && phone.lineageos) {
 		await fs.writeFile(
-			`${rootDirectory}${manufacturer}-${model}.json`,
+			`${rootDirectory}/${manufacturer}.${model}.json`,
 			JSON.stringify(phone)
 		);
 	} else {
