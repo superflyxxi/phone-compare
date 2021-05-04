@@ -3,6 +3,15 @@ const MissingMandatoryParametersError = require('../error-handler/missing-mandat
 const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
 const fs = require('fs/promises');
 
+exports.getAllPhones = async function () {
+	const result = [];
+	for (const filename of await fs.readdir(dirname)) {
+		const splt = filename.split('.');
+		result.push(await getPhone(splt[0], splt[1]));
+	}
+	return result;
+}
+
 exports.getPhone = async function (manufacturer, model) {
 	let phone;
 	try {
