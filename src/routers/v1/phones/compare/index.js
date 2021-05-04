@@ -77,7 +77,7 @@ const router = require('express').Router();
 
 /**
  * @openapi
- * /v1/phone-compare:
+ * /v1/phones/compare:
  *   post:
  *     summary: Calculate best phone
  *     description: |

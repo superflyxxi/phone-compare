@@ -33,7 +33,7 @@ describe('Phone-compare positive tests', () => {
 	it('Rank on height', (done) => {
 		chai
 			.request(app)
-			.post('/v1/phone-compare')
+			.post('/v1/phones/compare')
 			.send({
 				phones:[
 					{manufacturer: 'LG', model: 'E960'},
