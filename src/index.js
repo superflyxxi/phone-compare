@@ -11,6 +11,7 @@ app.disable('x-powered-by');
 // APIs
 app.use('/v1/phones', require('./routers/v1/phones.js'));
 app.use('/v1/settings', require('./routers/v1/settings.js'));
+app.use('/v1/phone-compare', require('./routers/v1/phone-compare.js'));
 
 // Standard Stuff
 const openapispec = require('swagger-jsdoc')({

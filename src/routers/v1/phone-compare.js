@@ -25,11 +25,25 @@ const router = require('express').Router();
  *           description: An array of phones to compare. If not provided, then all known phones will be compared.
  *           items:
  *             $ref: '#/components/schemas/PhoneCompareRequestSinglePhone'
+ *         ranking:
+ *           type: array
+ *           description: Sorted array of important attributes.
+ *           example: ['dimensions.height', 'nfc', 'lineageos']
+ *           items:
+ *             type: string
+ *       required:
+ *         - phones
+ *         - ranking
+ *
  *     PhoneCompareResultSinglePhone:
  *       allOf:
  *         - $ref: '#/components/schemas/PhoneCompareRequestSinglePhone'
  *         - type: object
  *           properties:
+ *             name:
+ *               type: string
+ *               description: Human readable name.
+ *               example: LG Nexus 4
  *             score:
  *               type: number
  *               description: The score given to this phone.
@@ -40,15 +54,20 @@ const router = require('express').Router();
  *                 nfc:
  *                   type: number
  *                   description: The score awarded through nfc.
+ *                   example: 10
  *                 height:
  *                   type: number
  *                   description: The score awarded through height.
+ *                   example: 20
  *                 fingerprint:
  *                   type: number
  *                   description: The score awarded through fingerprint.
+ *                   example: 40
  *     PhoneCompareResult:
  *       type: object
  *       properties:
+ *         best:
+ *           $ref: '#/components/schemas/PhoneCompareResultSinglePhone'
  *         results:
  *           type: array
  *           description: An array of phone results ranked based on settings.
@@ -79,14 +98,6 @@ const router = require('express').Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PhoneCompareResult'
- *             example:
- *               results:
- *                 - manufacturer: LG
- *                   model: E960
- *                   score: 100
- *                 - manufacturer: Google
- *                   model: Pixel 5
- *                   score: 3000
  *       default:
  *         description: All other errors
  *         content:
@@ -95,5 +106,24 @@ const router = require('express').Router();
  *               $ref: '#/components/schemas/Error'
  */
 router.post('/', (req, res) => {
-	res.status(400).send();
+	res.status(200).send({
+		best: {
+			manufacturer: 'Google',
+			model: 'GD1YQ',
+			score: 3000
+		},
+		results: [
+			{
+				manufacturer: 'LG',
+				model: 'E960',
+				score: 100
+			}, {
+				manufacturer: 'Google',
+				model: 'GD1YQ',
+				score: 3000
+			}
+		]
+	});
 });
+
+module.exports = router;
