@@ -4,13 +4,15 @@ const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
 const fs = require('fs/promises');
 
 exports.getAllPhones = async function () {
-	const result = [];
-	for (const filename of await fs.readdir(dirname)) {
+	let result = [];
+	for (const filename of await fs.readdir(rootDirectory)) {
 		const splt = filename.split('.');
-		result.push(await getPhone(splt[0], splt[1]));
+		result.push(this.getPhone(splt[0], splt[1]));
 	}
+
+	result = await Promise.all(result);
 	return result;
-}
+};
 
 exports.getPhone = async function (manufacturer, model) {
 	let phone;

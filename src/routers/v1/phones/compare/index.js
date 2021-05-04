@@ -117,7 +117,8 @@ router.post('/', (req, res) => {
 				manufacturer: 'LG',
 				model: 'E960',
 				score: 100
-			}, {
+			},
+			{
 				manufacturer: 'Google',
 				model: 'GD1YQ',
 				score: 3000
