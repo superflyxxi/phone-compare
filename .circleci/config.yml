@@ -117,9 +117,25 @@ jobs:
             - version.txt
   deploy:
     steps:
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
-          name: Deploying
-          command: true
+          name: Determine env variables
+          command: |
+            echo "DOCKER_TAG=$(cat /tmp/workspace/version.txt)" >> ${BASH_ENV}
+            if [[ "<< pipeline.git.branch >>" == "main" ]]; then
+              echo "ENV=prod" >> ${BASH_ENV}
+            else
+              echo "ENV=wip" >> ${BASH_ENV}
+            fi
+      - run:
+          name: Generate docker-compose file and deploy
+          command: |
+            cat docker-compose-template.yml |\
+              sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
+              sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
+              sed "s#\${ENV}#${ENV}#g" \
+              > docker-compose-${ENV}.yml
 
 workflows:
   default:
