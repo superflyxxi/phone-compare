@@ -144,11 +144,14 @@ jobs:
               > docker-compose-${ENV}.yml
             cat docker-compose-${ENV}.yml
       - run:
-          name: SSH docker-compose and deploy
+          name: Upload docker-compose file
           environment:
             REMOTE_DIR: ${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
           command: |
             scp -vvv -oPort=${SSH_PORT} -r docker-compose-${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+      - run:
+          name: Redeploy
+          command: |
             ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/redeploy.sh"
 
 workflows:
