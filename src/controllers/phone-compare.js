@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
+const MissingMandatoryParametersError = require('../error-handler/missing-mandatory-parameters-error');
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? '';
 
 exports.comparePhones = async function (req, res) {
+	validate(req);
 	let promises = [];
 	const rank = req.body.ranking;
 	for (const phone of req.body.phones) {
@@ -28,6 +30,15 @@ exports.comparePhones = async function (req, res) {
 		results: sortedPhoneList
 	});
 };
+
+function validate(req) {
+	if (!(req.body.ranking && req.body.phones)) {
+		throw new MissingMandatoryParametersError({
+			ranking: req.body.ranking,
+			phones: req.body.phones
+		});
+	}
+}
 
 /**
  * Generates an object that describes how each ranked property should be scored on a scale.

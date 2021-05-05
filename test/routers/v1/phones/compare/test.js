@@ -52,7 +52,7 @@ describe('Phone-compare positive tests', () => {
 					{manufacturer: 'Google', model: 'G020I'},
 					{manufacturer: 'Google', model: 'GD1YQ'}
 				],
-				rank: ['dimensions.height']
+				ranking: ['dimensions.height']
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(200);
