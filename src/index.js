@@ -18,7 +18,7 @@ const openapispec = require('swagger-jsdoc')({
 		openapi: '3.0.0',
 		info: {
 			title: 'Phone Compare',
-			version: require('fs').readFileSync('./version.txt')
+			version: require('./helpers/version')
 		}
 	},
 	apis: [
