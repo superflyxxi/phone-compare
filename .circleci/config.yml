@@ -115,6 +115,11 @@ jobs:
           root: /tmp/workspace
           paths:
             - version.txt
+  deploy:
+    steps:
+      - run:
+          name: Deploying
+          command: true
 
 workflows:
   default:
@@ -135,3 +140,6 @@ workflows:
             branches:
               only:
                 - main
+      - deploy:
+          requires:
+            - docker
