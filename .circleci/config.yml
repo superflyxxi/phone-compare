@@ -148,12 +148,8 @@ jobs:
           environment:
             REMOTE_DIR: ${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
           command: |
-            sftp -oPort=${SSH_PORT} -oBatchMode=no -b - ${SSH_USER}@${SSH_SERVER} \<< !
-              cd ${REMOTE_DIR}
-              put docker-compose-${ENV}.yml
-              bye
-            !
-            ssh ${SSH_USER}@${SSH_SERVER}:${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/redeploy.sh"
+            scp -vvv -oPort=${SSH_PORT} -r docker-compose-${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+            ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/redeploy.sh"
 
 workflows:
   default:
