@@ -172,6 +172,8 @@ workflows:
           prerelease: true
       - test:
           context: default
+          requires:
+            - test-deploy
       - docker:
           context: default
           requires:
