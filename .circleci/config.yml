@@ -153,14 +153,18 @@ workflows:
     jobs:
       - release:
           name: pre-release
+          context: default
           prerelease: true
-      - test
+      - test:
+          context: default
       - docker:
+          context: default
           requires:
             - test
             - pre-release
       - release:
           prerelease: false
+          context: default
           requires:
             - docker
           filters:
@@ -168,5 +172,6 @@ workflows:
               only:
                 - main
       - deploy:
+          context: default
           requires:
             - docker
