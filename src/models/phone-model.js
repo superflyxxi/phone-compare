@@ -1,7 +1,6 @@
 const NotFoundError = require('../error-handler/not-found-error.js');
 const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data/`;
 const fs = require('fs/promises');
-const {validate} = require('../helpers/validation');
 
 const validationConstraints = {
 	manufacturer: {
@@ -40,7 +39,7 @@ exports.getPhone = async function (manufacturer, model) {
 };
 
 exports.savePhone = async function (phone) {
-	validate(phone, validationConstraints);
+	require('../helpers/validation').validate(phone, validationConstraints);
 	const manufacturer = phone.manufacturer;
 	const model = phone.model;
 	await fs.writeFile(
