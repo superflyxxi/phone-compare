@@ -20,12 +20,12 @@ function validate(body) {
 			model: {presence: true, type: 'string'}
 		})
 	);
-	/*body.ranking.every((item) =>
+	/* Body.ranking.every((item) =>
 		validator.validate(item, {
 			presence: true,
 			type: 'string'
 		})
-	);*/
+	); */
 }
 
 exports.comparePhones = async function (req, res) {
