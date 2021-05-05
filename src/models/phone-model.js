@@ -3,6 +3,22 @@ const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data/`;
 const fs = require('fs/promises');
 const {validate} = require('../helpers/validation');
 
+const validationConstraints = {
+	manufacturer: {
+		presence: true
+	},
+	model: {
+		presence: true
+	},
+	gsmArenaUrl: {
+		presence: true,
+		url: true
+	},
+	lineageos: {
+		presence: true
+	}
+};
+
 exports.getPhone = async function (manufacturer, model) {
 	let phone;
 	try {
@@ -18,21 +34,6 @@ exports.getPhone = async function (manufacturer, model) {
 		await require('../helpers/gsm-arena.js').getGsmArenaData(phone.gsmArenaUrl)
 	);
 	return phone;
-};
-
-const validationConstraints = {
-	manufacturer: {
-		presence: true
-	},
-	model: {
-		presence: true
-	},
-	gsmArenaUrl: {
-		presence: true
-	},
-	lineageos: {
-		presence: true
-	}
 };
 
 exports.savePhone = async function (phone) {
