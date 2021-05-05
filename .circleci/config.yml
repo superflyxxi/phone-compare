@@ -145,7 +145,9 @@ jobs:
             cat docker-compose-${ENV}.yml
       - run:
           name: Install sshpass
-          command: apt-get install sshpass
+          command: |
+            sudo apt-get update
+            sudo apt-get install sshpass
       - run:
           name: Upload docker-compose file
           environment:
