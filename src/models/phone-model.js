@@ -1,7 +1,25 @@
 const NotFoundError = require('../error-handler/not-found-error.js');
-const MissingMandatoryParametersError = require('../error-handler/missing-mandatory-parameters-error.js');
 const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data/`;
 const fs = require('fs/promises');
+
+const validationConstraints = {
+	manufacturer: {
+		presence: true,
+		type: 'string'
+	},
+	model: {
+		presence: true,
+		type: 'string'
+	},
+	gsmArenaUrl: {
+		presence: true,
+		url: true
+	},
+	lineageos: {
+		presence: true,
+		type: 'string'
+	}
+};
 
 exports.getPhone = async function (manufacturer, model) {
 	let phone;
@@ -21,17 +39,11 @@ exports.getPhone = async function (manufacturer, model) {
 };
 
 exports.savePhone = async function (phone) {
+	require('../helpers/validation').validate(phone, validationConstraints);
 	const manufacturer = phone.manufacturer;
 	const model = phone.model;
-	if (phone.gsmArenaUrl && phone.lineageos) {
-		await fs.writeFile(
-			`${rootDirectory}${manufacturer}-${model}.json`,
-			JSON.stringify(phone)
-		);
-	} else {
-		throw new MissingMandatoryParametersError({
-			gsmArenaUrl: phone.gsmArenaUrl,
-			lineageos: phone.lineageos
-		});
-	}
+	await fs.writeFile(
+		`${rootDirectory}${manufacturer}-${model}.json`,
+		JSON.stringify(phone)
+	);
 };
