@@ -140,7 +140,7 @@ jobs:
               sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
               sed "s#\${ENV}#${ENV}#g" \
               > docker-compose-${ENV}.yml
-            sshpass -e sftp -oBatchMode=no -b - ${SSH_USER}@${SSH_SERVER}:${SSH_PORT} << !
+            sshpass -e sftp -oBatchMode=no -b - ${SSH_USER}@${SSH_SERVER}:${SSH_PORT} \<< !
               cd ${REMOTE_DIR}
               put docker-compose-${ENV}.yml
               bye
