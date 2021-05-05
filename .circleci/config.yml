@@ -41,7 +41,7 @@ jobs:
             fi
   docker:
     machine: 
-      image: ubuntu-2004:202101-01
+      enabled: true
     steps:
       - attach_workspace:
           at: /tmp/workspace
