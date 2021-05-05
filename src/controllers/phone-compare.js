@@ -2,13 +2,13 @@ const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? '';
 
 exports.comparePhones = async function (req, res) {
 	let promises = [];
-	const rank = req.body.rank;
-
+	const rank = req.body.ranking;
 	for (const phone of req.body.phones) {
 		promises.push(getPhoneData(phone, rank));
 	}
 
-	const phoneList = Promise.all(promises);
+	const phoneList = await Promise.all(promises);
+	console.log("initial", phoneList);
 
 	const rankScale = await generateScoreScale(rank, phoneList);
 
@@ -16,11 +16,11 @@ exports.comparePhones = async function (req, res) {
 	for (const phone of phoneList) {
 		promises.push(scorePhone(rankScale, phone));
 	}
+	await Promise.all(promises);
+	console.log("scored", phoneList);
 
-	Promise.all(promises);
-
-	const sortedPhoneList = getSortedPhoneList(phoneList);
-
+	const sortedPhoneList = await getSortedPhoneList(phoneList);
+	console.log("sorted", sortedPhoneList);
 	res.set('cache-control', 'public, max-age=2419200').send({
 		best: sortedPhoneList[0],
 		results: sortedPhoneList
@@ -49,7 +49,7 @@ async function getPhoneData(phone, properties) {
 	return phone;
 }
 
-async function scorePhone(phone, rank) {
+async function scorePhone(rankScale, phone) {
 	phone.score = 0;
 	phone.scoreBreakdown = {};
 }

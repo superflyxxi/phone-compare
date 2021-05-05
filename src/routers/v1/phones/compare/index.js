@@ -1,6 +1,6 @@
 const router = require('express').Router();
-// Const controller = require('../../controllers/phone-controller.js');
-// const asyncHandler = require('express-async-handler');
+const controller = require('../../../../controllers/phone-compare');
+const asyncHandler = require('express-async-handler');
 
 /**
  * @openapi
@@ -105,26 +105,6 @@ const router = require('express').Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/', (req, res) => {
-	res.status(200).send({
-		best: {
-			manufacturer: 'Google',
-			model: 'GD1YQ',
-			score: 3000
-		},
-		results: [
-			{
-				manufacturer: 'LG',
-				model: 'E960',
-				score: 100
-			},
-			{
-				manufacturer: 'Google',
-				model: 'GD1YQ',
-				score: 3000
-			}
-		]
-	});
-});
+router.post('/', asyncHandler(controller.comparePhones));
 
 module.exports = router;
