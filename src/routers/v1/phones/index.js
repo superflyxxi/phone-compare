@@ -164,4 +164,37 @@ router.put(
 	asyncHandler(controller.savePhoneByManufacturerAndModel)
 );
 
+/**
+ * @openapi
+ * /v1/phones:
+ *   get:
+ *     summary: Get all phones.
+ *     description: |
+ *       Similar to getting an individual phone, but for all phones available.
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   href:
+ *                     type: string
+ *                     format: uri
+ *                     description: A reference to get details of the phone.
+ *                     example: manufacturers/LG/models/E960
+ *       default:
+ *         description: All other errors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/', asyncHandler(controller.getAllPhones));
+
 module.exports = router;

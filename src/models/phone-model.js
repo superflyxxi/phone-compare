@@ -2,15 +2,17 @@ const NotFoundError = require('../error-handler/not-found-error.js');
 const MissingMandatoryParametersError = require('../error-handler/missing-mandatory-parameters-error.js');
 const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
 const fs = require('fs/promises');
+const path = require('path');
 
 exports.getAllPhones = async function () {
-	let result = [];
+	const result = [];
 	for (const filename of await fs.readdir(rootDirectory)) {
 		const splt = filename.split('.');
-		result.push(this.getPhone(splt[0], splt[1]));
+		result.push({
+			href: path.join('/manufacturers/', splt[0], '/models/', splt[1])
+		});
 	}
 
-	result = await Promise.all(result);
 	return result;
 };
 
