@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  phone-compare${POSTFIX}:
+    image: ${DOCKER_REGISTRY}/phone-compare:${DOCKER_TAG}
+    restart: always
