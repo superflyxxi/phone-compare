@@ -156,7 +156,7 @@ jobs:
             REMOTE_DIR: ${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
           command: |
             cat docker-compose-wip.yml
-            sshpass -e scp -v docker-compose-wip.yml "scp://circleci@superflyxxi.ddns.net:2222/home/sigrejas/docker_deployment/phone-compare"
+            sshpass -e scp -vvv docker-compose-wip.yml "scp://circleci@superflyxxi.ddns.net:2222/home/sigrejas/docker_deployment/phone-compare"
             sshpass -e scp -v docker-compose-${ENV}.yml "scp://${SSH_USER}@${SSH_SERVER}:${SSH_PORT}${REMOTE_DIR}"
       - run:
           name: Redeploy
