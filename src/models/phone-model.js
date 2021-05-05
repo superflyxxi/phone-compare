@@ -1,5 +1,4 @@
 const NotFoundError = require('../error-handler/not-found-error.js');
-const MissingMandatoryParametersError = require('../error-handler/missing-mandatory-parameters-error.js');
 const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data/`;
 const fs = require('fs/promises');
 const {validate} = require('../helpers/validation');
