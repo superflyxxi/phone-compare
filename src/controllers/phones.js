@@ -1,4 +1,4 @@
-const model = require('../models/phone-model.js');
+const model = require('../models/phones');
 const NotFoundError = require('../error-handler/not-found-error.js');
 
 exports.getAllPhones = async function (req, res) {
