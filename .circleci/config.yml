@@ -152,9 +152,8 @@ jobs:
             sudo apt-get install sshpass
       - run:
           name: Upload docker-compose file
-          environment:
-            REMOTE_DIR: ${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
           command: |
+            export REMOTE_DIR=${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
             echo "REMOTE_DIR=${REMOTE_DIR}"
             #sshpass -e scp -P 2222 docker-compose-wip.yml circleci@superflyxxi.ddns.net:/home/sigrejas/docker_deployment/phone-compare
             sshpass -e scp -v -P ${SSH_PORT} docker-compose.${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
