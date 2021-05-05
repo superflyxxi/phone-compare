@@ -143,8 +143,8 @@ jobs:
               sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
               sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
               sed "s#\${ENV}#${ENV}#g" \
-              > docker-compose-${ENV}.yml
-            cat docker-compose-${ENV}.yml
+              > docker-compose.${ENV}.yml
+            cat docker-compose.${ENV}.yml
       - run:
           name: Install sshpass
           command: |
@@ -155,8 +155,9 @@ jobs:
           environment:
             REMOTE_DIR: ${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
           command: |
+            echo "REMOTE_DIR=${REMOTE_DIR}"
             #sshpass -e scp -P 2222 docker-compose-wip.yml circleci@superflyxxi.ddns.net:/home/sigrejas/docker_deployment/phone-compare
-            sshpass -e scp -P ${SSH_PORT} docker-compose-${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+            sshpass -e scp -v -P ${SSH_PORT} docker-compose.${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
       - run:
           name: Redeploy
           command: |
