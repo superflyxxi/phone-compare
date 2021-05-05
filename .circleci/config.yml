@@ -136,7 +136,6 @@ jobs:
       - run:
           name: Generate docker-compose file
           command: |
-            export DOCKER_TAG=${CIRCLE_BRANCH}
             cat docker-compose-template.yml |\
               sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
               sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
@@ -152,9 +151,7 @@ jobs:
           name: Upload docker-compose file
           command: |
             export REMOTE_DIR=${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
-            echo "REMOTE_DIR=${REMOTE_DIR}"
-            #sshpass -e scp -P 2222 docker-compose-wip.yml circleci@superflyxxi.ddns.net:/home/sigrejas/docker_deployment/phone-compare
-            sshpass -e scp -v -P ${SSH_PORT} docker-compose.${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+            sshpass -e scp -P ${SSH_PORT} docker-compose.${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
       - run:
           name: Redeploy
           command: |
@@ -167,18 +164,13 @@ workflows:
           name: pre-release
           context: default
           prerelease: true
-          requires:
-            - test-deploy
       - test:
           context: default
-          requires:
-            - test-deploy
       - docker:
           context: default
           requires:
             - test
             - pre-release
-            - test-deploy
       - release:
           prerelease: false
           context: default
@@ -192,8 +184,3 @@ workflows:
           context: default
           requires:
             - docker
-      - deploy:
-          name: test-deploy
-          context: default
-          requires:
-            - pre-release
