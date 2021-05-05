@@ -153,7 +153,7 @@ jobs:
           environment:
             REMOTE_DIR: ${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
           command: |
-            sshpass -e scp -vvv -oPort=${SSH_PORT} -r docker-compose-${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+            sshpass -e scp -v docker-compose-${ENV}.yml scp://${SSH_USER}@${SSH_SERVER}:${SSH_PORT}${REMOTE_DIR}
       - run:
           name: Redeploy
           command: |
