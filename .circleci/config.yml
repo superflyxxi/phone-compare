@@ -144,15 +144,21 @@ jobs:
               > docker-compose-${ENV}.yml
             cat docker-compose-${ENV}.yml
       - run:
+          name: Install sshpass
+          command: apt-get install sshpass
+      - run:
           name: Upload docker-compose file
           environment:
             REMOTE_DIR: ${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
+            SSHPASS: ${SSH_PASS}
           command: |
-            scp -vvv -oPort=${SSH_PORT} -r docker-compose-${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+            sshpass -e scp -vvv -oPort=${SSH_PORT} -r docker-compose-${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
       - run:
           name: Redeploy
+          environment:
+            SSHPASS: ${SSH_PASS}
           command: |
-            ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/redeploy.sh"
+            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/redeploy.sh"
 
 workflows:
   default:
