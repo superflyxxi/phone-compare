@@ -5,17 +5,20 @@ const {validate} = require('../helpers/validation');
 
 const validationConstraints = {
 	manufacturer: {
-		presence: true
+		presence: true,
+		type: 'string'
 	},
 	model: {
-		presence: true
+		presence: true,
+		type: 'string'
 	},
 	gsmArenaUrl: {
 		presence: true,
 		url: true
 	},
 	lineageos: {
-		presence: true
+		presence: true,
+		type: 'string'
 	}
 };
 
