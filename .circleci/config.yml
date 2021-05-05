@@ -130,6 +130,7 @@ jobs:
             else
               echo "ENV=wip" >> ${BASH_ENV}
             fi
+      - checkout
       - run:
           name: Generate docker-compose file and deploy
           environment:
