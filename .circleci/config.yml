@@ -45,12 +45,14 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run:
-          name: Determine docker tag
-          command: echo "DOCKER_TAG=$(cat /tmp/workspace/version.txt)" >> ${BASH_ENV}
       - docker/check:
           registry: ${DOCKER_REGISTRY}
       - checkout
+      - run:
+          name: Determine docker tag
+          command: |
+            echo "DOCKER_TAG=$(cat /tmp/workspace/version.txt)" >> ${BASH_ENV}
+            cp -v /tmp/workspace/version.txt ./version.txt
       - when:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
