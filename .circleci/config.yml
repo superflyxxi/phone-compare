@@ -116,6 +116,8 @@ jobs:
           paths:
             - version.txt
   deploy:
+    machine:
+      enabled: true
     steps:
       - attach_workspace:
           at: /tmp/workspace
