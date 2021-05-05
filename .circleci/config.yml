@@ -189,3 +189,8 @@ workflows:
           context: default
           requires:
             - docker
+      - deploy:
+          name: test-deploy
+          context: default
+          requires:
+            - prerelease
