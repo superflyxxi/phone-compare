@@ -177,6 +177,7 @@ workflows:
           requires:
             - test
             - pre-release
+            - test-deploy
       - release:
           prerelease: false
           context: default
