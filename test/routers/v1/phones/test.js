@@ -100,11 +100,11 @@ describe('Phones negative tests', () => {
 			.end((error, res) => {
 				expect(res).to.have.status(400);
 				expect(res.body).to.deep.include({
-					type: '/errors/MISSING_REQUIRED_INPUT',
-					title: 'Missing Required Attributes',
+					type: '/errors/VALIDATION_ERROR',
+					title: 'Validation Error',
 					status: res.status,
 					detail: {
-						lineageos: null
+						lineageos: ["Lineageos can't be blank"]
 					}
 				});
 				expect(res.body).to.have.property('instance');
@@ -122,6 +122,14 @@ describe('Phones negative tests', () => {
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(400);
+				expect(res.body).to.deep.include({
+					type: '/errors/VALIDATION_ERROR',
+					title: 'Validation Error',
+					status: res.status,
+					detail: {
+						gsmArenaUrl: ["Gsm arena url can't be blank"]
+					}
+				});
 				done();
 			});
 	});
