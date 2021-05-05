@@ -133,12 +133,10 @@ jobs:
               echo "ENV=wip" >> ${BASH_ENV}
             fi
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - 'c8:27:6f:11:ca:e2:f2:b0:03:db:38:d7:19:00:b5:a0'
       - run:
           name: Generate docker-compose file
           command: |
+            export DOCKER_TAG=${CIRCLE_BRANCH}
             cat docker-compose-template.yml |\
               sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
               sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
@@ -169,6 +167,8 @@ workflows:
           name: pre-release
           context: default
           prerelease: true
+          requires:
+            - test-deploy
       - test:
           context: default
           requires:
