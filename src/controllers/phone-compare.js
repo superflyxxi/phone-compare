@@ -76,9 +76,10 @@ async function generateScoreScale(rankList, phoneList) {
 		}
 	}
 
-	const index = rankList.length;
+	let index = rankList.length;
 	for (const rank of rankList) {
 		scales[rank].multiplierPerUnit = 2 ** index / (scales[rank].max - scales[rank].min);
+		index--;
 	}
 
 	console.log('scales', scales);

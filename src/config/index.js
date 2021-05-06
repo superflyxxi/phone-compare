@@ -3,6 +3,11 @@ exports.rankRules = {
 		type: 'number',
 		scoreMethod: 'FROM_MAX',
 		precision: 0.01
+	},
+	'dimensions.width': {
+		type: 'number',
+		scoreMethod: 'FROM_MAX',
+		precision: 0.01
 	}
 };
 exports.server = {
