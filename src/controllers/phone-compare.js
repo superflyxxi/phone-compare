@@ -1,8 +1,8 @@
-const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:3000';
+const {server, rankRules} = require('../config');
+const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
 const validator = require('../helpers/validation');
 const axios = require('axios');
 const lodash = require('lodash');
-const {rankRules} = require('../config');
 
 const validationConstraints = {
 	phones: {presence: true, type: 'array'},

@@ -3,7 +3,7 @@ const path = require('path');
 const RouteNotFoundError = require('./error-handler/route-not-found-error.js');
 const express = require('express');
 const app = express();
-const port = 3000;
+const {server} = require('./config');
 
 app.use(express.json());
 app.disable('x-powered-by');
@@ -18,7 +18,7 @@ const openapispec = require('swagger-jsdoc')({
 		openapi: '3.0.0',
 		info: {
 			title: 'Phone Compare',
-			version: require('./helpers/version')
+			version: server.version
 		}
 	},
 	apis: [path.join(__dirname, '/routers/**/*.js'), path.join(__dirname, '/error-handler/*.js')]
@@ -33,8 +33,8 @@ app.use((req, res, next) => {
 app.use(require('morgan')('short'));
 app.use(require('./error-handler/index.js').errorHandler);
 
-app.listen(port, () => {
-	console.log('Started listening on', port);
+app.listen(server.port, () => {
+	console.log('Started version', server.version, 'listening on', server.port);
 });
 
 module.exports = app;
