@@ -28,7 +28,7 @@ const asyncHandler = require('express-async-handler');
  *         ranking:
  *           type: array
  *           description: Sorted array of important attributes.
- *           example: ['dimensions.height', 'nfc', 'lineageos']
+ *           example: ['dimensions.height', 'sensors.fingerprint', 'nfc']
  *           items:
  *             type: string
  *             enum:
