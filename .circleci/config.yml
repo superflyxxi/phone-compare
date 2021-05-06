@@ -109,7 +109,7 @@ jobs:
           command: |
             npx semantic-release ${ADDITIONAL_ARGS}
             if [[ "" == "$(cat version.txt)" ]]; then 
-              echo "${CIRCLE_BRANCH}" > /tmp/workspace/version.txt
+              echo "${CIRCLE_BRANCH}" | sed 's#/#-#g' > /tmp/workspace/version.txt
             else
               cp -v version.txt /tmp/workspace
             fi
