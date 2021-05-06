@@ -28,6 +28,7 @@ exports.comparePhones = async function (req, res) {
 	for (const phone of req.body.phones) {
 		promises.push(getPhoneData(phone, rank));
 	}
+
 	const phoneList = await Promise.all(promises);
 	console.log('initial', phoneList);
 
@@ -60,10 +61,15 @@ async function generateScoreScale(rank, phones) {
 }
 
 async function getPhoneData(phone, properties) {
-	const url = PHONE_BASE_URL + '/v1/phones/manufacturers/' + phone.manufacturer + '/models/' + phone.model;
-	console.log("URL", url);
+	const url =
+		PHONE_BASE_URL +
+		'/v1/phones/manufacturers/' +
+		phone.manufacturer +
+		'/models/' +
+		phone.model;
+	console.log('URL', url);
 	const res = await axios.get(url);
-	console.log("axios response", res);
+	console.log('axios response', res);
 	const data = {
 		manufacturer: res.data.manufacturer,
 		model: res.data.model,

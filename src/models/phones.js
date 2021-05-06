@@ -8,7 +8,12 @@ exports.getAllPhones = async function () {
 	for (const filename of await fs.readdir(rootDirectory)) {
 		const splt = filename.split('.');
 		result.push({
-			href: path.join('/manufacturers/', splt[0], '/models/', splt[1])
+			href: path.join(
+				'/manufacturers/',
+				splt[0].toLowerCase(),
+				'/models/',
+				splt[1].toLowerCase()
+			)
 		});
 	}
 
@@ -38,7 +43,16 @@ exports.getPhone = async function (manufacturer, model) {
 	let phone;
 	try {
 		phone = JSON.parse(
-			await fs.readFile(`${rootDirectory}/${manufacturer}.${model}.json`)
+			await fs.readFile(
+				path.join(
+					rootDirectory,
+					'/',
+					manufacturer.toLowerCase(),
+					'.',
+					model.toLowerCase(),
+					'.json'
+				)
+			)
 		);
 	} catch (error) {
 		throw new NotFoundError(error.message);

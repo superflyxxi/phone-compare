@@ -57,24 +57,36 @@ describe('Phone-compare positive tests', () => {
 			.end((error, res) => {
 				console.log('res.body', res.body);
 				expect(res).to.have.status(200);
-				expect(res.body).to.deep.include(
-					{
-					best:{
-						manufacturer: 'LG', model:'E960',name:'LG Nexus 4',score:0, scoreBreakdown:{}
+				expect(res.body).to.deep.include({
+					best: {
+						manufacturer: 'LG',
+						model: 'E960',
+						name: 'LG Nexus 4',
+						score: 0,
+						scoreBreakdown: {}
 					},
-					results:[
-					{
-						manufacturer: 'LG', model:'E960',name:'LG Nexus 4',score:0,
-						scoreBreakdown:{}
-					},
-					{
-						manufacturer: 'Google', model:'G020I',name:'Google Pixel 4',score:0,
-						scoreBreakdown:{}
-					},
-					{
-						manufacturer: 'Google', model:'GD1YQ',name:'Google Pixel 5',score:0,
-						scoreBreakdown:{}
-					}
+					results: [
+						{
+							manufacturer: 'LG',
+							model: 'E960',
+							name: 'LG Nexus 4',
+							score: 0,
+							scoreBreakdown: {}
+						},
+						{
+							manufacturer: 'Google',
+							model: 'G020I',
+							name: 'Google Pixel 4',
+							score: 0,
+							scoreBreakdown: {}
+						},
+						{
+							manufacturer: 'Google',
+							model: 'GD1YQ',
+							name: 'Google Pixel 5',
+							score: 0,
+							scoreBreakdown: {}
+						}
 					]
 				});
 				done();
