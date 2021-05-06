@@ -9,15 +9,16 @@ function validate(body) {
 		phones: {presence: true, type: 'array'},
 		ranking: {presence: true, type: 'array'}
 	});
-	for (item of body.phones) {
+	for (const item of body.phones) {
 		validator.validate(item, {
 			manufacturer: {presence: true, type: 'string'},
 			model: {presence: true, type: 'string'}
 		});
 	}
 
-	for (item of body.ranking) {
-		validator.validate({item},
+	for (const item of body.ranking) {
+		validator.validate(
+			{item},
 			{
 				item: {
 					presence: true,
