@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:3000';
 const validator = require('../helpers/validation');
 const axios = require('axios');
@@ -24,7 +23,9 @@ function validate(body) {
 
 const rankRules = {
 	'dimensions.height': {
-		scoreNumber: 'FROM_MAX'
+		type: 'number',
+		scoreMethod: 'FROM_MAX',
+		precision: 0.01
 	}
 };
 
@@ -49,11 +50,13 @@ exports.comparePhones = async function (req, res) {
 	await Promise.all(promises);
 	console.log('scored', phoneList);
 
-	const sortedPhoneList = await getSortedPhoneList(phoneList);
-	console.log('sorted', sortedPhoneList);
+	phoneList.sort((alpha, beta) => {
+		return beta.score - alpha.score;
+	});
+	console.log('sorted', phoneList);
 	res.set('cache-control', 'public, max-age=2419200').send({
-		best: sortedPhoneList[0],
-		results: sortedPhoneList
+		best: phoneList[0],
+		results: phoneList
 	});
 };
 
@@ -67,22 +70,27 @@ async function generateScoreScale(rankList, phoneList) {
 	const scales = {};
 	for (const phone of phoneList) {
 		for (const rank of rankList) {
-			const val = lodash.get(phone, rank);
+			const value = lodash.get(phone, rank);
 			if (!scales[rank]) {
-				scales[rank] = {max:0, min:Number.MAX_VALUE};
+				scales[rank] = {max: 0, min: Number.MAX_VALUE};
 			}
-			if (scales[rank].min > val) {
-				scales[rank].min = val;
+
+			if (scales[rank].min > value) {
+				scales[rank].min = value;
 			}
-			if (scales[rank]?.max < val) {
-				scales[rank].max = val;
+
+			if (scales[rank]?.max < value) {
+				scales[rank].max = value;
 			}
 		}
 	}
-	let i=rankList.length;
+
+	const index = rankList.length;
 	for (const rank of rankList) {
-		scales[rank].multiplierPerUnit = Math.pow(2, i) / (scales[rank].max - scales[rank].min);
+		scales[rank].multiplierPerUnit =
+			2 ** index / (scales[rank].max - scales[rank].min);
 	}
+
 	console.log('scales', scales);
 	return scales;
 }
@@ -101,7 +109,13 @@ async function getPhoneData(phone, properties) {
 		name: res.data.name
 	};
 	for (const property of properties) {
-		console.log("Processing ", res.data.manufacturer, res.data.model, "for property", property);
+		console.log(
+			'Processing',
+			res.data.manufacturer,
+			res.data.model,
+			'for property',
+			property
+		);
 		lodash.set(data, property, lodash.get(res.data, property));
 	}
 
@@ -112,16 +126,21 @@ async function scorePhone(rankScale, phone) {
 	phone.scoreBreakdown = {};
 	phone.score = 0;
 	for (const rank in rankScale) {
-		const val = lodash.get(phone, rank);
-		if (rankRules[rank].scoreNumber === 'FROM_MAX') {
-			phone.scoreBreakdown[rank] = (rankScale[rank].max - val)*rankScale[rank].multiplierPerUnit;
+		const value = lodash.get(phone, rank);
+		if (rankRules[rank].type === 'number') {
+			let score = 0;
+			if (rankRules[rank].scoreMethod === 'FROM_MAX') {
+				score =
+					(rankScale[rank].max - value) * rankScale[rank].multiplierPerUnit;
+			}
+
+			phone.scoreBreakdown[rank] =
+				Math.round(score / rankRules[rank].precision) *
+				rankRules[rank].precision;
 		}
 	}
-	for (const breakdown in phone.scoreBreakdown) {
-		phone.score += phone.scoreBreakdown[breakdown];
-	}
-}
 
-async function getSortedPhoneList(phones) {
-	return phones;
+	for (const item in phone.scoreBreakdown) {
+		phone.score += phone.scoreBreakdown[item];
+	}
 }
