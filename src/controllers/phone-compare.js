@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
-const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? '';
+const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:3000';
 const validator = require('../helpers/validation');
+const axios = require('axios');
+
 const validationConstraints = {
 	phones: {presence: true, type: 'array'},
 	ranking: {presence: true, type: 'array'}
@@ -58,16 +60,20 @@ async function generateScoreScale(rank, phones) {
 }
 
 async function getPhoneData(phone, properties) {
+	const url = PHONE_BASE_URL + '/v1/phones/manufacturers/' + phone.manufacturer + '/models/' + phone.model;
+	console.log("URL", url);
+	const res = await axios.get(url);
+	console.log("axios response", res);
 	const data = {
-		manufacturer: phone.manufacturer,
-		model: phone.model,
-		name: phone.name
+		manufacturer: res.data.manufacturer,
+		model: res.data.model,
+		name: res.data.name
 	};
 	for (const property of properties) {
-		data[property] = phone[property];
+		data[property] = res.data[property];
 	}
 
-	return phone;
+	return data;
 }
 
 async function scorePhone(rankScale, phone) {

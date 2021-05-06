@@ -11,7 +11,7 @@ describe('Phone-compare positive tests', () => {
 		// pixel 5
 		chai
 			.request(app)
-			.put('/v1/phones/manufacturers/google/models/GD1YQ')
+			.put('/v1/phones/manufacturers/google/models/gd1yq')
 			.send({
 				name: 'Google Pixel 5',
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
@@ -22,7 +22,7 @@ describe('Phone-compare positive tests', () => {
 		// Pixel 4
 		chai
 			.request(app)
-			.put('/v1/phones/manufacturers/google/models/G020I')
+			.put('/v1/phones/manufacturers/google/models/g020i')
 			.send({
 				name: 'Google Pixel 4',
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_4-9896.php',
@@ -33,7 +33,7 @@ describe('Phone-compare positive tests', () => {
 		// Nexus 4
 		chai
 			.request(app)
-			.put('/v1/phones/manufacturers/LG/models/E960')
+			.put('/v1/phones/manufacturers/lg/models/e960')
 			.send({
 				name: 'LG Nexus 4',
 				gsmArenaUrl: 'https://www.gsmarena.com/lg_nexus_4_e960-5048.php',
@@ -48,9 +48,9 @@ describe('Phone-compare positive tests', () => {
 			.post('/v1/phones/compare')
 			.send({
 				phones: [
-					{manufacturer: 'LG', model: 'E960'},
-					{manufacturer: 'Google', model: 'G020I'},
-					{manufacturer: 'Google', model: 'GD1YQ'}
+					{manufacturer: 'lg', model: 'e960'},
+					{manufacturer: 'google', model: 'g020i'},
+					{manufacturer: 'google', model: 'gd1yq'}
 				],
 				ranking: ['dimensions.height']
 			})
