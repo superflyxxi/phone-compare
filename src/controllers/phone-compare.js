@@ -108,12 +108,9 @@ async function scorePhone(rankScale, phone) {
 	for (const rank in rankScale) {
 		const value = lodash.get(phone, rank);
 		if (rankRules[rank].type === 'number') {
-			let score = 0;
 			if (rankRules[rank].scoreMethod === 'FROM_MAX') {
-				score = (rankScale[rank].max - value) * rankScale[rank].multiplierPerUnit;
+				phone.scoreBreakdown[rank] = (rankScale[rank].max - value) * rankScale[rank].multiplierPerUnit;
 			}
-
-			phone.scoreBreakdown[rank] = Math.round(score / rankRules[rank].precision) * rankRules[rank].precision;
 		}
 	}
 
