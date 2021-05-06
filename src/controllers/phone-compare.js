@@ -38,7 +38,6 @@ exports.comparePhones = async function (req, res) {
 	}
 
 	const phoneList = await Promise.all(promises);
-	console.log('initial', phoneList);
 
 	const rankScale = await generateScoreScale(rank, phoneList);
 
@@ -48,12 +47,10 @@ exports.comparePhones = async function (req, res) {
 	}
 
 	await Promise.all(promises);
-	console.log('scored', phoneList);
 
 	phoneList.sort((alpha, beta) => {
 		return beta.score - alpha.score;
 	});
-	console.log('sorted', phoneList);
 	res.set('cache-control', 'public, max-age=2419200').send({
 		best: phoneList[0],
 		results: phoneList
@@ -99,7 +96,6 @@ async function generateScoreScale(rankList, phoneList) {
 		index--;
 	}
 
-	console.log('scales', scales);
 	return scales;
 }
 
@@ -112,7 +108,6 @@ async function getPhoneData(phone, properties) {
 		name: res.data.name
 	};
 	for (const property of properties) {
-		console.log('Processing', res.data.manufacturer, res.data.model, 'for property', property);
 		lodash.set(data, property, lodash.get(res.data, property));
 	}
 

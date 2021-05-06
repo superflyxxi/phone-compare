@@ -94,7 +94,6 @@ describe('Phone-compare positive tests', () => {
 				ranking: ['dimensions.height']
 			})
 			.end((error, res) => {
-				console.log('res.body', res.body);
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
@@ -181,7 +180,6 @@ describe('Phone-compare positive tests', () => {
 				ranking: ['dimensions.height', 'dimensions.width']
 			})
 			.end((error, res) => {
-				console.log('res.body', res.body);
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
@@ -279,7 +277,6 @@ describe('Phone-compare positive tests', () => {
 				ranking: ['dimensions.height', 'sensors.fingerprint', 'nfc']
 			})
 			.end((error, res) => {
-				console.log('res.body', res.body);
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
