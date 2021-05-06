@@ -68,9 +68,9 @@ describe('Phone-compare positive tests', () => {
 		nock('http://localhost:3000')
 			.get('/v1/phones')
 			.reply(200, [
-				{href: '/v1/phones/manufacturers/' + googlePixel5.manufacturer + '/models/' + googlePixel5.model},
-				{href: '/v1/phones/manufacturers/' + googlePixel4.manufacturer + '/models/' + googlePixel4.model},
-				{href: '/v1/phones/manufacturers/' + lgNexus4.manufacturer + '/models/' + lgNexus4.model}
+				{href: 'manufacturers/' + googlePixel5.manufacturer + '/models/' + googlePixel5.model},
+				{href: 'manufacturers/' + googlePixel4.manufacturer + '/models/' + googlePixel4.model},
+				{href: 'manufacturers/' + lgNexus4.manufacturer + '/models/' + lgNexus4.model}
 			]);
 	});
 
