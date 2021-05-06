@@ -51,8 +51,8 @@ jobs:
       - run:
           name: Determine docker tag
           command: |
-            echo "DOCKER_TAG=$(cat /tmp/workspace/version.txt)" >> ${BASH_ENV}
-            cp -v /tmp/workspace/version.txt ./version.txt
+            echo "DOCKER_TAG=$(cat /tmp/workspace/short_version.txt)" >> ${BASH_ENV}
+            cp -v /tmp/workspace/full_version.txt ./version.txt
       - when:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
@@ -109,14 +109,16 @@ jobs:
           command: |
             npx semantic-release ${ADDITIONAL_ARGS}
             if [[ "" == "$(cat version.txt)" ]]; then 
-              echo "${CIRCLE_BRANCH}" | sed 's#/#-#g' > /tmp/workspace/version.txt
+              printf "%s-%s" ${CIRCLE_BRANCH} ${CIRCLE_SHA1:0:7} | sed 's#/#-#g' > /tmp/workspace/full_version.txt
+              printf "${CIRCLE_BRANCH}" | sed 's#/#-#g' > /tmp/workspace/short_version.txt
             else
-              cp -v version.txt /tmp/workspace
+              cp -v version.txt /tmp/workspace/full_version.txt
+              cp -v version.txt /tmp/workspace/short_version.txt
             fi
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - version.txt
+            - *version.txt
   deploy:
     machine:
       enabled: true
@@ -126,7 +128,7 @@ jobs:
       - run:
           name: Determine env variables
           command: |
-            echo "DOCKER_TAG=$(cat /tmp/workspace/version.txt)" >> ${BASH_ENV}
+            echo "DOCKER_TAG=$(cat /tmp/workspace/short_version.txt)" >> ${BASH_ENV}
             if [[ "<< pipeline.git.branch >>" == "main" ]]; then
               echo "ENV=prod" >> ${BASH_ENV}
             else
