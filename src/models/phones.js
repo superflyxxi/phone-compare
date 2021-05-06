@@ -7,9 +7,7 @@ exports.getAllPhones = async function () {
 	const result = [];
 	for (const filename of await fs.readdir(rootDirectory)) {
 		const splt = filename.split('.');
-		result.push({
-			href: path.join('/manufacturers/', splt[0].toLowerCase(), '/models/', splt[1].toLowerCase())
-		});
+		result.push({href: path.join('/manufacturers/', splt[0], '/models/', splt[1])});
 	}
 
 	return result;
