@@ -19,5 +19,9 @@ exports.rankRules = {
 
 exports.server = {
 	port: 3000,
-	version: require('../helpers/version')
+	version: getVersion()
 };
+
+function getVersion() {
+	return require('fs').readFileSync('./version.txt', {encoding: 'utf-8'}).trim();
+}
