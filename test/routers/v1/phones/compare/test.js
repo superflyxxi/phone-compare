@@ -71,6 +71,59 @@ describe('Phone-compare positive tests', () => {
 			});
 	});
 
+	const allPhoneHeightExpected = {
+		best: {
+			manufacturer: 'LG',
+			model: 'E960',
+			name: 'LG Nexus 4',
+			dimensions: {
+				height: 133.9
+			},
+			score: 2,
+			scoreBreakdown: {
+				'dimensions.height': 2
+			}
+		},
+		results: [
+			{
+				manufacturer: 'LG',
+				model: 'E960',
+				name: 'LG Nexus 4',
+				dimensions: {
+					height: 133.9
+				},
+				score: 2,
+				scoreBreakdown: {
+					'dimensions.height': 2
+				}
+			},
+			{
+				manufacturer: 'Google',
+				model: 'GD1YQ',
+				name: 'Google Pixel 5',
+				dimensions: {
+					height: 144.7
+				},
+				score: 0.4,
+				scoreBreakdown: {
+					'dimensions.height': 0.4
+				}
+			},
+			{
+				manufacturer: 'Google',
+				model: 'G020I',
+				name: 'Google Pixel 4',
+				dimensions: {
+					height: 147.1
+				},
+				score: 0,
+				scoreBreakdown: {
+					'dimensions.height': 0
+				}
+			}
+		]
+	};
+
 	/*
 	 * Max height = 147.1
 	 * min height = 133.9
@@ -95,58 +148,7 @@ describe('Phone-compare positive tests', () => {
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(200);
-				expect(res.body).to.deep.include.almost({
-					best: {
-						manufacturer: 'LG',
-						model: 'E960',
-						name: 'LG Nexus 4',
-						dimensions: {
-							height: 133.9
-						},
-						score: 2,
-						scoreBreakdown: {
-							'dimensions.height': 2
-						}
-					},
-					results: [
-						{
-							manufacturer: 'LG',
-							model: 'E960',
-							name: 'LG Nexus 4',
-							dimensions: {
-								height: 133.9
-							},
-							score: 2,
-							scoreBreakdown: {
-								'dimensions.height': 2
-							}
-						},
-						{
-							manufacturer: 'Google',
-							model: 'GD1YQ',
-							name: 'Google Pixel 5',
-							dimensions: {
-								height: 144.7
-							},
-							score: 0.4,
-							scoreBreakdown: {
-								'dimensions.height': 0.4
-							}
-						},
-						{
-							manufacturer: 'Google',
-							model: 'G020I',
-							name: 'Google Pixel 4',
-							dimensions: {
-								height: 147.1
-							},
-							score: 0,
-							scoreBreakdown: {
-								'dimensions.height': 0
-							}
-						}
-					]
-				});
+				expect(res.body).to.deep.include.almost(allPhoneHeightExpected);
 				done();
 			});
 	});
@@ -354,6 +356,20 @@ describe('Phone-compare positive tests', () => {
 						}
 					]
 				});
+				done();
+			});
+	});
+
+	it('Rank on a number (height) against all (3) phones', (done) => {
+		chai
+			.request(app)
+			.post('/v1/phones/compare')
+			.send({
+				ranking: ['dimensions.height']
+			})
+			.end((error, res) => {
+				expect(res).to.have.status(200);
+				expect(res.body).to.deep.include.almost(allPhoneHeightExpected);
 				done();
 			});
 	});
