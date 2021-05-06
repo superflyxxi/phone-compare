@@ -23,6 +23,7 @@
 					"Router"
 				]
 			}
-		]
+		],
+		"guard-for-in":["off"]
 	}
 }
