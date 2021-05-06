@@ -15,7 +15,18 @@ function validate(body) {
 			model: {presence: true, type: 'string'}
 		})
 	);
-	body.ranking.every((item) => validator.validate({item}, {item: {presence: true, type: 'string'}}));
+	body.ranking.every((item) =>
+		validator.validate(
+			{item},
+			{
+				item: {
+					presence: true,
+					type: 'string',
+					inclusion: ['dimensions.height', 'dimensions.weight', 'dimensions.width', 'nfc', 'sensors.fingerprint']
+				}
+			}
+		)
+	);
 }
 
 exports.comparePhones = async function (req, res) {

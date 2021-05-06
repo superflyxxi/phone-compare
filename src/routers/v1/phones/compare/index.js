@@ -31,6 +31,12 @@ const asyncHandler = require('express-async-handler');
  *           example: ['dimensions.height', 'nfc', 'lineageos']
  *           items:
  *             type: string
+ *             enum:
+ *               - dimensions.height
+ *               - dimensions.width
+ *               - dimensions.depth
+ *               - nfc
+ *               - sensors.fingerprint
  *       required:
  *         - phones
  *         - ranking
