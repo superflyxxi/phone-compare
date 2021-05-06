@@ -57,8 +57,28 @@ exports.comparePhones = async function (req, res) {
  * each mm, it would be equal to X points. If the min height is 140 and the max is 145, then
  * each mm is worth Y points, where Y > X.
  */
-async function generateScoreScale(rank, phones) {
-	return {};
+async function generateScoreScale(rankList, phoneList) {
+	const scales = {};
+	for (const phone of phoneList) {
+		for (const rank of rankList) {
+			const val = lodash.get(phone, rank);
+			if (!scales[rank]) {
+				scales[rank] = {max:0, min:Number.MAX_VALUE};
+			}
+			if (scales[rank].min > val) {
+				scales[rank].min = val;
+			}
+			if (scales[rank]?.max < val) {
+				scales[rank].max = val;
+			}
+		}
+	}
+	console.log('scales', scales);
+	const scoreScale = {};
+	for (const rank of rankList) {
+		scoreScale[rank] = scales[rank].max - scales[rank].min;
+	}
+	return scoreScale;
 }
 
 async function getPhoneData(phone, properties) {
