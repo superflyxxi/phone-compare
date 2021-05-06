@@ -9,15 +9,15 @@ function validate(body) {
 		phones: {presence: true, type: 'array'},
 		ranking: {presence: true, type: 'array'}
 	});
-	body.phones.every((item) =>
+	for (item of body.phones) {
 		validator.validate(item, {
 			manufacturer: {presence: true, type: 'string'},
 			model: {presence: true, type: 'string'}
-		})
-	);
-	body.ranking.every((item) =>
-		validator.validate(
-			{item},
+		});
+	}
+
+	for (item of body.ranking) {
+		validator.validate({item},
 			{
 				item: {
 					presence: true,
@@ -25,8 +25,8 @@ function validate(body) {
 					inclusion: ['dimensions.height', 'dimensions.weight', 'dimensions.width', 'nfc', 'sensors.fingerprint']
 				}
 			}
-		)
-	);
+		);
+	}
 }
 
 exports.comparePhones = async function (req, res) {
