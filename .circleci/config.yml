@@ -51,7 +51,6 @@ jobs:
           name: Determine docker tag
           command: |
             echo "export DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
-            cat ${BASH_ENV}
       - checkout
       - run: 
           name: Determine version.txt
@@ -62,10 +61,10 @@ jobs:
             equal: [ main, << pipeline.git.branch >> ]
           steps:
             - run:
-                name: Determine alternate tag
+                name: Determine alternate tags
                 command: |
                   if [[ "${DOCKER_TAG}" != "main" ]]; then
-                    echo "ALTERNATE_TAG=latest" >> ${BASH_ENV}
+                    echo "export ALTERNATE_TAG=latest" >> ${BASH_ENV}
                   fi
       - unless:
           condition:
@@ -81,12 +80,12 @@ jobs:
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG},${CIRCLE_BRANCH},${ALTERNATE_TAG}
+          tag: ${DOCKER_TAG},${ALTERNATE_TAG}
           extra_build_args: ${CACHE_FROM_ARGS} --build-arg NODE_VERSION=<< pipeline.parameters.nodeVersion >>
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG},${CIRCLE_BRANCH},${ALTERNATE_TAG}
+          tag: ${DOCKER_TAG},${ALTERNATE_TAG}
   release:
     docker:
       - image: circleci/node
