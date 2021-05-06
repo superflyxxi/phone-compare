@@ -2,6 +2,7 @@ const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:3000';
 const validator = require('../helpers/validation');
 const axios = require('axios');
 const lodash = require('lodash');
+const {rankRules} = require('../config');
 
 const validationConstraints = {
 	phones: {presence: true, type: 'array'},
@@ -18,14 +19,6 @@ function validate(body) {
 	);
 	body.ranking.every((item) => validator.validate({item}, {item: {presence: true, type: 'string'}}));
 }
-
-const rankRules = {
-	'dimensions.height': {
-		type: 'number',
-		scoreMethod: 'FROM_MAX',
-		precision: 0.01
-	}
-};
 
 exports.comparePhones = async function (req, res) {
 	validate(req.body);
