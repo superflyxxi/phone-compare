@@ -47,11 +47,14 @@ jobs:
           at: /tmp/workspace
       - docker/check:
           registry: ${DOCKER_REGISTRY}
-      - checkout
-      - run:
+      - run: &dockertag
           name: Determine docker tag
           command: |
             echo "DOCKER_TAG=$(cat /tmp/workspace/short_version.txt)" >> ${BASH_ENV}
+      - checkout
+      - run: 
+          name: Determine version.txt
+          command: |
             cp -v /tmp/workspace/full_version.txt ./version.txt
       - when:
           condition:
@@ -132,10 +135,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run:
-          name: Determine env variables
-          command: |
-            echo "DOCKER_TAG=$(cat /tmp/workspace/short_version.txt)" >> ${BASH_ENV}
+      - run: *dockertag
       - checkout
       - run:
           name: Generate docker-compose file
