@@ -113,8 +113,9 @@ async function generateScoreScale(rankList, phoneList) {
 }
 
 async function getPhoneData(phone, properties) {
-	let url = PHONE_BASE_URL;
-	url += phone.href ? phone.href : '/v1/phones/manufacturers/' + phone.manufacturer + '/models/' + phone.model;
+	const url =
+		PHONE_BASE_URL +
+		(phone.href ? phone.href : '/v1/phones/manufacturers/' + phone.manufacturer + '/models/' + phone.model);
 	const res = await axios.get(url);
 	const data = {
 		manufacturer: res.data.manufacturer,
