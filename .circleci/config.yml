@@ -51,6 +51,7 @@ jobs:
           name: Determine docker tag
           command: |
             echo "export DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
+            cat ${BASH_ENV}
       - checkout
       - run: 
           name: Determine version.txt
