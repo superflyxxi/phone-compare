@@ -46,11 +46,7 @@ exports.getPhone = async function (manufacturer, model) {
 			await fs.readFile(
 				path.join(
 					rootDirectory,
-					'/',
-					manufacturer.toLowerCase(),
-					'.',
-					model.toLowerCase(),
-					'.json'
+					manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'
 				)
 			)
 		);
@@ -70,7 +66,10 @@ exports.savePhone = async function (phone) {
 	const manufacturer = phone.manufacturer;
 	const model = phone.model;
 	await fs.writeFile(
-		`${rootDirectory}/${manufacturer}.${model}.json`,
+		path.join(
+			rootDirectory,
+			manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'
+		),
 		JSON.stringify(phone)
 	);
 };

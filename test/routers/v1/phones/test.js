@@ -10,7 +10,7 @@ describe('Phones positive tests', () => {
 	it('Create pixel5 phone', (done) => {
 		chai
 			.request(app)
-			.put('/v1/phones/manufacturers/google/models/GD1YQ')
+			.put('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.send({
 				name: 'Google Pixel 5 Initial',
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
@@ -25,7 +25,7 @@ describe('Phones positive tests', () => {
 	it('Replace pixel5 phone', (done) => {
 		chai
 			.request(app)
-			.put('/v1/phones/manufacturers/google/models/GD1YQ')
+			.put('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.send({
 				name: 'Google Pixel 5',
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
@@ -40,12 +40,12 @@ describe('Phones positive tests', () => {
 	it('Ensure it gets a valid phone', (done) => {
 		chai
 			.request(app)
-			.get('/v1/phones/manufacturers/google/models/GD1YQ')
+			.get('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.end((error, res) => {
 				pixel5Etag = res.get('etag');
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include({
-					manufacturer: 'google',
+					manufacturer: 'Google',
 					model: 'GD1YQ',
 					name: 'Google Pixel 5',
 					gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
@@ -68,7 +68,7 @@ describe('Phones positive tests', () => {
 	it('Ensure ETag for same URL returns 304', (done) => {
 		chai
 			.request(app)
-			.get('/v1/phones/manufacturers/google/models/GD1YQ')
+			.get('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
 				expect(res).to.have.status(304);
@@ -81,7 +81,7 @@ describe('Phones negative tests', () => {
 	it('Ensure ETag for diff URL returns 304', (done) => {
 		chai
 			.request(app)
-			.get('/v1/phones/manufacturers/google/models/pixel4')
+			.get('/v1/phones/manufacturers/Google/models/pixel4')
 			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
 				expect(res).to.have.status(404);
