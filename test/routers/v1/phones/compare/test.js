@@ -129,9 +129,9 @@ describe('Phone-compare positive tests', () => {
 							dimensions: {
 								height: 144.7
 							},
-							score: 0.36,
+							score: 0.4,
 							scoreBreakdown: {
-								'dimensions.height': 0.36
+								'dimensions.height': 0.4
 							}
 						},
 						{
@@ -221,10 +221,10 @@ describe('Phone-compare positive tests', () => {
 								width: 68.8,
 								height: 147.1
 							},
-							score: 1.88,
+							score: 1.9,
 							scoreBreakdown: {
 								'dimensions.height': 0,
-								'dimensions.width': 1.88
+								'dimensions.width': 1.9
 							}
 						},
 						{
@@ -235,9 +235,9 @@ describe('Phone-compare positive tests', () => {
 								width: 70.4,
 								height: 144.7
 							},
-							score: 0.73,
+							score: 0.7,
 							scoreBreakdown: {
-								'dimensions.height': 0.73,
+								'dimensions.height': 0.7,
 								'dimensions.width': 0
 							}
 						}
