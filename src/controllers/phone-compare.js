@@ -2,14 +2,8 @@
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? '';
 const validator = require('../helpers/validation');
 const validationConstraints = {
-	phones: {
-		presence: true,
-		type: 'array'
-	},
-	ranking: {
-		presence: true,
-		type: 'array'
-	}
+	phones: {presence: true, type: 'array'},
+	ranking: {presence: true, type: 'array'}
 };
 
 function validate(body) {
@@ -32,7 +26,6 @@ exports.comparePhones = async function (req, res) {
 	for (const phone of req.body.phones) {
 		promises.push(getPhoneData(phone, rank));
 	}
-
 	const phoneList = await Promise.all(promises);
 	console.log('initial', phoneList);
 
@@ -67,7 +60,8 @@ async function generateScoreScale(rank, phones) {
 async function getPhoneData(phone, properties) {
 	const data = {
 		manufacturer: phone.manufacturer,
-		model: phone.model
+		model: phone.model,
+		name: phone.name
 	};
 	for (const property of properties) {
 		data[property] = phone[property];
