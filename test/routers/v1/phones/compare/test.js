@@ -103,15 +103,15 @@ describe('Phone-compare positive tests', () => {
 						},
 						{
 							manufacturer: 'Google',
-							model: 'G020I',
-							name: 'Google Pixel 4',
+							model: 'GD1YQ',
+							name: 'Google Pixel 5',
 							score: 0,
 							scoreBreakdown: {}
 						},
 						{
 							manufacturer: 'Google',
-							model: 'GD1YQ',
-							name: 'Google Pixel 5',
+							model: 'G020I',
+							name: 'Google Pixel 4',
 							score: 0,
 							scoreBreakdown: {}
 						}
