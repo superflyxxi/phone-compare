@@ -4,6 +4,32 @@ const validator = require('../helpers/validation');
 const axios = require('axios');
 const lodash = require('lodash');
 
+exports.comparePhones = async function (req, res) {
+	validate(req.body);
+
+	const ranking = req.body.ranking;
+	const phoneList = await getPhoneList(req.body.phones, ranking);
+	const rankScale = await generateScoreScale(ranking, phoneList);
+	await scoreAndSortPhones(phoneList, rankScale);
+	res.set('cache-control', 'public, max-age=2419200').send({
+		best: phoneList[0],
+		results: phoneList
+	});
+};
+
+async function scoreAndSortPhones(phoneList, rankScale) {
+	const promises = [];
+	for (const phone of phoneList) {
+		promises.push(scorePhone(rankScale, phone));
+	}
+
+	await Promise.all(promises);
+
+	phoneList.sort((alpha, beta) => {
+		return beta.score - alpha.score;
+	});
+}
+
 function validate(body) {
 	validator.validate(body, {
 		phones: {presence: false, type: 'array'},
@@ -31,29 +57,6 @@ function validate(body) {
 		);
 	}
 }
-
-exports.comparePhones = async function (req, res) {
-	validate(req.body);
-
-	const ranking = req.body.ranking;
-	const phoneList = await getPhoneList(req.body.phones, ranking);
-	const rankScale = await generateScoreScale(ranking, phoneList);
-
-	const promises = [];
-	for (const phone of phoneList) {
-		promises.push(scorePhone(rankScale, phone));
-	}
-
-	await Promise.all(promises);
-
-	phoneList.sort((alpha, beta) => {
-		return beta.score - alpha.score;
-	});
-	res.set('cache-control', 'public, max-age=2419200').send({
-		best: phoneList[0],
-		results: phoneList
-	});
-};
 
 async function getPhoneList(phones, ranking) {
 	let phoneList = phones;
