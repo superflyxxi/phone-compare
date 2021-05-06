@@ -6,14 +6,16 @@ const lodash = require('lodash');
 
 function validate(body) {
 	validator.validate(body, {
-		phones: {presence: true, type: 'array'},
+		phones: {presence: false, type: 'array'},
 		ranking: {presence: true, type: 'array'}
 	});
-	for (const item of body.phones) {
-		validator.validate(item, {
-			manufacturer: {presence: true, type: 'string'},
-			model: {presence: true, type: 'string'}
-		});
+	if (body.phones) {
+		for (const item of body.phones) {
+			validator.validate(item, {
+				manufacturer: {presence: true, type: 'string'},
+				model: {presence: true, type: 'string'}
+			});
+		}
 	}
 
 	for (const item of body.ranking) {
@@ -32,17 +34,12 @@ function validate(body) {
 
 exports.comparePhones = async function (req, res) {
 	validate(req.body);
-	let promises = [];
-	const rank = req.body.ranking;
-	for (const phone of req.body.phones) {
-		promises.push(getPhoneData(phone, rank));
-	}
 
-	const phoneList = await Promise.all(promises);
+	const ranking = req.body.ranking;
+	const phoneList = await getPhoneList(req.body.phones, ranking);
+	const rankScale = await generateScoreScale(ranking, phoneList);
 
-	const rankScale = await generateScoreScale(rank, phoneList);
-
-	promises = [];
+	const promises = [];
 	for (const phone of phoneList) {
 		promises.push(scorePhone(rankScale, phone));
 	}
@@ -57,6 +54,21 @@ exports.comparePhones = async function (req, res) {
 		results: phoneList
 	});
 };
+
+async function getPhoneList(phones, ranking) {
+	let phoneList = phones;
+	if (!phoneList) {
+		const res = await axios.get(PHONE_BASE_URL + '/v1/phones');
+		phoneList = res.data;
+	}
+
+	const promises = [];
+	for (const phone of phoneList) {
+		promises.push(getPhoneData(phone, ranking));
+	}
+
+	return Promise.all(promises);
+}
 
 /**
  * Generates an object that describes how each ranked property should be scored on a scale.
@@ -101,7 +113,8 @@ async function generateScoreScale(rankList, phoneList) {
 }
 
 async function getPhoneData(phone, properties) {
-	const url = PHONE_BASE_URL + '/v1/phones/manufacturers/' + phone.manufacturer + '/models/' + phone.model;
+	let url = PHONE_BASE_URL;
+	url += phone.href ? phone.href : '/v1/phones/manufacturers/' + phone.manufacturer + '/models/' + phone.model;
 	const res = await axios.get(url);
 	const data = {
 		manufacturer: res.data.manufacturer,

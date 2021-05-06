@@ -177,14 +177,6 @@ router.put('/manufacturers/:manufacturer/models/:model', asyncHandler(controller
  *               items:
  *                 type: object
  *                 properties:
- *                   manufacturer:
- *                     type: string
- *                     description: The phone manfuacturer.
- *                     example: LG
- *                   model:
- *                     type: string
- *                     description: The phone model.
- *                     example: E960
  *                   href:
  *                     type: string
  *                     format: uri
