@@ -3,27 +3,25 @@ const path = require('path');
 const RouteNotFoundError = require('./error-handler/route-not-found-error.js');
 const express = require('express');
 const app = express();
-const port = 3000;
+const {server} = require('./config');
 
 app.use(express.json());
 app.disable('x-powered-by');
 
 // APIs
-app.use('/v1/phones', require('./routers/v1/phones.js'));
-app.use('/v1/settings', require('./routers/v1/settings.js'));
+app.use('/v1/phones', require('./routers/v1/phones'));
+app.use('/v1/phones/compare', require('./routers/v1/phones/compare'));
 
 // Standard Stuff
 const openapispec = require('swagger-jsdoc')({
 	swaggerDefinition: {
 		openapi: '3.0.0',
 		info: {
-			title: 'Phone Compare'
+			title: 'Phone Compare',
+			version: server.version
 		}
 	},
-	apis: [
-		path.join(__dirname, '/routers/**/*.js'),
-		path.join(__dirname, '/error-handler/*.js')
-	]
+	apis: [path.join(__dirname, '/routers/**/*.js'), path.join(__dirname, '/error-handler/*.js')]
 });
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapispec));
 
@@ -35,8 +33,8 @@ app.use((req, res, next) => {
 app.use(require('morgan')('short'));
 app.use(require('./error-handler/index.js').errorHandler);
 
-app.listen(port, () => {
-	console.log('Started listening on', port);
+app.listen(server.port, () => {
+	console.log('Started version', server.version, 'listening on', server.port);
 });
 
 module.exports = app;
