@@ -30,6 +30,7 @@ const {v4: uuidv4} = require('uuid');
  *           example: 2c046e7d-8d71-4f4e-9d79-aef50777a9b3
  */
 exports.errorHandler = function (error, req, res, next) {
+	console.log('error encountered', error);
 	if (res.headersSent) {
 		return next(error);
 	}
