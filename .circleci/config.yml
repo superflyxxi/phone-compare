@@ -118,7 +118,8 @@ jobs:
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - *version.txt
+            - full_version.txt
+            - short_version.txt
   deploy:
     machine:
       enabled: true
