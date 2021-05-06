@@ -22,6 +22,12 @@ function validate(body) {
 	);
 }
 
+const rankRules = {
+	'dimensions.height': {
+		scoreNumber: 'FROM_MAX'
+	}
+};
+
 exports.comparePhones = async function (req, res) {
 	validate(req.body);
 	let promises = [];
@@ -73,12 +79,12 @@ async function generateScoreScale(rankList, phoneList) {
 			}
 		}
 	}
-	console.log('scales', scales);
-	const scoreScale = {};
+	let i=rankList.length;
 	for (const rank of rankList) {
-		scoreScale[rank] = scales[rank].max - scales[rank].min;
+		scales[rank].multiplierPerUnit = Math.pow(2, i) / (scales[rank].max - scales[rank].min);
 	}
-	return scoreScale;
+	console.log('scales', scales);
+	return scales;
 }
 
 async function getPhoneData(phone, properties) {
@@ -103,8 +109,17 @@ async function getPhoneData(phone, properties) {
 }
 
 async function scorePhone(rankScale, phone) {
-	phone.score = 0;
 	phone.scoreBreakdown = {};
+	phone.score = 0;
+	for (const rank in rankScale) {
+		const val = lodash.get(phone, rank);
+		if (rankRules[rank].scoreNumber === 'FROM_MAX') {
+			phone.scoreBreakdown[rank] = (rankScale[rank].max - val)*rankScale[rank].multiplierPerUnit;
+		}
+	}
+	for (const breakdown in phone.scoreBreakdown) {
+		phone.score += phone.scoreBreakdown[breakdown];
+	}
 }
 
 async function getSortedPhoneList(phones) {

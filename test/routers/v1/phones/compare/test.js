@@ -90,30 +90,50 @@ describe('Phone-compare positive tests', () => {
 						manufacturer: 'LG',
 						model: 'E960',
 						name: 'LG Nexus 4',
-						score: 0,
-						scoreBreakdown: {}
+						dimensions: {
+							height: 133.9
+						},
+						score: 2,
+						scoreBreakdown: {
+							'dimensions.height': 2
+						}
 					},
 					results: [
 						{
 							manufacturer: 'LG',
 							model: 'E960',
 							name: 'LG Nexus 4',
-							score: 0,
-							scoreBreakdown: {}
+							dimensions: {
+								height: 133.9
+							},
+							score: 2,
+							scoreBreakdown: {
+								'dimensions.height': 2
+							}
 						},
 						{
 							manufacturer: 'Google',
 							model: 'GD1YQ',
 							name: 'Google Pixel 5',
-							score: 0,
-							scoreBreakdown: {}
+							dimensions: {
+								height: 144.7
+							},
+							score: 0.36,
+							scoreBreakdown: {
+								'dimensions.height': 0.36
+							}
 						},
 						{
 							manufacturer: 'Google',
 							model: 'G020I',
 							name: 'Google Pixel 4',
+							dimensions: {
+								height: 147.1
+							},
 							score: 0,
-							scoreBreakdown: {}
+							scoreBreakdown: {
+								'dimensions.height': 0
+							}
 						}
 					]
 				});
