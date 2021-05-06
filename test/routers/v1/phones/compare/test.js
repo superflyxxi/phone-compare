@@ -65,7 +65,13 @@ describe('Phone-compare positive tests', () => {
 		// Nexus 4
 		nock('http://localhost:3000').get('/v1/phones/manufacturers/LG/models/E960').reply(200, lgNexus4);
 
-		nock('http://localhost:3000').get('/v1/phones').reply(200, [googlePixel5, googlePixel4, lgNexus4]);
+		nock('http://localhost:3000')
+			.get('/v1/phones')
+			.reply(200, [
+				{href: '/v1/phones/manufacturers/' + googlePixel5.manufacturer + '/models/' + googlePixel5.model},
+				{href: '/v1/phones/manufacturers/' + googlePixel4.manufacturer + '/models/' + googlePixel4.model},
+				{href: '/v1/phones/manufacturers/' + lgNexus4.manufacturer + '/models/' + lgNexus4.model}
+			]);
 	});
 
 	const allPhoneHeightExpected = {
