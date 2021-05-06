@@ -16,9 +16,7 @@ function validate(body) {
 			model: {presence: true, type: 'string'}
 		})
 	);
-	body.ranking.every((item) =>
-		validator.validate({item}, {item: {presence: true, type: 'string'}})
-	);
+	body.ranking.every((item) => validator.validate({item}, {item: {presence: true, type: 'string'}}));
 }
 
 const rankRules = {
@@ -87,8 +85,7 @@ async function generateScoreScale(rankList, phoneList) {
 
 	const index = rankList.length;
 	for (const rank of rankList) {
-		scales[rank].multiplierPerUnit =
-			2 ** index / (scales[rank].max - scales[rank].min);
+		scales[rank].multiplierPerUnit = 2 ** index / (scales[rank].max - scales[rank].min);
 	}
 
 	console.log('scales', scales);
@@ -96,12 +93,7 @@ async function generateScoreScale(rankList, phoneList) {
 }
 
 async function getPhoneData(phone, properties) {
-	const url =
-		PHONE_BASE_URL +
-		'/v1/phones/manufacturers/' +
-		phone.manufacturer +
-		'/models/' +
-		phone.model;
+	const url = PHONE_BASE_URL + '/v1/phones/manufacturers/' + phone.manufacturer + '/models/' + phone.model;
 	const res = await axios.get(url);
 	const data = {
 		manufacturer: res.data.manufacturer,
@@ -109,13 +101,7 @@ async function getPhoneData(phone, properties) {
 		name: res.data.name
 	};
 	for (const property of properties) {
-		console.log(
-			'Processing',
-			res.data.manufacturer,
-			res.data.model,
-			'for property',
-			property
-		);
+		console.log('Processing', res.data.manufacturer, res.data.model, 'for property', property);
 		lodash.set(data, property, lodash.get(res.data, property));
 	}
 
@@ -130,13 +116,10 @@ async function scorePhone(rankScale, phone) {
 		if (rankRules[rank].type === 'number') {
 			let score = 0;
 			if (rankRules[rank].scoreMethod === 'FROM_MAX') {
-				score =
-					(rankScale[rank].max - value) * rankScale[rank].multiplierPerUnit;
+				score = (rankScale[rank].max - value) * rankScale[rank].multiplierPerUnit;
 			}
 
-			phone.scoreBreakdown[rank] =
-				Math.round(score / rankRules[rank].precision) *
-				rankRules[rank].precision;
+			phone.scoreBreakdown[rank] = Math.round(score / rankRules[rank].precision) * rankRules[rank].precision;
 		}
 	}
 

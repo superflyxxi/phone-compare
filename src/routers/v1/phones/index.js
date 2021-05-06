@@ -119,10 +119,7 @@ const asyncHandler = require('express-async-handler');
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get(
-	'/manufacturers/:manufacturer/models/:model',
-	asyncHandler(controller.getPhoneByManufacturerAndModel)
-);
+router.get('/manufacturers/:manufacturer/models/:model', asyncHandler(controller.getPhoneByManufacturerAndModel));
 
 /**
  * @openapi
@@ -159,10 +156,7 @@ router.get(
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put(
-	'/manufacturers/:manufacturer/models/:model',
-	asyncHandler(controller.savePhoneByManufacturerAndModel)
-);
+router.put('/manufacturers/:manufacturer/models/:model', asyncHandler(controller.savePhoneByManufacturerAndModel));
 
 /**
  * @openapi

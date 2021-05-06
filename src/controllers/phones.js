@@ -11,9 +11,7 @@ exports.getPhoneByManufacturerAndModel = async function (req, res) {
 	if (phone) {
 		res.set('cache-control', 'public, max-age=2419200').send(phone);
 	} else {
-		throw new NotFoundError(
-			`${req.params.manufacturer}/${req.params.model} not found.`
-		);
+		throw new NotFoundError(`${req.params.manufacturer}/${req.params.model} not found.`);
 	}
 };
 

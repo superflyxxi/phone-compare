@@ -8,12 +8,7 @@ exports.getAllPhones = async function () {
 	for (const filename of await fs.readdir(rootDirectory)) {
 		const splt = filename.split('.');
 		result.push({
-			href: path.join(
-				'/manufacturers/',
-				splt[0].toLowerCase(),
-				'/models/',
-				splt[1].toLowerCase()
-			)
+			href: path.join('/manufacturers/', splt[0].toLowerCase(), '/models/', splt[1].toLowerCase())
 		});
 	}
 
@@ -43,21 +38,13 @@ exports.getPhone = async function (manufacturer, model) {
 	let phone;
 	try {
 		phone = JSON.parse(
-			await fs.readFile(
-				path.join(
-					rootDirectory,
-					manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'
-				)
-			)
+			await fs.readFile(path.join(rootDirectory, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'))
 		);
 	} catch (error) {
 		throw new NotFoundError(error.message);
 	}
 
-	Object.assign(
-		phone,
-		await require('../helpers/gsm-arena.js').getGsmArenaData(phone.gsmArenaUrl)
-	);
+	Object.assign(phone, await require('../helpers/gsm-arena.js').getGsmArenaData(phone.gsmArenaUrl));
 	return phone;
 };
 
@@ -66,10 +53,7 @@ exports.savePhone = async function (phone) {
 	const manufacturer = phone.manufacturer;
 	const model = phone.model;
 	await fs.writeFile(
-		path.join(
-			rootDirectory,
-			manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'
-		),
+		path.join(rootDirectory, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'),
 		JSON.stringify(phone)
 	);
 };
