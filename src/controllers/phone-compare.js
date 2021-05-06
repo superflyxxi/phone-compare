@@ -2,6 +2,7 @@
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:3000';
 const validator = require('../helpers/validation');
 const axios = require('axios');
+const lodash = require('lodash');
 
 const validationConstraints = {
 	phones: {presence: true, type: 'array'},
@@ -67,16 +68,15 @@ async function getPhoneData(phone, properties) {
 		phone.manufacturer +
 		'/models/' +
 		phone.model;
-	console.log('URL', url);
 	const res = await axios.get(url);
-	console.log('axios response', res);
 	const data = {
 		manufacturer: res.data.manufacturer,
 		model: res.data.model,
 		name: res.data.name
 	};
 	for (const property of properties) {
-		data[property] = res.data[property];
+		console.log("Processing ", res.data.manufacturer, res.data.model, "for property", property);
+		lodash.set(data, property, lodash.get(res.data, property));
 	}
 
 	return data;
