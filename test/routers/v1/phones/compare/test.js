@@ -24,8 +24,9 @@ describe('Phone-compare positive tests', () => {
 					width: 70.4,
 					depth: 8
 				},
+				ram: 8,
 				nfc: true,
-				fingerprint: true
+				sensors: {fingerprint: true}
 			});
 
 		// Pixel 4
@@ -42,8 +43,9 @@ describe('Phone-compare positive tests', () => {
 					width: 68.8,
 					depth: 8.2
 				},
+				ram: 6,
 				nfc: true,
-				fingerprint: true
+				sensors: {fingerprint: true}
 			});
 
 		// Nexus 4
@@ -60,8 +62,11 @@ describe('Phone-compare positive tests', () => {
 					width: 68.7,
 					depth: 9.1
 				},
+				ram: 2,
 				nfc: true,
-				fingerprint: false
+				sensors: {
+					fingerprint: false
+				}
 			});
 	});
 
