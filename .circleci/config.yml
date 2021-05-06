@@ -41,16 +41,18 @@ jobs:
             fi
   docker:
     machine: 
-      image: ubuntu-2004:202101-01
+      enabled: true
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run:
-          name: Determine docker tag
-          command: echo "DOCKER_TAG=$(cat /tmp/workspace/version.txt)" >> ${BASH_ENV}
       - docker/check:
           registry: ${DOCKER_REGISTRY}
       - checkout
+      - run:
+          name: Determine docker tag
+          command: |
+            echo "DOCKER_TAG=$(cat /tmp/workspace/short_version.txt)" >> ${BASH_ENV}
+            cp -v /tmp/workspace/full_version.txt ./version.txt
       - when:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
@@ -61,11 +63,22 @@ jobs:
                   if [[ "${DOCKER_TAG}" != "main" ]]; then
                     echo "ALTERNATE_TAG=latest" >> ${BASH_ENV}
                   fi
+      - unless:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Set cache from args
+                command: |
+                  echo "export CACHE_FROM_ARGS='--cache-from ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest'" >> ${BASH_ENV}
+            - docker/pull:
+                ignore-docker-pull-error: true
+                images: ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${CIRCLE_BRANCH},${ALTERNATE_TAG}
-          extra_build_args: --build-arg NODE_VERSION=<< pipeline.parameters.nodeVersion >>
+          extra_build_args: ${CACHE_FROM_ARGS} --build-arg NODE_VERSION=<< pipeline.parameters.nodeVersion >>
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
@@ -90,37 +103,87 @@ jobs:
             run:
               name: Define additional args
               command: |
-                echo "ADDITIONAL_ARGS=--dry-run" >> ${BASH_ENV}
+                echo "export ADDITIONAL_ARGS=--dry-run" >> ${BASH_ENV}
       - run:
           name: Run semantic-release
           command: |
             npx semantic-release ${ADDITIONAL_ARGS}
             if [[ "" == "$(cat version.txt)" ]]; then 
-              echo "${CIRCLE_BRANCH}" > /tmp/workspace/version.txt
+              printf "%s-%s" ${CIRCLE_BRANCH} ${CIRCLE_SHA1:0:7} | sed 's#/#-#g' > /tmp/workspace/full_version.txt
+              printf "${CIRCLE_BRANCH}" | sed 's#/#-#g' > /tmp/workspace/short_version.txt
             else
-              cp -v version.txt /tmp/workspace
+              cp -v version.txt /tmp/workspace/full_version.txt
+              cp -v version.txt /tmp/workspace/short_version.txt
             fi
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - version.txt
+            - full_version.txt
+            - short_version.txt
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Determine env variables
+          command: |
+            echo "DOCKER_TAG=$(cat /tmp/workspace/short_version.txt)" >> ${BASH_ENV}
+            if [[ "<< pipeline.git.branch >>" == "main" ]]; then
+              echo "ENV=prod" >> ${BASH_ENV}
+            else
+              echo "ENV=wip" >> ${BASH_ENV}
+            fi
+      - checkout
+      - run:
+          name: Generate docker-compose file
+          command: |
+            cat docker-compose-template.yml |\
+              sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
+              sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
+              sed "s#\${ENV}#${ENV}#g" \
+              > docker-compose.${ENV}.yml
+            cat docker-compose.${ENV}.yml
+      - run:
+          name: Install sshpass
+          command: |
+            sudo apt-get update
+            sudo apt-get install sshpass
+      - run:
+          name: Upload docker-compose file
+          command: |
+            export REMOTE_DIR=${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
+            sshpass -e scp -P ${SSH_PORT} docker-compose.${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+      - run:
+          name: Redeploy
+          command: |
+            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/ci-deploy.sh"
 
 workflows:
   default:
     jobs:
       - release:
           name: pre-release
+          context: default
           prerelease: true
-      - test
+      - test:
+          context: default
       - docker:
+          context: default
           requires:
             - test
             - pre-release
       - release:
           prerelease: false
+          context: default
           requires:
             - docker
           filters:
             branches:
               only:
                 - main
+      - deploy:
+          context: default
+          requires:
+            - docker

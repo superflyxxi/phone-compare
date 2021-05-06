@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const controller = require('../../controllers/phone-controller.js');
+const controller = require('../../../controllers/phones');
 const asyncHandler = require('express-async-handler');
 
 /**
@@ -119,10 +119,7 @@ const asyncHandler = require('express-async-handler');
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get(
-	'/manufacturers/:manufacturer/models/:model',
-	asyncHandler(controller.getPhoneByManufacturerAndModel)
-);
+router.get('/manufacturers/:manufacturer/models/:model', asyncHandler(controller.getPhoneByManufacturerAndModel));
 
 /**
  * @openapi
@@ -159,9 +156,39 @@ router.get(
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put(
-	'/manufacturers/:manufacturer/models/:model',
-	asyncHandler(controller.savePhoneByManufacturerAndModel)
-);
+router.put('/manufacturers/:manufacturer/models/:model', asyncHandler(controller.savePhoneByManufacturerAndModel));
+
+/**
+ * @openapi
+ * /v1/phones:
+ *   get:
+ *     summary: Get all phones.
+ *     description: |
+ *       Similar to getting an individual phone, but for all phones available.
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       '200':
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   href:
+ *                     type: string
+ *                     format: uri
+ *                     description: A reference to get details of the phone.
+ *                     example: manufacturers/LG/models/E960
+ *       default:
+ *         description: All other errors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/', asyncHandler(controller.getAllPhones));
 
 module.exports = router;

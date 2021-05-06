@@ -15,7 +15,7 @@
     		"@semantic-release/release-notes-generator",
 		"@semantic-release/github",
 		["@semantic-release/exec", {
-			"verifyReleaseCmd": "echo ${nextRelease.version} > version.txt",
+			"verifyReleaseCmd": "printf ${nextRelease.version} > version.txt",
 		}]
 	]
 }
