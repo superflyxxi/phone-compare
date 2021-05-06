@@ -1,12 +1,20 @@
 const dimensionRules = {
 	type: 'number',
-	scoreMethod: 'FROM_MAX',
+	scoreMethod: 'FROM_MAX'
 };
 
 exports.rankRules = {
 	'dimensions.height': dimensionRules,
 	'dimensions.width': dimensionRules,
-	'dimensions.depth': dimensionRules
+	'dimensions.depth': dimensionRules,
+	nfc: {
+		type: 'boolean',
+		scoreMethod: 'PREFER_TRUE'
+	},
+	'sensors.fingerprint': {
+		type: 'boolean',
+		scoreMethod: 'PREFER_TRUE'
+	}
 };
 
 exports.server = {

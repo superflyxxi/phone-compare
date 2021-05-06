@@ -4,13 +4,11 @@ const validator = require('../helpers/validation');
 const axios = require('axios');
 const lodash = require('lodash');
 
-const validationConstraints = {
-	phones: {presence: true, type: 'array'},
-	ranking: {presence: true, type: 'array'}
-};
-
 function validate(body) {
-	validator.validate(body, validationConstraints);
+	validator.validate(body, {
+		phones: {presence: true, type: 'array'},
+		ranking: {presence: true, type: 'array'}
+	});
 	body.phones.every((item) =>
 		validator.validate(item, {
 			manufacturer: {presence: true, type: 'string'},
@@ -63,22 +61,30 @@ async function generateScoreScale(rankList, phoneList) {
 		for (const rank of rankList) {
 			const value = lodash.get(phone, rank);
 			if (!scales[rank]) {
-				scales[rank] = {max: 0, min: Number.MAX_VALUE};
+				scales[rank] = {};
 			}
 
-			if (scales[rank].min > value) {
-				scales[rank].min = value;
-			}
+			if (rankRules[rank].type === 'number') {
+				if (!scales[rank].min || scales[rank].min > value) {
+					scales[rank].min = value;
+				}
 
-			if (scales[rank]?.max < value) {
-				scales[rank].max = value;
+				if (!scales[rank].max || scales[rank].max < value) {
+					scales[rank].max = value;
+				}
 			}
 		}
 	}
 
 	let index = rankList.length;
 	for (const rank of rankList) {
-		scales[rank].multiplierPerUnit = 2 ** index / (scales[rank].max - scales[rank].min);
+		const maxPoints = 2 ** index;
+		if (rankRules[rank].type === 'number') {
+			scales[rank].multiplier = maxPoints / (scales[rank].max - scales[rank].min);
+		} else {
+			scales[rank].multiplier = maxPoints;
+		}
+
 		index--;
 	}
 
@@ -107,11 +113,16 @@ async function scorePhone(rankScale, phone) {
 	phone.score = 0;
 	for (const rank in rankScale) {
 		const value = lodash.get(phone, rank);
+		let score = 0;
 		if (rankRules[rank].type === 'number') {
 			if (rankRules[rank].scoreMethod === 'FROM_MAX') {
-				phone.scoreBreakdown[rank] = (rankScale[rank].max - value) * rankScale[rank].multiplierPerUnit;
+				score = (rankScale[rank].max - value) * rankScale[rank].multiplier;
 			}
+		} else if (rankRules[rank].type === 'boolean' && value && rankRules[rank].scoreMethod === 'PREFER_TRUE') {
+			score = rankScale[rank].multiplier;
 		}
+
+		phone.scoreBreakdown[rank] = score;
 	}
 
 	for (const item in phone.scoreBreakdown) {

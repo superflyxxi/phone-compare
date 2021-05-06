@@ -72,15 +72,15 @@ describe('Phone-compare positive tests', () => {
 	});
 
 	/*
- 	 * max height = 147.1
- 	 * min height = 133.9
- 	 * diff = 13.2
- 	 * height is worth 2pts, 2/13.2 = 0.15
- 	 * So 0.15 per mm below max.
- 	 * pixel5 = 144.7; 2.4*0.15 = 0.36pts
- 	 * pixel4 = max; = 0pts
- 	 * nexu4 = min; = 2pts
- 	 */
+	 * Max height = 147.1
+	 * min height = 133.9
+	 * diff = 13.2
+	 * height is worth 2pts, 2/13.2 = 0.15
+	 * So 0.15 per mm below max.
+	 * pixel5 = 144.7; 2.4*0.15 = 0.36pts
+	 * pixel4 = max; = 0pts
+	 * nexu4 = min; = 2pts
+	 */
 	it('Rank on a number (height)', (done) => {
 		chai
 			.request(app)
@@ -151,23 +151,23 @@ describe('Phone-compare positive tests', () => {
 				done();
 			});
 	});
-	
+
 	/*
- 	 * max height = 147.1, min height = 133.9, diff = 13.2
- 	 * height is worth 4pts, 4/13.2 = 0.30
- 	 * pixel5 = 144.7; 2.4*0.30 = 0.72pts
- 	 * pixel4 = max; = 0pts
- 	 * nexus4 = min; = 4pts
- 	 * width max=70.4 min=68.7 diff=1.7
- 	 * width = 2pts, 2/1.7 = 1.18pts per mm under max
- 	 * pixel5 = max = 0pts
- 	 * pixel4 = 68.8; 1.6*1.18 = 1.89pts
- 	 * nexus4 = min; = 2pts
- 	 *
- 	 * nexus4=4+2
- 	 * pixel4=0+1.89
- 	 * pixel5=0.72+0
- 	 */
+	 * Max height = 147.1, min height = 133.9, diff = 13.2
+	 * height is worth 4pts, 4/13.2 = 0.30
+	 * pixel5 = 144.7; 2.4*0.30 = 0.72pts
+	 * pixel4 = max; = 0pts
+	 * nexus4 = min; = 4pts
+	 * width max=70.4 min=68.7 diff=1.7
+	 * width = 2pts, 2/1.7 = 1.18pts per mm under max
+	 * pixel5 = max = 0pts
+	 * pixel4 = 68.8; 1.6*1.18 = 1.89pts
+	 * nexus4 = min; = 2pts
+	 *
+	 * nexus4=4+2
+	 * pixel4=0+1.89
+	 * pixel5=0.72+0
+	 */
 	it('Rank on two numbers (height, width)', (done) => {
 		chai
 			.request(app)
@@ -239,6 +239,120 @@ describe('Phone-compare positive tests', () => {
 							scoreBreakdown: {
 								'dimensions.height': 0.7,
 								'dimensions.width': 0
+							}
+						}
+					]
+				});
+				done();
+			});
+	});
+
+	/*
+	 * Max height = 147.1, min height = 133.9, diff = 13.2
+	 * height is worth 8pts, 8/13.2 = 0.61
+	 * pixel5 = 144.7; 2.4*0.61 = 1.46pts
+	 * pixel4 = max; = 0pts
+	 * nexus4 = min; = 8pts
+	 * fingerprint is worth 4pts
+	 * pixel5 = true = 4pts
+	 * pixel4 = true = 4pts
+	 * nexus4 = false = 0pts
+	 * nfc is worth 2pts
+	 * pixel5 = true = 2pts
+	 * pixel4 = true = 2pts
+	 * nexus4 = true = 2pts
+	 *
+	 * nexus4=8+0+2
+	 * pixel5=1.46+4+2
+	 * pixel4=0+4+2
+	 */
+	it('Rank on number and boolean (height, fingerprint, nfc)', (done) => {
+		chai
+			.request(app)
+			.post('/v1/phones/compare')
+			.send({
+				phones: [
+					{manufacturer: 'lg', model: 'e960'},
+					{manufacturer: 'google', model: 'g020i'},
+					{manufacturer: 'google', model: 'gd1yq'}
+				],
+				ranking: ['dimensions.height', 'sensors.fingerprint', 'nfc']
+			})
+			.end((error, res) => {
+				console.log('res.body', res.body);
+				expect(res).to.have.status(200);
+				expect(res.body).to.deep.include.almost({
+					best: {
+						manufacturer: 'LG',
+						model: 'E960',
+						name: 'LG Nexus 4',
+						dimensions: {
+							height: 133.9
+						},
+						nfc: true,
+						sensors: {
+							fingerprint: false
+						},
+						score: 10,
+						scoreBreakdown: {
+							'dimensions.height': 8,
+							'sensors.fingerprint': 0,
+							nfc: 2
+						}
+					},
+					results: [
+						{
+							manufacturer: 'LG',
+							model: 'E960',
+							name: 'LG Nexus 4',
+							dimensions: {
+								height: 133.9
+							},
+							nfc: true,
+							sensors: {
+								fingerprint: false
+							},
+							score: 10,
+							scoreBreakdown: {
+								'dimensions.height': 8,
+								'sensors.fingerprint': 0,
+								nfc: 2
+							}
+						},
+						{
+							manufacturer: 'Google',
+							model: 'GD1YQ',
+							name: 'Google Pixel 5',
+							dimensions: {
+								height: 144.7
+							},
+							nfc: true,
+							sensors: {
+								fingerprint: true
+							},
+							score: 7.5,
+							scoreBreakdown: {
+								'dimensions.height': 1.5,
+								'sensors.fingerprint': 4,
+								nfc: 2
+							}
+						},
+						{
+							manufacturer: 'Google',
+							model: 'G020I',
+							name: 'Google Pixel 4',
+							dimensions: {
+								height: 147.1
+							},
+							nfc: true,
+							sensors: {
+								fingerprint: true
+							},
+							score: 6,
+							scoreBreakdown: {
+								'dimensions.height': 0,
+								'sensors.fingerprint': 4,
+								nfc: 2
 							}
 						}
 					]
