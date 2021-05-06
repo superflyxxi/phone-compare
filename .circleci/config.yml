@@ -121,6 +121,12 @@ jobs:
             - full_version.txt
             - short_version.txt
   deploy:
+    parameters:
+      env:
+        description: Which environment to deploy
+        type: enum
+        default: "wip"
+        enum: ["wip", "prod"]
     machine:
       enabled: true
     steps:
@@ -130,11 +136,6 @@ jobs:
           name: Determine env variables
           command: |
             echo "DOCKER_TAG=$(cat /tmp/workspace/short_version.txt)" >> ${BASH_ENV}
-            if [[ "<< pipeline.git.branch >>" == "main" ]]; then
-              echo "ENV=prod" >> ${BASH_ENV}
-            else
-              echo "ENV=wip" >> ${BASH_ENV}
-            fi
       - checkout
       - run:
           name: Generate docker-compose file
@@ -142,9 +143,9 @@ jobs:
             cat docker-compose-template.yml |\
               sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
               sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
-              sed "s#\${ENV}#${ENV}#g" \
-              > docker-compose.${ENV}.yml
-            cat docker-compose.${ENV}.yml
+              sed "s#\${ENV}#<< parameters.env >>#g" \
+              > docker-compose.<< parameters.env >>.yml
+            cat docker-compose.<< parameters.env >>.yml
       - run:
           name: Install sshpass
           command: |
@@ -154,7 +155,7 @@ jobs:
           name: Upload docker-compose file
           command: |
             export REMOTE_DIR=${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
-            sshpass -e scp -P ${SSH_PORT} docker-compose.${ENV}.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+            sshpass -e scp -P ${SSH_PORT} docker-compose.<< parameters.env >>.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
       - run:
           name: Redeploy
           command: |
@@ -185,5 +186,17 @@ workflows:
                 - main
       - deploy:
           context: default
+          name: deploy-wip
+          env: wip
           requires:
             - docker
+      - deploy:
+          context: default
+          name: deploy-prod
+          env: prod
+          requires:
+            - docker
+          filters:
+            branches:
+              only:
+                - main
