@@ -86,6 +86,19 @@ describe('Phones positive tests', () => {
 				done();
 			});
 	});
+
+	it('Get all phones', (done) => {
+		chai
+			.request(app)
+			.get('/v1/phones')
+			.send()
+			.end((error, res) => {
+				console.log('res.body', res.body);
+				expect(res).to.have.status(200);
+				expect({test: res.body}).to.deep.include({test: [{href: 'manufacturers/google/models/gd1yq'}]});
+				done();
+			});
+	});
 });
 
 describe('Phones negative tests', () => {
