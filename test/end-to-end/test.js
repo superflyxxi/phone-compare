@@ -2,12 +2,13 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../../src/index.js');
 const {expect} = chai;
-const nock = require('nock');
+const helper = require('../helpers');
 
 chai.use(chaiHttp);
+chai.use(require('chai-almost')(0.1));
 
 describe('End-to-end tests', () => {
-	afterEach(() => nock.cleanAll());
+	after(helper.cleanupDataDir);
 
 	it('Compare 3 phones', (done) => {
 		// Create the pixel 5
@@ -16,7 +17,7 @@ describe('End-to-end tests', () => {
 			.put('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.send({
 				name: 'Google Pixel 5',
-				gsmArenaUrl: 'https://www.gsmarena.test/google_pixel_5-10386.php',
+				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
 				lineageos: '18.1'
 			})
 			.end((error, res) => {
