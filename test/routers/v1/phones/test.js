@@ -3,18 +3,14 @@ const chaiHttp = require('chai-http');
 const app = require('../../../../src/index.js');
 const {expect} = chai;
 const nock = require('nock');
+const helper = require('../../../helpers');
 
 let pixel5Etag;
 chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
 	afterEach(() => nock.cleanAll());
-	after(() => {
-		const fs = require('fs');
-		for (file of fs.readdirSync(process.env.DATA_DIR)) {
-			fs.unlinkSync(require('path').join(process.env.DATA_DIR, file));
-		}
-	});
+	after(helper.cleanupDataDir);
 
 	it('Create pixel5 phone', (done) => {
 		chai
