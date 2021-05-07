@@ -45,13 +45,17 @@ function validate(body) {
 	}
 
 	for (const item of body.ranking) {
+		if (!rankRules[item]) {
+			console.error(item, 'has not been configured properly');
+		}
+
 		validator.validate(
 			{item},
 			{
 				item: {
 					presence: true,
 					type: 'string',
-					inclusion: ['dimensions.height', 'dimensions.weight', 'dimensions.width', 'nfc', 'sensors.fingerprint']
+					inclusion: Object.keys(rankRules)
 				}
 			}
 		);
@@ -128,8 +132,10 @@ async function score(rankScale, phoneScore) {
 		const value = lodash.get(phoneScore.phone, rank);
 		let score = 0;
 		if (rankRules[rank].type === 'number') {
-			if (rankRules[rank].scoreMethod === 'FROM_MAX') {
+			if (rankRules[rank].scoreMethod === 'PREFER_LOW') {
 				score = (rankScale[rank].max - value) * rankScale[rank].multiplier;
+			} else if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
+				score = (value - rankScale[rank].min) * rankScale[rank].multiplier;
 			}
 		} else if (rankRules[rank].type === 'boolean' && value && rankRules[rank].scoreMethod === 'PREFER_TRUE') {
 			score = rankScale[rank].multiplier;

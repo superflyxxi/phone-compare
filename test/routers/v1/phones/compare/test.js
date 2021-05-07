@@ -390,4 +390,28 @@ describe('Phone-compare positive tests', () => {
 				done();
 			});
 	});
+
+	it('Rank everything', (done) => {
+		chai
+			.request(app)
+			.post('/v1/phones/compare')
+			.send({
+				phones: [{manufacturer: 'Google', model: 'GD1YQ'}],
+				ranking: [
+					'dimensions.height',
+					'dimensions.width',
+					'dimensions.depth',
+					'price.usd',
+					'price.eur',
+					'ram',
+					'year',
+					'nfc',
+					'sensors.fingerprint'
+				]
+			})
+			.end((error, res) => {
+				expect(res).to.have.status(200);
+				done();
+			});
+	});
 });
