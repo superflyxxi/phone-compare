@@ -377,4 +377,18 @@ describe('Phone-compare positive tests', () => {
 				done();
 			});
 	});
+
+	it('Rank on a version (lineageos)', (done) => {
+		chai
+			.request(app)
+			.post('/v1/phones/compare')
+			.send({
+				ranking: ['lineageos']
+			})
+			.end((error, res) => {
+				expect(res).to.have.status(200);
+				//expect(res.body).to.deep.include.almost(allPhoneHeightExpected);
+				done();
+			});
+	});
 });
