@@ -18,19 +18,11 @@ jobs:
     steps:
       - checkout
       - node/install-packages
-      - when:
-          condition:
-            not:
-              equal: [ main, << pipeline.git.branch >> ]
-          steps:
-            - run:
-                name: Set branch mocha args
-                command: echo "export CI_MOCHA_ARGS=--forbid-pending" >> ${BASH_ENV}
       - run:
           command: npm test
           environment:
             MOCHA_FILE: ./mocha/test-results.xml
-            MOCHA_ARGS: ${CI_MOCHA_ARGS} --forbid-only --reporter mocha-junit-reporter
+            MOCHA_ARGS: --forbid-pending --forbid-only --reporter mocha-junit-reporter
       - store_test_results:
           path: ./mocha
       - store_artifacts:
