@@ -78,6 +78,17 @@ const asyncHandler = require('express-async-handler');
  *                   description: Determines whether a fingerprint sensor exists.
  *                   example: false
  *                   readonly: true
+ *             price:
+ *               type: object
+ *               properties:
+ *                 usd:
+ *                   type: number
+ *                   description: The price in USD.
+ *                   example: 649.99
+ *                 eur:
+ *                   type: number
+ *                   description: The price in EUR.
+ *                   example: 499.99
  */
 
 /**
