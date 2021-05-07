@@ -39,10 +39,11 @@ const asyncHandler = require('express-async-handler');
  *               - sensors.fingerprint
  *               - price.usd
  *               - price.eur
+ *               - ram
  *       required:
  *         - ranking
  *
- *     PhoneCompareResultSinglePhone:
+ *     ScoredPhone:
  *       allOf:
  *         - $ref: '#/components/schemas/PhoneCompareRequestSinglePhone'
  *         - type: object
@@ -59,6 +60,8 @@ const asyncHandler = require('express-async-handler');
  *               type: object
  *               description: Scores award for each property.
  *               properties:
+ *                 ram:
+ *                   type: number
  *                 nfc:
  *                   type: number
  *                 'dimensions.height':
@@ -78,12 +81,12 @@ const asyncHandler = require('express-async-handler');
  *       type: object
  *       properties:
  *         best:
- *           $ref: '#/components/schemas/PhoneCompareResultSinglePhone'
+ *           $ref: '#/components/schemas/ScoredPhone'
  *         results:
  *           type: array
  *           description: An array of phone results ranked based on settings.
  *           items:
- *             $ref: '#/components/schemas/PhoneCompareResultSinglePhone'
+ *             $ref: '#/components/schemas/ScoredPhone'
  */
 
 /**
