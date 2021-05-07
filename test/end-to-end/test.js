@@ -7,7 +7,7 @@ const nock = require('nock');
 chai.use(chaiHttp);
 
 describe('End-to-end tests', () => {
-	before(() => nock.cleanAll());
+	afterEach(() => nock.cleanAll());
 
 	it('Compare 3 phones', (done) => {
 		// Create the pixel 5

@@ -8,6 +8,8 @@ let pixel5Etag;
 chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
+	afterEach(() => nock.cleanAll());
+
 	it('Create pixel5 phone', (done) => {
 		chai
 			.request(app)
