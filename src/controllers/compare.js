@@ -45,10 +45,6 @@ function validate(body) {
 	}
 
 	for (const item of body.ranking) {
-		if (!rankRules[item]) {
-			console.error(item, 'has not been configured properly');
-		}
-
 		validator.validate(
 			{item},
 			{
@@ -77,6 +73,15 @@ async function getPhoneScoreList(phones) {
 	return Promise.all(promises);
 }
 
+function getVersion(string) {
+	const splt = string.split('.');
+	return {
+		major: splt[0] ? Number.parseInt(splt[0], 10) : undefined,
+		minor: splt[1] ? Number.parseInt(splt[1], 10) : undefined,
+		patch: splt[2] ? Number.parseInt(splt[2], 10) : undefined
+	};
+}
+
 /**
  * Generates an object that describes how each ranked property should be scored on a scale.
  * For example, if the min height in the phone list is 130 and the max height is 150, then for
@@ -85,22 +90,35 @@ async function getPhoneScoreList(phones) {
  */
 async function generateScoreScale(rankList, phoneScoreList) {
 	const scales = {};
-	for (const phoneScore of phoneScoreList) {
-		for (const rank of rankList) {
+
+	for (const rank of rankList) {
+		scales[rank] = {};
+		const mapValues = {};
+		if (rankRules[rank].type === 'number') {
+			mapValues.values = [];
+		} else if (rankRules[rank].type === 'version') {
+			mapValues.major = [];
+			mapValues.minor = [];
+			mapValues.patch = [];
+		}
+
+		for (const phoneScore of phoneScoreList) {
 			const value = lodash.get(phoneScore.phone, rank);
-			if (!scales[rank]) {
-				scales[rank] = {};
-			}
 
 			if (rankRules[rank].type === 'number') {
-				if (!scales[rank].min || scales[rank].min > value) {
-					scales[rank].min = value;
-				}
-
-				if (!scales[rank].max || scales[rank].max < value) {
-					scales[rank].max = value;
-				}
+				mapValues.values.push(value);
+			} else if (rankRules[rank].type === 'version') {
+				const ver = getVersion(value);
+				mapValues.major.push(ver.major);
+				mapValues.minor.push(ver.minor);
+				mapValues.patch.push(ver.patch);
 			}
+		}
+
+		for (const item of Object.keys(mapValues)) {
+			scales[rank][item] = {};
+			scales[rank][item].max = Math.max(...mapValues[item]);
+			scales[rank][item].min = Math.min(...mapValues[item]);
 		}
 	}
 
@@ -108,7 +126,17 @@ async function generateScoreScale(rankList, phoneScoreList) {
 	for (const rank of rankList) {
 		const maxPoints = 2 ** index;
 		if (rankRules[rank].type === 'number') {
-			scales[rank].multiplier = maxPoints / (scales[rank].max - scales[rank].min);
+			scales[rank].multiplier = maxPoints / (scales[rank].values.max - scales[rank].values.min);
+		} else if (rankRules[rank].type === 'version') {
+			for (const v in ['major', 'minor', 'patch']) {
+				if (scales[rank][v].max !== scales[rank][v].min) {
+					scales[rank].semantic = v;
+					break;
+				}
+			}
+
+			scales[rank].multiplier =
+				maxPoints / (scales[rank][scales[rank].semantic].max - scales[rank][scales[rank].semantic].min);
 		} else {
 			scales[rank].multiplier = maxPoints;
 		}
@@ -133,14 +161,19 @@ async function score(rankScale, phoneScore) {
 		let score = 0;
 		if (rankRules[rank].type === 'number') {
 			if (rankRules[rank].scoreMethod === 'PREFER_LOW') {
-				score = (rankScale[rank].max - value) * rankScale[rank].multiplier;
+				score = (rankScale[rank].values.max - value) * rankScale[rank].multiplier;
 			} else if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
-				score = (value - rankScale[rank].min) * rankScale[rank].multiplier;
+				score = (value - rankScale[rank].values.min) * rankScale[rank].multiplier;
 			}
 		} else if (rankRules[rank].type === 'boolean' && value && rankRules[rank].scoreMethod === 'PREFER_TRUE') {
 			score = rankScale[rank].multiplier;
+		} else if (rankRules[rank].type === 'version') {
+			const ver = getVersion(value);
+			const semantic = rankScale[rank].semantic;
+			if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
+				score = (ver[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;
+			}
 		}
-
 		phoneScore.scoreBreakdown[rank] = score;
 	}
 
