@@ -12,5 +12,5 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-Report vulnerabilities using [Security Issue Template](https://github.com/superflyxxi/phone-compare/issues/new).
+Report vulnerabilities using [Vulnerability Issue Template](https://github.com/superflyxxi/phone-compare/issues/new?assignees=superflyxxi&labels=vulnerability&template=vulnerability.md).
 Issues will be analyzed once a week.
