@@ -52,6 +52,7 @@ describe('Phones positive tests', () => {
 			.end((error, res) => {
 				pixel5Etag = res.get('etag');
 				expect(res).to.have.status(200);
+				console.log('res.body', res.body);
 				expect(res.body).to.deep.include({
 					manufacturer: 'Google',
 					model: 'GD1YQ',
@@ -67,6 +68,10 @@ describe('Phones positive tests', () => {
 					nfc: true,
 					sensors: {
 						fingerprint: true
+					},
+					price: {
+						usd: 650,
+						eur: 499.99
 					}
 				});
 				expect(nock.pendingMocks.length).to.equal(0);
