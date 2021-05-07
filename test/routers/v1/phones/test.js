@@ -39,8 +39,11 @@ describe('Phones positive tests', () => {
 	});
 
 	it('Ensure it gets a valid phone', (done) => {
-		nock('http://www.gsmarena.test').get('/google_pixel_5-10386.php').replyWithFile(200, 'test/resources/google_pixel_5-10386.html');
-		chai.request(app)
+		nock('http://www.gsmarena.test')
+			.get('/google_pixel_5-10386.php')
+			.replyWithFile(200, 'test/resources/google_pixel_5-10386.html');
+		chai
+			.request(app)
 			.get('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.end((error, res) => {
 				pixel5Etag = res.get('etag');
@@ -62,19 +65,22 @@ describe('Phones positive tests', () => {
 						fingerprint: true
 					}
 				});
-				expect(nock.isDone()).to.be.true;
+				expect(nock.isDone()).to.equal(true);
 				done();
 			});
 	});
 
 	it('Ensure ETag for same URL returns 304', (done) => {
-		nock('http://www.gsmarena.test').get('/google_pixel_5-10386.php').replyWithFile(200, 'test/resources/google_pixel_5-10386.html');
-		chai.request(app)
+		nock('http://www.gsmarena.test')
+			.get('/google_pixel_5-10386.php')
+			.replyWithFile(200, 'test/resources/google_pixel_5-10386.html');
+		chai
+			.request(app)
 			.get('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
 				expect(res).to.have.status(304);
-				expect(nock.isDone()).to.be.true;
+				expect(nock.isDone()).to.equal(true);
 				done();
 			});
 	});
@@ -116,7 +122,8 @@ describe('Phones negative tests', () => {
 	});
 
 	it('Missing gsmArena', (done) => {
-		chai.request(app)
+		chai
+			.request(app)
 			.put('/v1/phones/manufacturers/test/models/missing')
 			.send({
 				name: 'Test Missing Input',
