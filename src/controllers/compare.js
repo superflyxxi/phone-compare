@@ -55,17 +55,7 @@ function validate(body) {
 				item: {
 					presence: true,
 					type: 'string',
-					inclusion: [
-						'dimensions.height',
-						'dimensions.depth',
-						'dimensions.width',
-						'nfc',
-						'sensors.fingerprint',
-						'ram',
-						'year',
-						'price.usd',
-						'price.eur'
-					]
+					inclusion: Object.keys(rankRules)
 				}
 			}
 		);
