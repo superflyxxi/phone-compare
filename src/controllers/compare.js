@@ -108,10 +108,10 @@ async function generateScoreScale(rankList, phoneScoreList) {
 			if (rankRules[rank].type === 'number') {
 				mapValues.values.push(value);
 			} else if (rankRules[rank].type === 'version') {
-				const ver = getVersion(value);
-				mapValues.major.push(ver.major);
-				mapValues.minor.push(ver.minor);
-				mapValues.patch.push(ver.patch);
+				const version = getVersion(value);
+				mapValues.major.push(version.major);
+				mapValues.minor.push(version.minor);
+				mapValues.patch.push(version.patch);
 			}
 		}
 
@@ -128,7 +128,7 @@ async function generateScoreScale(rankList, phoneScoreList) {
 		if (rankRules[rank].type === 'number') {
 			scales[rank].multiplier = maxPoints / (scales[rank].values.max - scales[rank].values.min);
 		} else if (rankRules[rank].type === 'version') {
-			for (const v in ['major', 'minor', 'patch']) {
+			for (const v of ['major', 'minor', 'patch']) {
 				if (scales[rank][v].max !== scales[rank][v].min) {
 					scales[rank].semantic = v;
 					break;
@@ -168,12 +168,14 @@ async function score(rankScale, phoneScore) {
 		} else if (rankRules[rank].type === 'boolean' && value && rankRules[rank].scoreMethod === 'PREFER_TRUE') {
 			score = rankScale[rank].multiplier;
 		} else if (rankRules[rank].type === 'version') {
-			const ver = getVersion(value);
+			const version = getVersion(value);
 			const semantic = rankScale[rank].semantic;
+			console.log('ver=', version, 'semantic=', semantic);
 			if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
-				score = (ver[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;
+				score = (version[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;
 			}
 		}
+
 		phoneScore.scoreBreakdown[rank] = score;
 	}
 
