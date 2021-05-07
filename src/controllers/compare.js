@@ -8,24 +8,24 @@ exports.comparePhones = async function (req, res) {
 	validate(req.body);
 
 	const ranking = req.body.ranking;
-	const phoneList = await getPhoneList(req.body.phones, ranking);
-	const rankScale = await generateScoreScale(ranking, phoneList);
-	await scoreAndSortPhones(phoneList, rankScale);
+	const phoneScoreList = await getPhoneScoreList(req.body.phones);
+	const rankScale = await generateScoreScale(ranking, phoneScoreList);
+	await scoreAndSortPhones(phoneScoreList, rankScale);
 	res.set('cache-control', 'public, max-age=2419200').send({
-		best: phoneList[0],
-		results: phoneList
+		best: phoneScoreList[0],
+		results: phoneScoreList
 	});
 };
 
-async function scoreAndSortPhones(phoneList, rankScale) {
+async function scoreAndSortPhones(phoneScoreList, rankScale) {
 	const promises = [];
-	for (const phone of phoneList) {
-		promises.push(scorePhone(rankScale, phone));
+	for (const phoneScore of phoneScoreList) {
+		promises.push(score(rankScale, phoneScore));
 	}
 
 	await Promise.all(promises);
 
-	phoneList.sort((alpha, beta) => {
+	phoneScoreList.sort((alpha, beta) => {
 		return beta.score - alpha.score;
 	});
 }
@@ -58,7 +58,7 @@ function validate(body) {
 	}
 }
 
-async function getPhoneList(phones, ranking) {
+async function getPhoneScoreList(phones) {
 	let phoneList = phones;
 	if (!phoneList) {
 		const res = await axios.get(PHONE_BASE_URL + '/v1/phones');
@@ -67,7 +67,7 @@ async function getPhoneList(phones, ranking) {
 
 	const promises = [];
 	for (const phone of phoneList) {
-		promises.push(getPhoneData(phone, ranking));
+		promises.push(getPhoneScore(phone));
 	}
 
 	return Promise.all(promises);
@@ -79,11 +79,11 @@ async function getPhoneList(phones, ranking) {
  * each mm, it would be equal to X points. If the min height is 140 and the max is 145, then
  * each mm is worth Y points, where Y > X.
  */
-async function generateScoreScale(rankList, phoneList) {
+async function generateScoreScale(rankList, phoneScoreList) {
 	const scales = {};
-	for (const phone of phoneList) {
+	for (const phoneScore of phoneScoreList) {
 		for (const rank of rankList) {
-			const value = lodash.get(phone, rank);
+			const value = lodash.get(phoneScore.phone, rank);
 			if (!scales[rank]) {
 				scales[rank] = {};
 			}
@@ -115,27 +115,17 @@ async function generateScoreScale(rankList, phoneList) {
 	return scales;
 }
 
-async function getPhoneData(phone, properties) {
-	const url =
-		PHONE_BASE_URL + '/v1/phones/' + (phone.href ?? 'manufacturers/' + phone.manufacturer + '/models/' + phone.model);
-	const res = await axios.get(url);
-	const data = {
-		manufacturer: res.data.manufacturer,
-		model: res.data.model,
-		name: res.data.name
-	};
-	for (const property of properties) {
-		lodash.set(data, property, lodash.get(res.data, property));
-	}
-
-	return data;
+async function getPhoneScore(phone) {
+	const url = '/v1/phones/' + (phone.href ?? 'manufacturers/' + phone.manufacturer + '/models/' + phone.model);
+	const res = await axios.get(PHONE_BASE_URL + url);
+	return {href: url, phone: res.data};
 }
 
-async function scorePhone(rankScale, phone) {
-	phone.scoreBreakdown = {};
-	phone.score = 0;
+async function score(rankScale, phoneScore) {
+	phoneScore.scoreBreakdown = {};
+	phoneScore.score = 0;
 	for (const rank in rankScale) {
-		const value = lodash.get(phone, rank);
+		const value = lodash.get(phoneScore.phone, rank);
 		let score = 0;
 		if (rankRules[rank].type === 'number') {
 			if (rankRules[rank].scoreMethod === 'FROM_MAX') {
@@ -145,10 +135,12 @@ async function scorePhone(rankScale, phone) {
 			score = rankScale[rank].multiplier;
 		}
 
-		phone.scoreBreakdown[rank] = score;
+		phoneScore.scoreBreakdown[rank] = score;
 	}
 
-	for (const item in phone.scoreBreakdown) {
-		phone.score += phone.scoreBreakdown[item];
+	for (const item in phoneScore.scoreBreakdown) {
+		phoneScore.score += phoneScore.scoreBreakdown[item];
 	}
+
+	delete phoneScore.phone;
 }

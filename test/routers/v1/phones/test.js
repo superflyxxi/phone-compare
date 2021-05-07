@@ -67,7 +67,12 @@ describe('Phones positive tests', () => {
 					nfc: true,
 					sensors: {
 						fingerprint: true
-					}
+					},
+					price: {
+						usd: 650,
+						eur: 499.99
+					},
+					year: 2020
 				});
 				expect(nock.pendingMocks.length).to.equal(0);
 				done();

@@ -37,48 +37,59 @@ const asyncHandler = require('express-async-handler');
  *               - dimensions.depth
  *               - nfc
  *               - sensors.fingerprint
+ *               - price.usd
+ *               - price.eur
+ *               - ram
+ *               - year
  *       required:
- *         - phones
  *         - ranking
  *
- *     PhoneCompareResultSinglePhone:
+ *     ScoredPhone:
  *       allOf:
  *         - $ref: '#/components/schemas/PhoneCompareRequestSinglePhone'
  *         - type: object
  *           properties:
- *             name:
+ *             href:
  *               type: string
- *               description: Human readable name.
- *               example: LG Nexus 4
+ *               format: uri
+ *               description: Refernce to the phone object for details on what was used to calcualte score.
  *             score:
  *               type: number
  *               description: The score given to this phone.
  *               example: 100.0
  *             scoreBreakdown:
  *               type: object
+ *               description: Scores award for each property.
  *               properties:
+ *                 year:
+ *                   type: number
+ *                 ram:
+ *                   type: number
  *                 nfc:
  *                   type: number
- *                   description: The score awarded through nfc.
- *                   example: 10
- *                 height:
+ *                 'dimensions.height':
  *                   type: number
- *                   description: The score awarded through height.
- *                   example: 20
- *                 fingerprint:
+ *                 'dimensions.width':
  *                   type: number
- *                   description: The score awarded through fingerprint.
- *                   example: 40
+ *                 'dimensions.depth':
+ *                   type: number
+ *                 'sensors.fingerprint':
+ *                   type: number
+ *                 'price.usd':
+ *                   type: number
+ *                 'price.eur':
+ *                   type: number
+ *
  *     PhoneCompareResult:
  *       type: object
  *       properties:
  *         best:
- *           $ref: '#/components/schemas/PhoneCompareResultSinglePhone'
+ *           $ref: '#/components/schemas/ScoredPhone'
  *         results:
  *           type: array
  *           description: An array of phone results ranked based on settings.
  *           items:
- *             $ref: '#/components/schemas/PhoneCompareResultSinglePhone'
+ *             $ref: '#/components/schemas/ScoredPhone'
  */
 
 /**
