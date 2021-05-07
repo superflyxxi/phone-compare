@@ -313,7 +313,38 @@ describe('Phone-compare positive tests', () => {
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(200);
-				//expect(res.body).to.deep.include.almost(allPhoneHeightExpected);
+				expect(res.body).to.deep.include.almost({
+					best: {
+						href: '/v1/phones/manufacturers/Google/models/G020I',
+						score: 2,
+						scoreBreakdown: {
+							lineageos: 2
+						}
+					},
+					results: [
+						{
+							href: '/v1/phones/manufacturers/Google/models/G020I',
+							score: 2,
+							scoreBreakdown: {
+								lineageos: 2
+							}
+						},
+						{
+							href: '/v1/phones/manufacturers/Google/models/GD1YQ',
+							score: 2,
+							scoreBreakdown: {
+								lineageos: 2
+							}
+						},
+						{
+							href: '/v1/phones/manufacturers/LG/models/E960',
+							score: 0,
+							scoreBreakdown: {
+								lineageos: 0
+							}
+						}
+					]
+				});
 				done();
 			});
 	});
