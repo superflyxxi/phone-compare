@@ -22,10 +22,12 @@ exports.getGsmArenaData = async function (gsmUrl) {
 		usbSpeed: undefined,
 		wirelessSpeed: undefined
 	}; */
-	const priceHtml = dom.window.document.querySelector('[data-spec="price"]').querySelector('a').innerHTML;
-	data.price = {
-		usd: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[0]),
-		eur: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[1])
-	};
+	const priceHtml = dom.window.document.querySelector('[data-spec="price"]')?.querySelector('a')?.innerHTML;
+	if (priceHtml) {
+		data.price = {
+			usd: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[0]),
+			eur: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[1])
+		};
+	}
 	return data;
 };
