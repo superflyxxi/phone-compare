@@ -21,9 +21,11 @@ exports.getGsmArenaData = async function (gsmUrl) {
 	/* Data.charging = {
 		usbSpeed: undefined,
 		wirelessSpeed: undefined
-	};
-	data.prices = {
-		// Usd: Number.parseFloat(dom.window.document.querySelector('[data-spec="price"]').innerHTML.match(/\$&thinsp;\d\.\d/g)[0])
 	}; */
+	const priceHtml = dom.window.document.querySelector('[data-spec="price"]').querySelector('a').innerHTML;
+	data.price = {
+		usd: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[0]),
+		eur: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[1])
+	};
 	return data;
 };
