@@ -9,6 +9,12 @@ chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
 	afterEach(() => nock.cleanAll());
+	after(() => {
+		const fs = require('fs');
+		for (file of fs.readdirSync(process.env.DATA_DIR)) {
+			fs.unlinkSync(require('path').join(process.env.DATA_DIR, file));
+		}
+	});
 
 	it('Create pixel5 phone', (done) => {
 		chai
@@ -67,7 +73,7 @@ describe('Phones positive tests', () => {
 						fingerprint: true
 					}
 				});
-				expect(nock.isDone()).to.equal(true);
+				expect(nock.pendingMocks.length).to.equal(0);
 				done();
 			});
 	});
@@ -82,7 +88,7 @@ describe('Phones positive tests', () => {
 			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
 				expect(res).to.have.status(304);
-				expect(nock.isDone()).to.equal(true);
+				expect(nock.pendingMocks.length).to.equal(0);
 				done();
 			});
 	});
@@ -93,9 +99,9 @@ describe('Phones positive tests', () => {
 			.get('/v1/phones')
 			.send()
 			.end((error, res) => {
-				console.log('res.body', res.body);
 				expect(res).to.have.status(200);
 				expect({test: res.body}).to.deep.include({test: [{href: 'manufacturers/google/models/gd1yq'}]});
+				expect(nock.pendingMocks.length).to.equal(0);
 				done();
 			});
 	});
