@@ -24,7 +24,8 @@ describe('Phone-compare positive tests', () => {
 			},
 			ram: 8,
 			nfc: true,
-			sensors: {fingerprint: true}
+			sensors: {fingerprint: true},
+			price: {usd: 649.99, eur: 649.99}
 		};
 		const googlePixel4 = {
 			manufacturer: 'Google',
@@ -39,7 +40,8 @@ describe('Phone-compare positive tests', () => {
 			},
 			ram: 6,
 			nfc: true,
-			sensors: {fingerprint: true}
+			sensors: {fingerprint: true},
+			price: {usd: 399.99, eur: 399.99}
 		};
 		const lgNexus4 = {
 			manufacturer: 'LG',
@@ -54,7 +56,8 @@ describe('Phone-compare positive tests', () => {
 			},
 			ram: 2,
 			nfc: true,
-			sensors: {fingerprint: false}
+			sensors: {fingerprint: false},
+			price: {usd: 49.99, eur: 49.99}
 		};
 
 		// Pixel 5
@@ -77,12 +80,7 @@ describe('Phone-compare positive tests', () => {
 
 	const allPhoneHeightExpected = {
 		best: {
-			manufacturer: 'LG',
-			model: 'E960',
-			name: 'LG Nexus 4',
-			dimensions: {
-				height: 133.9
-			},
+			href: '/v1/phones/manufacturers/LG/models/E960',
 			score: 2,
 			scoreBreakdown: {
 				'dimensions.height': 2
@@ -90,36 +88,21 @@ describe('Phone-compare positive tests', () => {
 		},
 		results: [
 			{
-				manufacturer: 'LG',
-				model: 'E960',
-				name: 'LG Nexus 4',
-				dimensions: {
-					height: 133.9
-				},
+				href: '/v1/phones/manufacturers/LG/models/E960',
 				score: 2,
 				scoreBreakdown: {
 					'dimensions.height': 2
 				}
 			},
 			{
-				manufacturer: 'Google',
-				model: 'GD1YQ',
-				name: 'Google Pixel 5',
-				dimensions: {
-					height: 144.7
-				},
+				href: '/v1/phones/manufacturers/Google/models/GD1YQ',
 				score: 0.4,
 				scoreBreakdown: {
 					'dimensions.height': 0.4
 				}
 			},
 			{
-				manufacturer: 'Google',
-				model: 'G020I',
-				name: 'Google Pixel 4',
-				dimensions: {
-					height: 147.1
-				},
+				href: '/v1/phones/manufacturers/Google/models/G020I',
 				score: 0,
 				scoreBreakdown: {
 					'dimensions.height': 0
@@ -189,13 +172,7 @@ describe('Phone-compare positive tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
-						manufacturer: 'LG',
-						model: 'E960',
-						name: 'LG Nexus 4',
-						dimensions: {
-							width: 68.7,
-							height: 133.9
-						},
+						href: '/v1/phones/manufacturers/LG/models/E960',
 						score: 6,
 						scoreBreakdown: {
 							'dimensions.height': 4,
@@ -204,13 +181,7 @@ describe('Phone-compare positive tests', () => {
 					},
 					results: [
 						{
-							manufacturer: 'LG',
-							model: 'E960',
-							name: 'LG Nexus 4',
-							dimensions: {
-								width: 68.7,
-								height: 133.9
-							},
+							href: '/v1/phones/manufacturers/LG/models/E960',
 							score: 6,
 							scoreBreakdown: {
 								'dimensions.height': 4,
@@ -218,13 +189,7 @@ describe('Phone-compare positive tests', () => {
 							}
 						},
 						{
-							manufacturer: 'Google',
-							model: 'G020I',
-							name: 'Google Pixel 4',
-							dimensions: {
-								width: 68.8,
-								height: 147.1
-							},
+							href: '/v1/phones/manufacturers/Google/models/G020I',
 							score: 1.9,
 							scoreBreakdown: {
 								'dimensions.height': 0,
@@ -232,13 +197,7 @@ describe('Phone-compare positive tests', () => {
 							}
 						},
 						{
-							manufacturer: 'Google',
-							model: 'GD1YQ',
-							name: 'Google Pixel 5',
-							dimensions: {
-								width: 70.4,
-								height: 144.7
-							},
+							href: '/v1/phones/manufacturers/Google/models/GD1YQ',
 							score: 0.7,
 							scoreBreakdown: {
 								'dimensions.height': 0.7,
@@ -286,16 +245,7 @@ describe('Phone-compare positive tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
-						manufacturer: 'LG',
-						model: 'E960',
-						name: 'LG Nexus 4',
-						dimensions: {
-							height: 133.9
-						},
-						nfc: true,
-						sensors: {
-							fingerprint: false
-						},
+						href: '/v1/phones/manufacturers/LG/models/E960',
 						score: 10,
 						scoreBreakdown: {
 							'dimensions.height': 8,
@@ -305,16 +255,7 @@ describe('Phone-compare positive tests', () => {
 					},
 					results: [
 						{
-							manufacturer: 'LG',
-							model: 'E960',
-							name: 'LG Nexus 4',
-							dimensions: {
-								height: 133.9
-							},
-							nfc: true,
-							sensors: {
-								fingerprint: false
-							},
+							href: '/v1/phones/manufacturers/LG/models/E960',
 							score: 10,
 							scoreBreakdown: {
 								'dimensions.height': 8,
@@ -323,16 +264,7 @@ describe('Phone-compare positive tests', () => {
 							}
 						},
 						{
-							manufacturer: 'Google',
-							model: 'GD1YQ',
-							name: 'Google Pixel 5',
-							dimensions: {
-								height: 144.7
-							},
-							nfc: true,
-							sensors: {
-								fingerprint: true
-							},
+							href: '/v1/phones/manufacturers/Google/models/GD1YQ',
 							score: 7.5,
 							scoreBreakdown: {
 								'dimensions.height': 1.5,
@@ -341,16 +273,7 @@ describe('Phone-compare positive tests', () => {
 							}
 						},
 						{
-							manufacturer: 'Google',
-							model: 'G020I',
-							name: 'Google Pixel 4',
-							dimensions: {
-								height: 147.1
-							},
-							nfc: true,
-							sensors: {
-								fingerprint: true
-							},
+							href: '/v1/phones/manufacturers/Google/models/G020I',
 							score: 6,
 							scoreBreakdown: {
 								'dimensions.height': 0,
