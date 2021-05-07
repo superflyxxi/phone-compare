@@ -8,6 +8,7 @@ chai.use(chaiHttp);
 chai.use(require('chai-almost')(0.1));
 
 describe('Phone-compare positive tests', () => {
+	afterEach(() => nock.cleanAll());
 	beforeEach(() => {
 		// Mock the phones
 		const googlePixel5 = {

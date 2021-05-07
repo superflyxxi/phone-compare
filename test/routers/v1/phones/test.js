@@ -2,18 +2,23 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../../../../src/index.js');
 const {expect} = chai;
+const nock = require('nock');
+const helper = require('../../../helpers');
 
 let pixel5Etag;
 chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
+	afterEach(() => nock.cleanAll());
+	after(helper.cleanupDataDir);
+
 	it('Create pixel5 phone', (done) => {
 		chai
 			.request(app)
 			.put('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.send({
 				name: 'Google Pixel 5 Initial',
-				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
+				gsmArenaUrl: 'http://www.gsmarena.test/google_pixel_5-10386.php',
 				lineageos: '18.1'
 			})
 			.end((error, res) => {
@@ -28,7 +33,7 @@ describe('Phones positive tests', () => {
 			.put('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.send({
 				name: 'Google Pixel 5',
-				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
+				gsmArenaUrl: 'http://www.gsmarena.test/google_pixel_5-10386.php',
 				lineageos: '18.1'
 			})
 			.end((error, res) => {
@@ -38,6 +43,9 @@ describe('Phones positive tests', () => {
 	});
 
 	it('Ensure it gets a valid phone', (done) => {
+		nock('http://www.gsmarena.test')
+			.get('/google_pixel_5-10386.php')
+			.replyWithFile(200, 'test/resources/google_pixel_5-10386.html');
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturers/Google/models/GD1YQ')
@@ -48,7 +56,7 @@ describe('Phones positive tests', () => {
 					manufacturer: 'Google',
 					model: 'GD1YQ',
 					name: 'Google Pixel 5',
-					gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
+					gsmArenaUrl: 'http://www.gsmarena.test/google_pixel_5-10386.php',
 					lineageos: '18.1',
 					dimensions: {
 						height: 144.7,
@@ -61,17 +69,22 @@ describe('Phones positive tests', () => {
 						fingerprint: true
 					}
 				});
+				expect(nock.pendingMocks.length).to.equal(0);
 				done();
 			});
 	});
 
 	it('Ensure ETag for same URL returns 304', (done) => {
+		nock('http://www.gsmarena.test')
+			.get('/google_pixel_5-10386.php')
+			.replyWithFile(200, 'test/resources/google_pixel_5-10386.html');
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
 				expect(res).to.have.status(304);
+				expect(nock.pendingMocks.length).to.equal(0);
 				done();
 			});
 	});
@@ -82,16 +95,16 @@ describe('Phones positive tests', () => {
 			.get('/v1/phones')
 			.send()
 			.end((error, res) => {
-				console.log('res.body', res.body);
 				expect(res).to.have.status(200);
 				expect({test: res.body}).to.deep.include({test: [{href: 'manufacturers/google/models/gd1yq'}]});
+				expect(nock.pendingMocks.length).to.equal(0);
 				done();
 			});
 	});
 });
 
 describe('Phones negative tests', () => {
-	it('Ensure ETag for diff URL returns 304', (done) => {
+	it('Ensure ETag for diff URL returns 404', (done) => {
 		chai
 			.request(app)
 			.get('/v1/phones/manufacturers/Google/models/pixel4')
@@ -108,7 +121,7 @@ describe('Phones negative tests', () => {
 			.put('/v1/phones/manufacturers/test/models/missing')
 			.send({
 				name: 'Test Missing Input',
-				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php'
+				gsmArenaUrl: 'http://www.gsmarena.test/google_pixel_5-10386.php'
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(400);

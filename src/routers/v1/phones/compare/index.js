@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const controller = require('../../../../controllers/phone-compare');
+const controller = require('../../../../controllers/compare');
 const asyncHandler = require('express-async-handler');
 
 /**

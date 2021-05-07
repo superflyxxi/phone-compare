@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "DATA_DIR=$(mktemp -d) nyc --reporter text --reporter html mocha ${MOCHA_REPORTER_ARGS} --recursive --exit --timeout 10000",
+    "test": "DATA_DIR=$(mktemp -d) nyc --reporter text --reporter html mocha ${MOCHA_ARGS} --recursive --exit --timeout 10000",
     "xo-fix": "xo --fix",
     "xo-verify": "xo"
   },

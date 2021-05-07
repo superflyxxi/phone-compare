@@ -22,7 +22,7 @@ jobs:
           command: npm test
           environment:
             MOCHA_FILE: ./mocha/test-results.xml
-            MOCHA_REPORTER_ARGS: --reporter mocha-junit-reporter
+            MOCHA_ARGS: --forbid-pending --forbid-only --reporter mocha-junit-reporter
       - store_test_results:
           path: ./mocha
       - store_artifacts:
@@ -32,13 +32,6 @@ jobs:
       - run:
           name: Verify XO
           command: npm run xo-verify
-      - run:
-          name: Ensure only not used
-          command: |
-            if grep "\.only" -Rq test/; then
-              echo "Tests include only; failng"
-              exit 1
-            fi
   docker:
     machine: 
       enabled: true
