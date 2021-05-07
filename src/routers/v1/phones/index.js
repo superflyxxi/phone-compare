@@ -60,6 +60,11 @@ const asyncHandler = require('express-async-handler');
  *                   description: The depth of the phone in mm.
  *                   readonly: true
  *                   example: 9.1
+ *             year:
+ *               type: integer
+ *               description: The year the phone was released.
+ *               example: 2021
+ *               readonly: true
  *             ram:
  *               type: integer
  *               description: The amount of ram in GB.
@@ -78,6 +83,17 @@ const asyncHandler = require('express-async-handler');
  *                   description: Determines whether a fingerprint sensor exists.
  *                   example: false
  *                   readonly: true
+ *             price:
+ *               type: object
+ *               properties:
+ *                 usd:
+ *                   type: number
+ *                   description: The price in USD.
+ *                   example: 649.99
+ *                 eur:
+ *                   type: number
+ *                   description: The price in EUR.
+ *                   example: 499.99
  */
 
 /**

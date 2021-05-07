@@ -58,12 +58,7 @@ describe('End-to-end tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
-						manufacturer: 'LG',
-						model: 'E960',
-						name: 'LG Nexus 4',
-						dimensions: {
-							height: 133.9
-						},
+						href: '/v1/phones/manufacturers/lg/models/e960',
 						score: 2,
 						scoreBreakdown: {
 							'dimensions.height': 2
@@ -71,36 +66,21 @@ describe('End-to-end tests', () => {
 					},
 					results: [
 						{
-							manufacturer: 'LG',
-							model: 'E960',
-							name: 'LG Nexus 4',
-							dimensions: {
-								height: 133.9
-							},
+							href: '/v1/phones/manufacturers/lg/models/e960',
 							score: 2,
 							scoreBreakdown: {
 								'dimensions.height': 2
 							}
 						},
 						{
-							manufacturer: 'Google',
-							model: 'GD1YQ',
-							name: 'Google Pixel 5',
-							dimensions: {
-								height: 144.7
-							},
+							href: '/v1/phones/manufacturers/google/models/gd1yq',
 							score: 0.4,
 							scoreBreakdown: {
 								'dimensions.height': 0.4
 							}
 						},
 						{
-							manufacturer: 'Google',
-							model: 'G020I',
-							name: 'Google Pixel 4',
-							dimensions: {
-								height: 147.1
-							},
+							href: '/v1/phones/manufacturers/google/models/g020i',
 							score: 0,
 							scoreBreakdown: {
 								'dimensions.height': 0
@@ -111,4 +91,4 @@ describe('End-to-end tests', () => {
 				done();
 			});
 	});
-});
+}).timeout(30000);
