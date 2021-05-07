@@ -29,5 +29,6 @@ exports.getGsmArenaData = async function (gsmUrl) {
 			eur: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[1])
 		};
 	}
+
 	return data;
 };
