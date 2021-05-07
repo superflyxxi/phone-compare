@@ -40,6 +40,7 @@ const asyncHandler = require('express-async-handler');
  *               - price.usd
  *               - price.eur
  *               - ram
+ *               - year
  *       required:
  *         - ranking
  *
@@ -60,6 +61,8 @@ const asyncHandler = require('express-async-handler');
  *               type: object
  *               description: Scores award for each property.
  *               properties:
+ *                 year:
+ *                   type: number
  *                 ram:
  *                   type: number
  *                 nfc:

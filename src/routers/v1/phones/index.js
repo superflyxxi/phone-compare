@@ -60,6 +60,11 @@ const asyncHandler = require('express-async-handler');
  *                   description: The depth of the phone in mm.
  *                   readonly: true
  *                   example: 9.1
+ *             year:
+ *               type: integer
+ *               description: The year the phone was released.
+ *               example: 2021
+ *               readonly: true
  *             ram:
  *               type: integer
  *               description: The amount of ram in GB.

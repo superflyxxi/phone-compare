@@ -30,5 +30,10 @@ exports.getGsmArenaData = async function (gsmUrl) {
 		};
 	}
 
+	const releasedHtml = dom.window.document.querySelector('[data-spec="released-hl"]')?.innerHTML;
+	if (releasedHtml) {
+		data.year = Number.parseInt(releasedHtml.match(/\d+/g, 10)[0]);
+	}
+
 	return data;
 };
