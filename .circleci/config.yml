@@ -150,7 +150,7 @@ jobs:
             export REMOTE_DIR=${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
             sshpass -e scp -P ${SSH_PORT} docker-compose.<< parameters.env >>.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
       - run:
-          name: Redeploy
+          name: Deploy
           command: |
             sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/ci-deploy.sh"
 
