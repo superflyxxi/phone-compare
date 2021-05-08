@@ -55,7 +55,6 @@ describe('End-to-end tests', () => {
 				ranking: ['android.max', 'dimensions.height', 'sensors.fingerprint', 'charging.wireless', 'ram', 'nfc', 'year']
 			})
 			.end((error, res) => {
-				console.log('res.body', res.body);
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {

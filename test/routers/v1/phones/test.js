@@ -61,7 +61,6 @@ describe('Phones positive tests', () => {
 			.request(app)
 			.get('/v1/phones/manufacturers/LG/models/E960')
 			.end((error, res) => {
-				console.log('res.body', res.body);
 				expect(nock.pendingMocks.length).to.equal(0);
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include({
