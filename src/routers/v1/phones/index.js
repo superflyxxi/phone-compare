@@ -102,6 +102,25 @@ const asyncHandler = require('express-async-handler');
  *                 type: boolean
  *                 description: Wether it supports any type of wireless charging.
  *                 example: false
+ *             android:
+ *               type: object
+ *               description: Contains various information about the base android version.
+ *               properties:
+ *                 official:
+ *                   type: string
+ *                   format: '^\d(\.\d(\.\d)?)?$'
+ *                   description: The official support android version.
+ *                   example: '11'
+ *                 lineageos:
+ *                   type: string
+ *                   format: '^\d(\.\d(\.\d)?)?$'
+ *                   description: The base android version of lineageos.
+ *                   example: '11'
+ *                 max:
+ *                   type: string
+ *                   format: '^\d(\.\d(\.\d)?)?$'
+ *                   description: The max of all the versions.
+ *                   example: '11'
  */
 
 /**
