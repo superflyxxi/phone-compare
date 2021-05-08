@@ -52,38 +52,63 @@ describe('End-to-end tests', () => {
 			.request(app)
 			.post('/v1/phones/compare')
 			.send({
-				ranking: ['dimensions.height']
+				ranking: ['android.max', 'dimensions.height', 'sensors.fingerprint', 'charging.wireless', 'ram', 'nfc', 'year']
 			})
 			.end((error, res) => {
+				console.log('res.body', res.body);
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
-						href: '/v1/phones/manufacturers/lg/models/e960',
-						score: 2,
+						href: '/v1/phones/manufacturers/google/models/gd1yq',
 						scoreBreakdown: {
-							'dimensions.height': 2
-						}
+							'android.max': 128,
+							'dimensions.height': 11.6,
+							'sensors.fingerprint': 32,
+							'charging.wireless': 16,
+							ram: 8,
+							nfc: 4,
+							year: 2
+						},
+						score: 201.6
 					},
 					results: [
 						{
-							href: '/v1/phones/manufacturers/lg/models/e960',
-							score: 2,
-							scoreBreakdown: {
-								'dimensions.height': 2
-							}
-						},
-						{
 							href: '/v1/phones/manufacturers/google/models/gd1yq',
-							score: 0.4,
 							scoreBreakdown: {
-								'dimensions.height': 0.4
-							}
+								'android.max': 128,
+								'dimensions.height': 11.6,
+								'sensors.fingerprint': 32,
+								'charging.wireless': 16,
+								ram: 8,
+								nfc: 4,
+								year: 2
+							},
+							score: 201.6
 						},
 						{
 							href: '/v1/phones/manufacturers/google/models/g020i',
-							score: 0,
+							score: 155.1,
 							scoreBreakdown: {
-								'dimensions.height': 0
+								'android.max': 128,
+								'charging.wireless': 16,
+								'dimensions.height': 0,
+								nfc: 4,
+								ram: 5.3,
+								'sensors.fingerprint': 0,
+								year: 1.8
+							}
+						},
+						{
+							href: '/v1/phones/manufacturers/lg/models/e960',
+							score: 84,
+							scoreBreakdown: {
+								'android.max': 0,
+								'charging.wireless': 16,
+								'dimensions.height': 64,
+								nfc: 4,
+								ram: 0,
+								'sensors.fingerprint': 0,
+								year: 0
 							}
 						}
 					]

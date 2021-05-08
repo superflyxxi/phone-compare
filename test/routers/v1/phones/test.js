@@ -53,7 +53,7 @@ describe('Phones positive tests', () => {
 			});
 	});
 
-	it.only('Ensure it gets a valid, old phone: Nexus 4', (done) => {
+	it('Ensure it gets a valid, old phone: Nexus 4', (done) => {
 		nock('http://www.gsmarena.test')
 			.get('/lg_nexus_4_e960-5048.php')
 			.replyWithFile(200, 'test/resources/lg_nexus_4_e960-5048.html');
@@ -79,10 +79,6 @@ describe('Phones positive tests', () => {
 					nfc: true,
 					sensors: {
 						fingerprint: false
-					},
-					price: {
-						usd: 0,
-						eur: 0
 					},
 					year: 2012,
 					charging: {wireless: true},
@@ -154,7 +150,9 @@ describe('Phones positive tests', () => {
 			.send()
 			.end((error, res) => {
 				expect(res).to.have.status(200);
-				expect({test: res.body}).to.deep.include({test: [{href: 'manufacturers/google/models/gd1yq'}, {href: 'manufacturers/lg/models/e960'}]});
+				expect({test: res.body}).to.deep.include({
+					test: [{href: 'manufacturers/google/models/gd1yq'}, {href: 'manufacturers/lg/models/e960'}]
+				});
 				expect(nock.pendingMocks.length).to.equal(0);
 				done();
 			});
