@@ -94,24 +94,37 @@ async function generateScoreScale(rankList, phoneScoreList) {
 	for (const rank of rankList) {
 		scales[rank] = {};
 		const mapValues = {};
-		if (rankRules[rank].type === 'number') {
-			mapValues.values = [];
-		} else if (rankRules[rank].type === 'version') {
-			mapValues.major = [];
-			mapValues.minor = [];
-			mapValues.patch = [];
+		switch (rankRules[rank].type) {
+			case 'number':
+				mapValues.values = [];
+				break;
+			case 'version':
+				mapValues.major = [];
+				mapValues.minor = [];
+				mapValues.patch = [];
+				break;
+			default:
+				// Skip any types that don't need counting
+				continue;
 		}
 
 		for (const phoneScore of phoneScoreList) {
 			const value = lodash.get(phoneScore.phone, rank);
+
 			if (value) {
-				if (rankRules[rank].type === 'number') {
-					mapValues.values.push(value);
-				} else if (rankRules[rank].type === 'version') {
-					const version = getVersion(value);
-					mapValues.major.push(version.major);
-					mapValues.minor.push(version.minor);
-					mapValues.patch.push(version.patch);
+				let version;
+				switch (rankRules[rank].type) {
+					case 'number':
+						mapValues.values.push(value);
+						break;
+					case 'version':
+						version = getVersion(value);
+						mapValues.major.push(version.major);
+						mapValues.minor.push(version.minor);
+						mapValues.patch.push(version.patch);
+						break;
+					default:
+					// Should never get here
 				}
 			}
 		}
@@ -126,21 +139,25 @@ async function generateScoreScale(rankList, phoneScoreList) {
 	let index = rankList.length;
 	for (const rank of rankList) {
 		const maxPoints = 2 ** index;
-		if (rankRules[rank].type === 'number') {
-			scales[rank].multiplier = maxPoints / (scales[rank].values.max - scales[rank].values.min);
-		} else if (rankRules[rank].type === 'version') {
-			let semantic = 'major';
-			for (const v of ['major', 'minor', 'patch']) {
-				if (scales[rank][v].max !== scales[rank][v].min) {
-					semantic = v;
-					break;
+		let i;
+		let semantic = 'major';
+		switch (rankRules[rank].type) {
+			case 'number':
+				scales[rank].multiplier = maxPoints / (scales[rank].values.max - scales[rank].values.min);
+				break;
+			case 'version':
+				for (i of ['major', 'minor', 'patch']) {
+					if (scales[rank][i].max !== scales[rank][i].min) {
+						semantic = i;
+						break;
+					}
 				}
-			}
 
-			scales[rank].semantic = semantic;
-			scales[rank].multiplier = maxPoints / (scales[rank][semantic].max - scales[rank][semantic].min);
-		} else {
-			scales[rank].multiplier = maxPoints;
+				scales[rank].semantic = semantic;
+				scales[rank].multiplier = maxPoints / (scales[rank][semantic].max - scales[rank][semantic].min);
+				break;
+			default:
+				scales[rank].multiplier = maxPoints;
 		}
 
 		index--;
@@ -161,20 +178,36 @@ async function score(rankScale, phoneScore) {
 	for (const rank in rankScale) {
 		const value = lodash.get(phoneScore.phone, rank);
 		let score = 0;
-		if (rankRules[rank].type === 'number') {
-			if (rankRules[rank].scoreMethod === 'PREFER_LOW') {
-				score = (rankScale[rank].values.max - value) * rankScale[rank].multiplier;
-			} else if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
-				score = (value - rankScale[rank].values.min) * rankScale[rank].multiplier;
-			}
-		} else if (rankRules[rank].type === 'boolean' && value && rankRules[rank].scoreMethod === 'PREFER_TRUE') {
-			score = rankScale[rank].multiplier;
-		} else if (rankRules[rank].type === 'version') {
-			const version = getVersion(value);
-			const semantic = rankScale[rank].semantic;
-			if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
-				score = (version[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;
-			}
+		let version;
+		let semantic;
+		switch (rankRules[rank].type) {
+			case 'number':
+				if (rankRules[rank].scoreMethod === 'PREFER_LOW') {
+					score = (rankScale[rank].values.max - value) * rankScale[rank].multiplier;
+				} else if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
+					score = (value - rankScale[rank].values.min) * rankScale[rank].multiplier;
+				}
+
+				break;
+
+			case 'boolean':
+				if (value && rankRules[rank].scoreMethod === 'PREFER_TRUE') {
+					score = rankScale[rank].multiplier;
+				}
+
+				break;
+
+			case 'version':
+				version = getVersion(value);
+				semantic = rankScale[rank].semantic;
+				if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
+					score = (version[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;
+				}
+
+				break;
+
+			default:
+				console.error('Invalid type configured: rank=', rank, 'type=', rankRules[rank].type);
 		}
 
 		phoneScore.scoreBreakdown[rank] = score;
