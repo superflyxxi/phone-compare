@@ -6,7 +6,9 @@
 			"releaseRules": [
 				{"type":"fix", "release":"patch"},
 				{"type":"feat", "release":"minor"},
-				{"scope":"ci", "release":false}
+				{"type":"major", "release":"major"},
+				{"scope":"ci", "release":false},
+				{"scope":"doc", "release":false}
 			],
 			"parserOpts": {
 				"noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
