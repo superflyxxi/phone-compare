@@ -410,7 +410,9 @@ describe('Phone-compare positive tests', () => {
 					'year',
 					'nfc',
 					'sensors.fingerprint',
-					'charging.wireless'
+					'charging.wireless',
+					'android.official',
+					'android.max'
 				]
 			})
 			.end((error, res) => {
