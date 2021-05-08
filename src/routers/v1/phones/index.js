@@ -94,6 +94,14 @@ const asyncHandler = require('express-async-handler');
  *                   type: number
  *                   description: The price in EUR.
  *                   example: 499.99
+ *             charging:
+ *               type: object
+ *               description: Various charging information.
+ *               properties:
+ *                 wireless:
+ *                 type: boolean
+ *                 description: Wether it supports any type of wireless charging.
+ *                 example: false
  */
 
 /**

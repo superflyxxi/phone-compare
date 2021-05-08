@@ -33,6 +33,10 @@ exports.rankRules = {
 	lineageos: {
 		type: 'version',
 		scoreMethod: 'PREFER_HIGH'
+	},
+	'charging.wireless': {
+		type: 'boolean',
+		scoreMethod: 'PREFER_TRUE'
 	}
 };
 

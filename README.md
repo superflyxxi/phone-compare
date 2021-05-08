@@ -2,7 +2,7 @@
 Tools to compare phones
 
 ## Running
-docker run -p <yourport>:3000 <image>
+`docker run -p <yourport>:3000 <image>`
 
 ### Environment Variables
 

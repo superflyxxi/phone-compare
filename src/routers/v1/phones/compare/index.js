@@ -41,6 +41,7 @@ const asyncHandler = require('express-async-handler');
  *               - price.eur
  *               - ram
  *               - year
+ *               - charging.wireless
  *       required:
  *         - ranking
  *

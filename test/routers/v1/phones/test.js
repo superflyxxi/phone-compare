@@ -72,7 +72,8 @@ describe('Phones positive tests', () => {
 						usd: 650,
 						eur: 499.99
 					},
-					year: 2020
+					year: 2020,
+					charging: {wireless: true}
 				});
 				expect(nock.pendingMocks.length).to.equal(0);
 				done();
