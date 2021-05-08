@@ -309,6 +309,10 @@ describe('Phone-compare positive tests', () => {
 			.request(app)
 			.post('/v1/phones/compare')
 			.send({
+				phones: [
+					{manufacturer: 'Google', model: 'G020I'},
+					{manufacturer: 'LG', model: 'E960'}
+				],
 				ranking: ['lineageos']
 			})
 			.end((error, res) => {
@@ -324,13 +328,6 @@ describe('Phone-compare positive tests', () => {
 					results: [
 						{
 							href: '/v1/phones/manufacturers/Google/models/G020I',
-							score: 2,
-							scoreBreakdown: {
-								lineageos: 2
-							}
-						},
-						{
-							href: '/v1/phones/manufacturers/Google/models/GD1YQ',
 							score: 2,
 							scoreBreakdown: {
 								lineageos: 2
