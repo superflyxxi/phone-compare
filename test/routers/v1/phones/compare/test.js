@@ -26,7 +26,8 @@ describe('Phone-compare positive tests', () => {
 			nfc: true,
 			sensors: {fingerprint: true},
 			price: {usd: 649.99, eur: 649.99},
-			year: 2020
+			year: 2020,
+			charging: {wireless: true}
 		};
 		const googlePixel4 = {
 			manufacturer: 'Google',
@@ -43,7 +44,8 @@ describe('Phone-compare positive tests', () => {
 			nfc: true,
 			sensors: {fingerprint: true},
 			price: {usd: 399.99, eur: 399.99},
-			year: 2019
+			year: 2019,
+			charging: {wireless: true}
 		};
 		const lgNexus4 = {
 			manufacturer: 'LG',
@@ -60,7 +62,8 @@ describe('Phone-compare positive tests', () => {
 			nfc: true,
 			sensors: {fingerprint: false},
 			price: {usd: 49.99, eur: 49.99},
-			year: 2012
+			year: 2012,
+			charging: {wireless: true}
 		};
 
 		// Pixel 5
