@@ -29,6 +29,10 @@ exports.rankRules = {
 	year: {
 		type: 'number',
 		scoreMethod: 'PREFER_HIGH'
+	},
+	lineageos: {
+		type: 'version',
+		scoreMethod: 'PREFER_HIGH'
 	}
 };
 

@@ -16,7 +16,7 @@ describe('Phone-compare positive tests', () => {
 			model: 'GD1YQ',
 			name: 'Google Pixel 5',
 			gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
-			lineageos: '18.1',
+			lineageos: '18.2',
 			dimensions: {
 				height: 144.7,
 				width: 70.4,
@@ -300,6 +300,90 @@ describe('Phone-compare positive tests', () => {
 			.end((error, res) => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost(allPhoneHeightExpected);
+				done();
+			});
+	});
+
+	it('Rank on a major version (lineageos)', (done) => {
+		chai
+			.request(app)
+			.post('/v1/phones/compare')
+			.send({
+				phones: [
+					{manufacturer: 'Google', model: 'G020I'},
+					{manufacturer: 'LG', model: 'E960'}
+				],
+				ranking: ['lineageos']
+			})
+			.end((error, res) => {
+				expect(res).to.have.status(200);
+				expect(res.body).to.deep.include.almost({
+					best: {
+						href: '/v1/phones/manufacturers/Google/models/G020I',
+						score: 2,
+						scoreBreakdown: {
+							lineageos: 2
+						}
+					},
+					results: [
+						{
+							href: '/v1/phones/manufacturers/Google/models/G020I',
+							score: 2,
+							scoreBreakdown: {
+								lineageos: 2
+							}
+						},
+						{
+							href: '/v1/phones/manufacturers/LG/models/E960',
+							score: 0,
+							scoreBreakdown: {
+								lineageos: 0
+							}
+						}
+					]
+				});
+				done();
+			});
+	});
+
+	it('Rank on a minor version (lineageos)', (done) => {
+		chai
+			.request(app)
+			.post('/v1/phones/compare')
+			.send({
+				phones: [
+					{manufacturer: 'Google', model: 'GD1YQ'},
+					{manufacturer: 'Google', model: 'G020I'}
+				],
+				ranking: ['lineageos']
+			})
+			.end((error, res) => {
+				expect(res).to.have.status(200);
+				expect(res.body).to.deep.include.almost({
+					best: {
+						href: '/v1/phones/manufacturers/Google/models/GD1YQ',
+						score: 2,
+						scoreBreakdown: {
+							lineageos: 2
+						}
+					},
+					results: [
+						{
+							href: '/v1/phones/manufacturers/Google/models/GD1YQ',
+							score: 2,
+							scoreBreakdown: {
+								lineageos: 2
+							}
+						},
+						{
+							href: '/v1/phones/manufacturers/Google/models/G020I',
+							score: 0,
+							scoreBreakdown: {
+								lineageos: 0
+							}
+						}
+					]
+				});
 				done();
 			});
 	});

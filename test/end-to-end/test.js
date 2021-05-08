@@ -90,5 +90,5 @@ describe('End-to-end tests', () => {
 				});
 				done();
 			});
-	});
-}).timeout(30000);
+	}).timeout(30000);
+});
