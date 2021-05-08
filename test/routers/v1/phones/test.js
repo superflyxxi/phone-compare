@@ -11,6 +11,17 @@ chai.use(chaiHttp);
 describe('Phones positive tests', () => {
 	afterEach(() => nock.cleanAll());
 	after(helper.cleanupDataDir);
+	before(() => {
+		chai
+			.request(app)
+			.put('/v1/phones/manufacturers/LG/models/E960')
+			.send({
+				name: 'LG Nexus 4',
+				gsmArenaUrl: 'http://www.gsmarena.test/lg_nexus_4_e960-5048.php',
+				lineageos: '16.1'
+			})
+			.end();
+	});
 
 	it('Create pixel5 phone', (done) => {
 		chai
@@ -42,7 +53,47 @@ describe('Phones positive tests', () => {
 			});
 	});
 
-	it('Ensure it gets a valid phone', (done) => {
+	it.only('Ensure it gets a valid, old phone: Nexus 4', (done) => {
+		nock('http://www.gsmarena.test')
+			.get('/lg_nexus_4_e960-5048.php')
+			.replyWithFile(200, 'test/resources/lg_nexus_4_e960-5048.html');
+		chai
+			.request(app)
+			.get('/v1/phones/manufacturers/LG/models/E960')
+			.end((error, res) => {
+				console.log('res.body', res.body);
+				expect(nock.pendingMocks.length).to.equal(0);
+				expect(res).to.have.status(200);
+				expect(res.body).to.deep.include({
+					manufacturer: 'LG',
+					model: 'E960',
+					name: 'LG Nexus 4',
+					gsmArenaUrl: 'http://www.gsmarena.test/lg_nexus_4_e960-5048.php',
+					lineageos: '16.1',
+					dimensions: {
+						height: 133.9,
+						width: 68.7,
+						depth: 9.1
+					},
+					ram: 2,
+					nfc: true,
+					sensors: {
+						fingerprint: false
+					},
+					price: {
+						usd: 0,
+						eur: 0
+					},
+					year: 2012,
+					charging: {wireless: true},
+					android: {official: '5.1', lineageos: '9', max: '9'}
+				});
+				expect(nock.pendingMocks.length).to.equal(0);
+				done();
+			});
+	});
+
+	it('Ensure it gets a valid, new phone: Pixel 5', (done) => {
 		nock('http://www.gsmarena.test')
 			.get('/google_pixel_5-10386.php')
 			.replyWithFile(200, 'test/resources/google_pixel_5-10386.html');
@@ -103,7 +154,7 @@ describe('Phones positive tests', () => {
 			.send()
 			.end((error, res) => {
 				expect(res).to.have.status(200);
-				expect({test: res.body}).to.deep.include({test: [{href: 'manufacturers/google/models/gd1yq'}]});
+				expect({test: res.body}).to.deep.include({test: [{href: 'manufacturers/google/models/gd1yq'}, {href: 'manufacturers/lg/models/e960'}]});
 				expect(nock.pendingMocks.length).to.equal(0);
 				done();
 			});
