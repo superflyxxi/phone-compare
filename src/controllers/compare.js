@@ -3,6 +3,7 @@ const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + serve
 const validator = require('../helpers/validation');
 const axios = require('axios');
 const lodash = require('lodash');
+const versions = require('../helpers/versions');
 
 exports.comparePhones = async function (req, res) {
 	validate(req.body);
@@ -73,15 +74,6 @@ async function getPhoneScoreList(phones) {
 	return Promise.all(promises);
 }
 
-function getVersion(string) {
-	const splt = string.split('.');
-	return {
-		major: splt[0] ? Number.parseInt(splt[0], 10) : undefined,
-		minor: splt[1] ? Number.parseInt(splt[1], 10) : undefined,
-		patch: splt[2] ? Number.parseInt(splt[2], 10) : undefined
-	};
-}
-
 /**
  * Generates an object that describes how each ranked property should be scored on a scale.
  * For example, if the min height in the phone list is 130 and the max height is 150, then for
@@ -118,7 +110,7 @@ async function generateScoreScale(rankList, phoneScoreList) {
 						mapValues.values.push(value);
 						break;
 					case 'version':
-						version = getVersion(value);
+						version = versions.getVersionObject(value);
 						mapValues.major.push(version.major);
 						mapValues.minor.push(version.minor);
 						mapValues.patch.push(version.patch);
@@ -198,7 +190,7 @@ async function score(rankScale, phoneScore) {
 				break;
 
 			case 'version':
-				version = getVersion(value);
+				version = versions.getVersionObject(value);
 				semantic = rankScale[rank].semantic;
 				if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
 					score = (version[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;

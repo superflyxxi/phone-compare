@@ -2,6 +2,7 @@ const NotFoundError = require('../error-handler/not-found-error.js');
 const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
 const fs = require('fs/promises');
 const path = require('path');
+const versions = require('../helpers/versions');
 
 exports.getAllPhones = async function () {
 	const result = [];
@@ -43,6 +44,23 @@ exports.getPhone = async function (manufacturer, model) {
 	}
 
 	Object.assign(phone, await require('../helpers/gsm-arena.js').getGsmArenaData(phone.gsmArenaUrl));
+	const lineageVersion = versions.getAndroidVersion(phone.lineageos);
+	phone.android.lineageos = versions.getVersionString(lineageVersion);
+	const androidVersion = versions.getVersionObject(phone.android.official);
+	const maxVersion = {};
+	if (lineageVersion.major === androidVersion.major) {
+		maxVersion.major = androidVersion.major;
+		if (lineageVersion.minor === androidVersion.minor) {
+			maxVersion.minor = androidVersion.minor;
+			maxVersion.patch = Math.max(androidVersion.patch, lineageVersion.patch);
+		} else {
+			maxVersion.minor = Math.max(androidVersion.minor, lineageVersion.minor);
+		}
+	} else {
+		maxVersion.major = Math.max(androidVersion.major, lineageVersion.major);
+	}
+
+	phone.android.max = versions.getVersionString(maxVersion);
 	return phone;
 };
 

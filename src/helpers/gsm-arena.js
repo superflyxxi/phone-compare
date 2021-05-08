@@ -32,6 +32,11 @@ exports.getGsmArenaData = async function (gsmUrl) {
 		data.year = Number.parseInt(releasedHtml.match(/\d+/g)[0], 10);
 	}
 
+	const android = dom.window.document.querySelector('[data-spec="os"]').innerHTML.match(/\d+(\.\d+)?/g);
+	data.android = {
+		official: android[android.length - 1]
+	};
+
 	// Misc things that aren't easy to find
 	const tdList = dom.window.document.querySelectorAll('td.nfo');
 	data.charging = {wireless: false};
