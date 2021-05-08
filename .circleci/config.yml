@@ -152,7 +152,7 @@ jobs:
       - run:
           name: Redeploy
           command: |
-            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/ci-deploy.sh"
+            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>"
 
 workflows:
   default:
