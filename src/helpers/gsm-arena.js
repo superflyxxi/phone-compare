@@ -13,10 +13,13 @@ exports.getGsmArenaData = async function (gsmUrl) {
 	};
 	const ram = dom.window.document.querySelector('[data-spec="internalmemory"]').innerHTML.match(/\d+GB RAM/g);
 	data.ram = Number.parseFloat(ram[0].match(/\d/g)[0]);
-	data.nfc = dom.window.document.querySelector('[data-spec="nfc"]').innerHTML.match(/yes/i) !== undefined;
+
+	const nfcMatch = dom.window.document.querySelector('[data-spec="nfc"]').innerHTML.match(/yes/i);
+	data.nfc = nfcMatch !== undefined && nfcMatch !== null;
+
+	const fingerprintMatch = dom.window.document.querySelector('[data-spec="sensors"]').innerHTML.match(/fingerprint/i);
 	data.sensors = {
-		fingerprint:
-			dom.window.document.querySelector('[data-spec="sensors"]').innerHTML.match(/fingerprint/i) !== undefined
+		fingerprint: fingerprintMatch !== undefined && fingerprintMatch !== null
 	};
 
 	const priceHtml = dom.window.document.querySelector('[data-spec="price"]')?.querySelector('a')?.innerHTML;
