@@ -12,7 +12,8 @@
 			{
 				"replacements":{
 					"res": false,
-					"req": false
+					"req": false,
+					"i": false
 				}
 			}
 		],

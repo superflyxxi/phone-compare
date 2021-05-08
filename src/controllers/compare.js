@@ -136,19 +136,19 @@ async function generateScoreScale(rankList, phoneScoreList) {
 		}
 	}
 
-	let index = rankList.length;
+	let i = rankList.length;
 	for (const rank of rankList) {
-		const maxPoints = 2 ** index;
-		let i;
+		const maxPoints = 2 ** i;
+		let temporarySemantic;
 		let semantic = 'major';
 		switch (rankRules[rank].type) {
 			case 'number':
 				scales[rank].multiplier = maxPoints / (scales[rank].values.max - scales[rank].values.min);
 				break;
 			case 'version':
-				for (i of ['major', 'minor', 'patch']) {
-					if (scales[rank][i].max !== scales[rank][i].min) {
-						semantic = i;
+				for (temporarySemantic of ['major', 'minor', 'patch']) {
+					if (scales[rank][temporarySemantic].max !== scales[rank][temporarySemantic].min) {
+						semantic = temporarySemantic;
 						break;
 					}
 				}
@@ -160,7 +160,7 @@ async function generateScoreScale(rankList, phoneScoreList) {
 				scales[rank].multiplier = maxPoints;
 		}
 
-		index--;
+		i--;
 	}
 
 	return scales;
