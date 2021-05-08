@@ -406,7 +406,8 @@ describe('Phone-compare positive tests', () => {
 					'ram',
 					'year',
 					'nfc',
-					'sensors.fingerprint'
+					'sensors.fingerprint',
+					'charging.wireless'
 				]
 			})
 			.end((error, res) => {
