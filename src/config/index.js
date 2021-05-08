@@ -8,6 +8,11 @@ const priceRules = {
 	scoreMethod: 'PREFER_LOW'
 };
 
+const versionRules = {
+	type: 'version',
+	scoreMethod: 'PREFER_HIGH'
+};
+
 exports.rankRules = {
 	'dimensions.height': dimensionRules,
 	'dimensions.width': dimensionRules,
@@ -30,14 +35,13 @@ exports.rankRules = {
 		type: 'number',
 		scoreMethod: 'PREFER_HIGH'
 	},
-	lineageos: {
-		type: 'version',
-		scoreMethod: 'PREFER_HIGH'
-	},
+	lineageos: versionRules,
 	'charging.wireless': {
 		type: 'boolean',
 		scoreMethod: 'PREFER_TRUE'
-	}
+	},
+	'android.official': versionRules,
+	'android.max': versionRules,
 };
 
 exports.server = {

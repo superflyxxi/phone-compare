@@ -42,6 +42,8 @@ const asyncHandler = require('express-async-handler');
  *               - ram
  *               - year
  *               - charging.wireless
+ *               - android.official
+ *               - android.max
  *       required:
  *         - ranking
  *
