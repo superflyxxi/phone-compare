@@ -104,14 +104,15 @@ async function generateScoreScale(rankList, phoneScoreList) {
 
 		for (const phoneScore of phoneScoreList) {
 			const value = lodash.get(phoneScore.phone, rank);
-
-			if (rankRules[rank].type === 'number') {
-				mapValues.values.push(value);
-			} else if (rankRules[rank].type === 'version') {
-				const version = getVersion(value);
-				mapValues.major.push(version.major);
-				mapValues.minor.push(version.minor);
-				mapValues.patch.push(version.patch);
+			if (value) {
+				if (rankRules[rank].type === 'number') {
+					mapValues.values.push(value);
+				} else if (rankRules[rank].type === 'version') {
+					const version = getVersion(value);
+					mapValues.major.push(version.major);
+					mapValues.minor.push(version.minor);
+					mapValues.patch.push(version.patch);
+				}
 			}
 		}
 
@@ -128,15 +129,16 @@ async function generateScoreScale(rankList, phoneScoreList) {
 		if (rankRules[rank].type === 'number') {
 			scales[rank].multiplier = maxPoints / (scales[rank].values.max - scales[rank].values.min);
 		} else if (rankRules[rank].type === 'version') {
+			let semantic = 'major';
 			for (const v of ['major', 'minor', 'patch']) {
 				if (scales[rank][v].max !== scales[rank][v].min) {
-					scales[rank].semantic = v;
+					semantic = v;
 					break;
 				}
 			}
 
-			scales[rank].multiplier =
-				maxPoints / (scales[rank][scales[rank].semantic].max - scales[rank][scales[rank].semantic].min);
+			scales[rank].semantic = semantic;
+			scales[rank].multiplier = maxPoints / (scales[rank][semantic].max - scales[rank][semantic].min);
 		} else {
 			scales[rank].multiplier = maxPoints;
 		}
@@ -170,7 +172,6 @@ async function score(rankScale, phoneScore) {
 		} else if (rankRules[rank].type === 'version') {
 			const version = getVersion(value);
 			const semantic = rankScale[rank].semantic;
-			console.log('ver=', version, 'semantic=', semantic);
 			if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
 				score = (version[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;
 			}
