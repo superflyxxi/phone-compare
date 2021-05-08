@@ -41,7 +41,7 @@ exports.rankRules = {
 		scoreMethod: 'PREFER_TRUE'
 	},
 	'android.official': versionRules,
-	'android.max': versionRules,
+	'android.max': versionRules
 };
 
 exports.server = {

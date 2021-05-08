@@ -74,7 +74,7 @@ describe('Phones positive tests', () => {
 					},
 					year: 2020,
 					charging: {wireless: true},
-					android: {official:'11', lineageos:'11', max:'11'}
+					android: {official: '11', lineageos: '11', max: '11'}
 				});
 				expect(nock.pendingMocks.length).to.equal(0);
 				done();
