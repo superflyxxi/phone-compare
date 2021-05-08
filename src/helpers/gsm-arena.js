@@ -18,10 +18,7 @@ exports.getGsmArenaData = async function (gsmUrl) {
 		fingerprint:
 			dom.window.document.querySelector('[data-spec="sensors"]').innerHTML.match(/fingerprint/i) !== undefined
 	};
-	/* Data.charging = {
-		usbSpeed: undefined,
-		wirelessSpeed: undefined
-	}; */
+
 	const priceHtml = dom.window.document.querySelector('[data-spec="price"]')?.querySelector('a')?.innerHTML;
 	if (priceHtml) {
 		data.price = {
@@ -33,6 +30,21 @@ exports.getGsmArenaData = async function (gsmUrl) {
 	const releasedHtml = dom.window.document.querySelector('[data-spec="released-hl"]')?.innerHTML;
 	if (releasedHtml) {
 		data.year = Number.parseInt(releasedHtml.match(/\d+/g)[0], 10);
+	}
+
+	// Misc things that aren't easy to find
+	const tdList = dom.window.document.querySelectorAll('td.nfo');
+	data.charging = {wireless: false};
+	for (const td of tdList) {
+		let considerWirelessCharging = true;
+		if (considerWirelessCharging && /wireless charg/i.test(td.innerHTML)) {
+			data.charging.wireless = true;
+			considerWirelessCharging = false;
+		}
+
+		if (!considerWirelessCharging) {
+			break;
+		}
 	}
 
 	return data;
