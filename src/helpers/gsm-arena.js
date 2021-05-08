@@ -18,11 +18,7 @@ exports.getGsmArenaData = async function (gsmUrl) {
 		fingerprint:
 			dom.window.document.querySelector('[data-spec="sensors"]').innerHTML.match(/fingerprint/i) !== undefined
 	};
-	//	Dom.window.document.querySelector('td[class="nfo"]').innerHTML.match(/wireless charg/i) !== undefined;
-	/* Data.charging = {
-		usbSpeed: undefined,
-		wirelessSpeed: undefined
-	}; */
+
 	const priceHtml = dom.window.document.querySelector('[data-spec="price"]')?.querySelector('a')?.innerHTML;
 	if (priceHtml) {
 		data.price = {
