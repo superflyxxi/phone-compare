@@ -1,4 +1,4 @@
-const {v4: uuidv4} = require('uuid');
+import {v4 as uuidv4} from 'uuid';
 /**
  * @openapi
  * components:
@@ -29,7 +29,7 @@ const {v4: uuidv4} = require('uuid');
  *           description: A unique identifier of this instance of the error.
  *           example: 2c046e7d-8d71-4f4e-9d79-aef50777a9b3
  */
-exports.errorHandler = function (error, req, res, next) {
+export default function errrorHandler(error, req, res, next) {
 	console.log('error encountered', error);
 	if (res.headersSent) {
 		return next(error);
@@ -44,4 +44,4 @@ exports.errorHandler = function (error, req, res, next) {
 		stack: process.env.NODE_ENV === 'production' ? undefined : error.stack
 	};
 	res.status(message.status).send(message);
-};
+}
