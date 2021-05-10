@@ -1,11 +1,11 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import app from '../src/index.js';
+import app from '../../src/index.js';
 const {expect} = chai;
 
 chai.use(chaiHttp);
 
-describe('Basic test', () => {
+describe('Root test', () => {
 	it('Should get 404', (done) => {
 		chai
 			.request(app)
