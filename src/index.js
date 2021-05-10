@@ -25,7 +25,7 @@ const openapispec = swaggerJsdoc({
 			version: server.version
 		}
 	},
-	apis: ['./routers/**/*.js', './error-handler/*.js']
+	apis: ['./src/routers/**/*.js', './src/error-handler/*.js']
 });
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapispec));
 
