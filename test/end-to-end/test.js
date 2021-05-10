@@ -1,9 +1,9 @@
 import chai from 'chai';
-const {expect} = chai;
 import chaiHttp from 'chai-http';
 import chaiAlmost from 'chai-almost';
 import app from '../../src/index.js';
 import cleanupDataDir from '../helpers/index.js';
+const {expect} = chai;
 
 chai.use(chaiHttp);
 chai.use(chaiAlmost(0.1));
