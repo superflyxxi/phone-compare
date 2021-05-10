@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Phone comparision RESTful tools",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "test": "DATA_DIR=$(mktemp -d) nyc mocha ${MOCHA_ARGS}",
@@ -39,6 +40,6 @@
     "mocha-junit-reporter": "^2.0.0",
     "nock": "^13.0.11",
     "nyc": "^15.1.0",
-    "xo": "^0.39.1"
+    "xo": "^0.40.0"
   }
 }

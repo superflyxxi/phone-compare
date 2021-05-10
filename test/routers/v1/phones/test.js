@@ -1,16 +1,16 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const app = require('../../../../src/index.js');
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import nock from 'nock';
+import app from '../../../../src/index.js';
+import cleanupDataDir from '../../../helpers/index.js';
 const {expect} = chai;
-const nock = require('nock');
-const helper = require('../../../helpers');
 
 let pixel5Etag;
 chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
 	afterEach(() => nock.cleanAll());
-	after(helper.cleanupDataDir);
+	after(cleanupDataDir);
 	before(() => {
 		chai
 			.request(app)

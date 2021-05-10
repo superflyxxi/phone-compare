@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+
 const dimensionRules = {
 	type: 'number',
 	scoreMethod: 'PREFER_LOW'
@@ -13,7 +15,7 @@ const versionRules = {
 	scoreMethod: 'PREFER_HIGH'
 };
 
-exports.rankRules = {
+const rankRules = {
 	'dimensions.height': dimensionRules,
 	'dimensions.width': dimensionRules,
 	'dimensions.depth': dimensionRules,
@@ -44,11 +46,13 @@ exports.rankRules = {
 	'android.max': versionRules
 };
 
-exports.server = {
+const server = {
 	port: 3000,
 	version: getVersion()
 };
 
 function getVersion() {
-	return require('fs').readFileSync('./version.txt', {encoding: 'utf-8'}).trim();
+	return fs.readFileSync('./version.txt', {encoding: 'utf-8'}).trim();
 }
+
+export {rankRules, server};

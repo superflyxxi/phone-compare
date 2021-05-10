@@ -1,18 +1,21 @@
-const NotFoundError = require('../error-handler/not-found-error.js');
-const rootDirectory = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
-const fs = require('fs/promises');
-const path = require('path');
-const versions = require('../helpers/versions');
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import NotFoundError from '../error-handler/not-found-error.js';
+import * as versions from '../helpers/versions.js';
+import getGsmArenaData from '../helpers/gsm-arena.js';
+import validate from '../helpers/validation.js';
 
-exports.getAllPhones = async function () {
+const DATA_DIRECTORY = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
+
+async function getAllPhones() {
 	const result = [];
-	for (const filename of await fs.readdir(rootDirectory)) {
+	for (const filename of await fs.readdir(DATA_DIRECTORY)) {
 		const splt = filename.split('.');
 		result.push({href: 'manufacturers/' + splt[0] + '/models/' + splt[1]});
 	}
 
 	return result;
-};
+}
 
 const validationConstraints = {
 	manufacturer: {
@@ -33,17 +36,17 @@ const validationConstraints = {
 	}
 };
 
-exports.getPhone = async function (manufacturer, model) {
+async function getPhone(manufacturer, model) {
 	let phone;
 	try {
 		phone = JSON.parse(
-			await fs.readFile(path.join(rootDirectory, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'))
+			await fs.readFile(path.join(DATA_DIRECTORY, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'))
 		);
 	} catch (error) {
 		throw new NotFoundError(error.message);
 	}
 
-	Object.assign(phone, await require('../helpers/gsm-arena.js').getGsmArenaData(phone.gsmArenaUrl));
+	Object.assign(phone, await getGsmArenaData(phone.gsmArenaUrl));
 	const lineageVersion = versions.getAndroidVersion(phone.lineageos);
 	phone.android.lineageos = versions.getVersionString(lineageVersion);
 	const androidVersion = versions.getVersionObject(phone.android.official);
@@ -62,14 +65,16 @@ exports.getPhone = async function (manufacturer, model) {
 
 	phone.android.max = versions.getVersionString(maxVersion);
 	return phone;
-};
+}
 
-exports.savePhone = async function (phone) {
-	require('../helpers/validation').validate(phone, validationConstraints);
+async function savePhone(phone) {
+	validate(phone, validationConstraints);
 	const manufacturer = phone.manufacturer;
 	const model = phone.model;
 	await fs.writeFile(
-		path.join(rootDirectory, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'),
+		path.join(DATA_DIRECTORY, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'),
 		JSON.stringify(phone)
 	);
-};
+}
+
+export {getPhone, getAllPhones, savePhone};

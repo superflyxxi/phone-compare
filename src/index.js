@@ -1,40 +1,32 @@
-const swaggerUi = require('swagger-ui-express');
-const path = require('path');
-const RouteNotFoundError = require('./error-handler/route-not-found-error.js');
-const express = require('express');
-const app = express();
-const {server} = require('./config');
+import express from 'express';
+import morgan from 'morgan';
+import RouteNotFoundError from './error-handler/route-not-found-error.js';
+import {server} from './config/index.js';
+import errorHandler from './error-handler/index.js';
 
+import phoneRouter from './routers/v1/phones/index.js';
+import compareRouter from './routers/v1/phones/compare/index.js';
+import apiDocsRouter from './routers/api-docs/index.js';
+
+const app = express();
 app.use(express.json());
 app.disable('x-powered-by');
 
 // APIs
-app.use('/v1/phones', require('./routers/v1/phones'));
-app.use('/v1/phones/compare', require('./routers/v1/phones/compare'));
-
-// Standard Stuff
-const openapispec = require('swagger-jsdoc')({
-	swaggerDefinition: {
-		openapi: '3.0.0',
-		info: {
-			title: 'Phone Compare',
-			version: server.version
-		}
-	},
-	apis: [path.join(__dirname, '/routers/**/*.js'), path.join(__dirname, '/error-handler/*.js')]
-});
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapispec));
+app.use('/v1/phones', phoneRouter);
+app.use('/v1/phones/compare', compareRouter);
+app.use('/api-docs', apiDocsRouter);
 
 // eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
 	throw new RouteNotFoundError(req);
 });
 
-app.use(require('morgan')('short'));
-app.use(require('./error-handler/index.js').errorHandler);
+app.use(morgan('short'));
+app.use(errorHandler);
 
 app.listen(server.port, () => {
 	console.log('Started version', server.version, 'listening on', server.port);
 });
 
-module.exports = app;
+export default app;

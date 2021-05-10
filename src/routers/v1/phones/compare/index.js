@@ -1,6 +1,7 @@
-const router = require('express').Router();
-const controller = require('../../../../controllers/compare');
-const asyncHandler = require('express-async-handler');
+import express from 'express';
+import asyncHandler from 'express-async-handler';
+import comparePhones from '../../../../controllers/compare.js';
+const router = express.Router();
 
 /**
  * @openapi
@@ -125,6 +126,6 @@ const asyncHandler = require('express-async-handler');
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/', asyncHandler(controller.comparePhones));
+router.post('/', asyncHandler(comparePhones));
 
-module.exports = router;
+export default router;

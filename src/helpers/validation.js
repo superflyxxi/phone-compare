@@ -1,9 +1,9 @@
-const validate = require('validate.js');
-const ValidationError = require('../error-handler/validation-error');
+import validatejs from 'validate.js';
+import ValidationError from '../error-handler/validation-error.js';
 
-exports.validate = function (object, constraints) {
-	const result = validate(object, constraints);
+export default function validate(object, constraints) {
+	const result = validatejs(object, constraints);
 	if (result) {
 		throw new ValidationError(result);
 	}
-};
+}

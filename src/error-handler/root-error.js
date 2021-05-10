@@ -1,4 +1,4 @@
-module.exports = class RootError extends Error {
+export default class RootError extends Error {
 	constructor(type, title, status, detail) {
 		super(detail);
 		this.name = 'RootError';
@@ -7,4 +7,4 @@ module.exports = class RootError extends Error {
 		this.status = status;
 		this.detail = detail;
 	}
-};
+}

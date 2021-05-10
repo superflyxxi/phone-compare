@@ -1,6 +1,7 @@
-const router = require('express').Router();
-const controller = require('../../../controllers/phones');
-const asyncHandler = require('express-async-handler');
+import express from 'express';
+import asyncHandler from 'express-async-handler';
+import * as controller from '../../../controllers/phones.js';
+const router = express.Router();
 
 /**
  * @openapi
@@ -234,4 +235,4 @@ router.put('/manufacturers/:manufacturer/models/:model', asyncHandler(controller
  */
 router.get('/', asyncHandler(controller.getAllPhones));
 
-module.exports = router;
+export default router;

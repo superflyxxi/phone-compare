@@ -1,11 +1,12 @@
-const {server, rankRules} = require('../config');
-const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
-const validator = require('../helpers/validation');
-const axios = require('axios');
-const lodash = require('lodash');
-const versions = require('../helpers/versions');
+import axios from 'axios';
+import lodash from 'lodash';
+import {server, rankRules} from '../config/index.js';
+import validation from '../helpers/validation.js';
+import * as versions from '../helpers/versions.js';
 
-exports.comparePhones = async function (req, res) {
+const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
+
+export default async function comparePhones(req, res) {
 	validate(req.body);
 
 	const ranking = req.body.ranking;
@@ -16,7 +17,7 @@ exports.comparePhones = async function (req, res) {
 		best: phoneScoreList[0],
 		results: phoneScoreList
 	});
-};
+}
 
 async function scoreAndSortPhones(phoneScoreList, rankScale) {
 	const promises = [];
@@ -32,13 +33,13 @@ async function scoreAndSortPhones(phoneScoreList, rankScale) {
 }
 
 function validate(body) {
-	validator.validate(body, {
+	validation(body, {
 		phones: {presence: false, type: 'array'},
 		ranking: {presence: true, type: 'array'}
 	});
 	if (body.phones) {
 		for (const item of body.phones) {
-			validator.validate(item, {
+			validation(item, {
 				manufacturer: {presence: true, type: 'string'},
 				model: {presence: true, type: 'string'}
 			});
@@ -46,7 +47,7 @@ function validate(body) {
 	}
 
 	for (const item of body.ranking) {
-		validator.validate(
+		validation(
 			{item},
 			{
 				item: {

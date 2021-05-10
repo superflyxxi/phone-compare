@@ -1,11 +1,12 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const app = require('../../../../../src/index.js');
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import chaiAlmost from 'chai-almost';
+import nock from 'nock';
+import app from '../../../../../src/index.js';
 const {expect} = chai;
-const nock = require('nock');
 
 chai.use(chaiHttp);
-chai.use(require('chai-almost')(0.1));
+chai.use(chaiAlmost(0.1));
 
 describe('Phone-compare positive tests', () => {
 	afterEach(() => nock.cleanAll());
