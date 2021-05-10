@@ -14,7 +14,8 @@
 					"res": false,
 					"req": false,
 					"i": false,
-					"dir": false
+					"dir": false,
+					"docs": false
 				}
 			}
 		],

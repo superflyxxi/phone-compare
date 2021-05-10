@@ -1,6 +1,4 @@
-import swaggerUi from 'swagger-ui-express';
 import express from 'express';
-import swaggerJsdoc from 'swagger-jsdoc';
 import morgan from 'morgan';
 import RouteNotFoundError from './error-handler/route-not-found-error.js';
 import {server} from './config/index.js';
