@@ -112,9 +112,9 @@ async function generateScoreScale(rankList, phoneScoreList) {
 						break;
 					case 'version':
 						version = versions.getVersionObject(value);
-						mapValues.major.push(version.major);
-						mapValues.minor.push(version.minor);
-						mapValues.patch.push(version.patch);
+						if (version?.major) mapValues.major.push(version.major);
+						if (version?.minor) mapValues.minor.push(version.minor);
+						if (version?.patch) mapValues.patch.push(version.patch);
 						break;
 					default:
 					// Should never get here
@@ -140,7 +140,7 @@ async function generateScoreScale(rankList, phoneScoreList) {
 				break;
 			case 'version':
 				for (temporarySemantic of ['major', 'minor', 'patch']) {
-					if (scales[rank][temporarySemantic].max !== scales[rank][temporarySemantic].min) {
+					if (scales[rank][temporarySemantic]?.max !== scales[rank][temporarySemantic]?.min) {
 						semantic = temporarySemantic;
 						break;
 					}
@@ -193,7 +193,7 @@ async function score(rankScale, phoneScore) {
 			case 'version':
 				version = versions.getVersionObject(value);
 				semantic = rankScale[rank].semantic;
-				if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
+				if (version[semantic] && rankRules[rank].scoreMethod === 'PREFER_HIGH') {
 					score = (version[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;
 				}
 
