@@ -1,12 +1,12 @@
-exports.getAndroidVersion = function (lineageos) {
+function getAndroidVersion(lineageos) {
 	const version = this.getVersionObject(lineageos);
 	version.major -= 7;
 	version.minor = undefined;
 	version.patch = undefined;
 	return version;
-};
+}
 
-exports.getVersionString = function (object) {
+function getVersionString(object) {
 	let string;
 	if (object.major) {
 		string = object.major.toString();
@@ -19,13 +19,15 @@ exports.getVersionString = function (object) {
 	}
 
 	return string;
-};
+}
 
-exports.getVersionObject = function (string) {
+function getVersionObject(string) {
 	const splt = string.split('.');
 	return {
 		major: splt[0] ? Number.parseInt(splt[0], 10) : undefined,
 		minor: splt[1] ? Number.parseInt(splt[1], 10) : undefined,
 		patch: splt[2] ? Number.parseInt(splt[2], 10) : undefined
 	};
-};
+}
+
+export {getVersionObject, getVersionString, getAndroidVersion};

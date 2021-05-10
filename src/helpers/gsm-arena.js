@@ -1,8 +1,9 @@
-exports.getGsmArenaData = async function (gsmUrl) {
+import axios from 'axios';
+import jsdom from 'jsdom';
+
+export default async function getGsmArenaData(gsmUrl) {
 	const data = {};
-	const got = require('axios');
-	const res = await got.get(gsmUrl);
-	const jsdom = require('jsdom');
+	const res = await axios.get(gsmUrl);
 	const dom = new jsdom.JSDOM(res.data);
 	let dimensions = dom.window.document.querySelector('[data-spec="dimensions"]').innerHTML;
 	dimensions = dimensions.match(/\d+\.*\d*/g);
@@ -56,4 +57,4 @@ exports.getGsmArenaData = async function (gsmUrl) {
 	}
 
 	return data;
-};
+}
