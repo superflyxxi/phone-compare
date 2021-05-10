@@ -1,11 +1,12 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const app = require('../../src/index.js');
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import chaiAlmost from 'chai-almost';
+import app from '../../src/index.js';
+import helper from '../helpers.js';
 const {expect} = chai;
-const helper = require('../helpers');
 
 chai.use(chaiHttp);
-chai.use(require('chai-almost')(0.1));
+chai.use(chaiAlmost(0.1));
 
 describe('End-to-end tests', () => {
 	after(helper.cleanupDataDir);
@@ -114,5 +115,5 @@ describe('End-to-end tests', () => {
 				});
 				done();
 			});
-	}).timeout(30000);
+	}).timeout(30_000);
 });

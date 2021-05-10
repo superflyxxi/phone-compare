@@ -13,7 +13,8 @@
 				"replacements":{
 					"res": false,
 					"req": false,
-					"i": false
+					"i": false,
+					"dir": false
 				}
 			}
 		],
