@@ -1,19 +1,23 @@
-const swaggerUi = require('swagger-ui-express');
-const path = require('path');
-const RouteNotFoundError = require('./error-handler/route-not-found-error.js');
-const express = require('express');
-const app = express();
-const {server} = require('./config');
+import swaggerUi from 'swagger-ui-express';
+import express from 'express';
+import swaggerJsdoc from 'swagger-jsdoc';
+import morgan from 'morgan';
+import RouteNotFoundError from './error-handler/route-not-found-error.js';
+import {server} from './config.js';
+import phoneRouter from './routers/v1/phones.js';
+import compareRouter from './routers/v1/phones/compare.js';
+import errorHandler from './error-handler.js';
 
+const app = express();
 app.use(express.json());
 app.disable('x-powered-by');
 
 // APIs
-app.use('/v1/phones', require('./routers/v1/phones'));
-app.use('/v1/phones/compare', require('./routers/v1/phones/compare'));
+app.use('/v1/phones', phoneRouter);
+app.use('/v1/phones/compare', compareRouter);
 
 // Standard Stuff
-const openapispec = require('swagger-jsdoc')({
+const openapispec = swaggerJsdoc({
 	swaggerDefinition: {
 		openapi: '3.0.0',
 		info: {
@@ -21,7 +25,7 @@ const openapispec = require('swagger-jsdoc')({
 			version: server.version
 		}
 	},
-	apis: [path.join(__dirname, '/routers/**/*.js'), path.join(__dirname, '/error-handler/*.js')]
+	apis: ['./routers/**/*.js', './error-handler/*.js']
 });
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapispec));
 
@@ -30,11 +34,11 @@ app.use((req, res, next) => {
 	throw new RouteNotFoundError(req);
 });
 
-app.use(require('morgan')('short'));
-app.use(require('./error-handler/index.js').errorHandler);
+app.use(morgan('short'));
+app.use(errorHandler.errorHandler);
 
 app.listen(server.port, () => {
 	console.log('Started version', server.version, 'listening on', server.port);
 });
 
-module.exports = app;
+export default app;
