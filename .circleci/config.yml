@@ -57,7 +57,7 @@ jobs:
                 name: Determine alternate tags
                 command: |
                   if [[ "${DOCKER_TAG}" != "main" ]]; then
-                    echo "export ALTERNATE_TAG=latest" >> ${BASH_ENV}
+                    echo "export ALTERNATE_TAG=main,latest" >> ${BASH_ENV}
                   fi
       - unless:
           condition:
