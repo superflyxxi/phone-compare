@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import nock from 'nock';
 import app from '../../../../src/index.js';
-import helper from '../../../helpers.js';
+import cleanupDataDir from '../../../helpers/index.js';
 const {expect} = chai;
 
 let pixel5Etag;
@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
 	afterEach(() => nock.cleanAll());
-	after(helper.cleanupDataDir);
+	after(cleanupDataDir);
 	before(() => {
 		chai
 			.request(app)

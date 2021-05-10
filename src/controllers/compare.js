@@ -1,8 +1,8 @@
 import axios from 'axios';
 import lodash from 'lodash';
-import {server, rankRules} from '../config.js';
-import validator from '../helpers/validation.js';
-import versions from '../helpers/versions.js';
+import {server, rankRules} from '../config/index.js';
+import validation from '../helpers/validation.js';
+import * as versions from '../helpers/versions.js';
 
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
 
@@ -33,13 +33,13 @@ async function scoreAndSortPhones(phoneScoreList, rankScale) {
 }
 
 function validate(body) {
-	validator.validate(body, {
+	validation(body, {
 		phones: {presence: false, type: 'array'},
 		ranking: {presence: true, type: 'array'}
 	});
 	if (body.phones) {
 		for (const item of body.phones) {
-			validator.validate(item, {
+			validation(item, {
 				manufacturer: {presence: true, type: 'string'},
 				model: {presence: true, type: 'string'}
 			});
@@ -47,7 +47,7 @@ function validate(body) {
 	}
 
 	for (const item of body.ranking) {
-		validator.validate(
+		validation(
 			{item},
 			{
 				item: {

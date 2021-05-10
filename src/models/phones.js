@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import NotFoundError from '../error-handler/not-found-error.js';
-import versions from '../helpers/versions.js';
-import gsmArenaHelper from '../helpers/gsm-arena.js';
-import validation from '../helpers/validation.js';
+import * as versions from '../helpers/versions.js';
+import getGsmArenaData from '../helpers/gsm-arena.js';
+import validate from '../helpers/validation.js';
 
 const DATA_DIRECTORY = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
 
@@ -46,7 +46,7 @@ async function getPhone(manufacturer, model) {
 		throw new NotFoundError(error.message);
 	}
 
-	Object.assign(phone, await gsmArenaHelper.getGsmArenaData(phone.gsmArenaUrl));
+	Object.assign(phone, await getGsmArenaData(phone.gsmArenaUrl));
 	const lineageVersion = versions.getAndroidVersion(phone.lineageos);
 	phone.android.lineageos = versions.getVersionString(lineageVersion);
 	const androidVersion = versions.getVersionObject(phone.android.official);
@@ -68,7 +68,7 @@ async function getPhone(manufacturer, model) {
 }
 
 async function savePhone(phone) {
-	validation.validate(phone, validationConstraints);
+	validate(phone, validationConstraints);
 	const manufacturer = phone.manufacturer;
 	const model = phone.model;
 	await fs.writeFile(

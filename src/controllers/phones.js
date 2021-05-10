@@ -1,4 +1,4 @@
-import model from '../models/phones.js';
+import * as model from '../models/phones.js';
 import NotFoundError from '../error-handler/not-found-error.js';
 
 async function getAllPhones(req, res) {

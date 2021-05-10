@@ -3,10 +3,10 @@ import express from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import morgan from 'morgan';
 import RouteNotFoundError from './error-handler/route-not-found-error.js';
-import {server} from './config.js';
-import phoneRouter from './routers/v1/phones.js';
-import compareRouter from './routers/v1/phones/compare.js';
-import errorHandler from './error-handler.js';
+import {server} from './config/index.js';
+import phoneRouter from './routers/v1/phones/index.js';
+import compareRouter from './routers/v1/phones/compare/index.js';
+import errorHandler from './error-handler/index.js';
 
 const app = express();
 app.use(express.json());
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 });
 
 app.use(morgan('short'));
-app.use(errorHandler.errorHandler);
+app.use(errorHandler);
 
 app.listen(server.port, () => {
 	console.log('Started version', server.version, 'listening on', server.port);

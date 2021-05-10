@@ -1,6 +1,6 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import controller from '../../../../controllers/compare.js';
+import comparePhones from '../../../../controllers/compare.js';
 const router = express.Router();
 
 /**
@@ -126,6 +126,6 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/', asyncHandler(controller.comparePhones));
+router.post('/', asyncHandler(comparePhones));
 
 export default router;

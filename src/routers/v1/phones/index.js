@@ -1,6 +1,6 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import controller from '../../../controllers/phones.js';
+import * as controller from '../../../controllers/phones.js';
 const router = express.Router();
 
 /**
