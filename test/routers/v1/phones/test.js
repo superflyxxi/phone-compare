@@ -170,29 +170,6 @@ describe('Phones negative tests', () => {
 			});
 	});
 
-	it('Missing lineageos', (done) => {
-		chai
-			.request(app)
-			.put('/v1/phones/manufacturers/test/models/missing')
-			.send({
-				name: 'Test Missing Input',
-				gsmArenaUrl: 'http://www.gsmarena.test/google_pixel_5-10386.php'
-			})
-			.end((error, res) => {
-				expect(res).to.have.status(400);
-				expect(res.body).to.deep.include({
-					type: '/errors/VALIDATION_ERROR',
-					title: 'Validation Error',
-					status: res.status,
-					detail: {
-						lineageos: ["Lineageos can't be blank"]
-					}
-				});
-				expect(res.body).to.have.property('instance');
-				done();
-			});
-	});
-
 	it('Missing gsmArena', (done) => {
 		chai
 			.request(app)
