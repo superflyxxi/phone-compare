@@ -29,7 +29,7 @@ const router = express.Router();
  *         ranking:
  *           type: array
  *           description: Sorted array of important attributes.
- *           example: ['dimensions.height', 'sensors.fingerprint', 'nfc']
+ *           example: ["android.max", "dimensions.height", "sensors.fingerprint", "charging.wireless", "ram", "nfc", "year"]
  *           items:
  *             type: string
  *             enum:
