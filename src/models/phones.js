@@ -31,7 +31,7 @@ const validationConstraints = {
 		url: true
 	},
 	lineageos: {
-		presence: true,
+		presence: false,
 		type: 'string'
 	}
 };
