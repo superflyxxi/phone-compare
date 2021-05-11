@@ -8,7 +8,7 @@ function getAndroidVersion(lineageos) {
 
 function getVersionString(object) {
 	let string;
-	if (object.major) {
+	if (object?.major) {
 		string = object.major.toString();
 		if (object.minor) {
 			string += '.' + object.minor.toString();
