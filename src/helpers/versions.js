@@ -30,6 +30,7 @@ function getVersionObject(string) {
 			patch: splt[2] ? Number.parseInt(splt[2], 10) : undefined
 		};
 	}
+
 	return {};
 }
 
