@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "test": "DATA_DIR=$(mktemp -d) c8 --check-coverage --all --lines 80 --functions 80 --branches 80 mocha ${MOCHA_ARGS}",
+    "test": "DATA_DIR=$(mktemp -d) c8 --reporter text --reporter html --check-coverage --all --lines 80 --functions 80 --branches 80 mocha --require test/hooks.mjs ${MOCHA_ARGS}",
     "xo-fix": "xo --fix",
     "xo-verify": "xo"
   },
