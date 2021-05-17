@@ -1,10 +1,12 @@
 import axios from 'axios';
 import lodash from 'lodash';
+import NodeCache from 'node-cache';
 import {server, rankRules} from '../config/index.js';
 import validation from '../helpers/validation.js';
 import * as versions from '../helpers/versions.js';
 
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
+const cache = new NodeCache();
 
 export default async function comparePhones(req, res) {
 	validate(req.body);
@@ -161,8 +163,16 @@ async function generateScoreScale(rankList, phoneScoreList) {
 
 async function getPhoneScore(phone) {
 	const url = '/v1/phones/' + (phone.href ?? 'manufacturers/' + phone.manufacturer + '/models/' + phone.model);
+	let result = cache.get(url);
+	if (result) {
+		return result;
+	}
+
 	const res = await axios.get(PHONE_BASE_URL + url);
-	return {href: url, phone: res.data};
+	result = {href: url, phone: res.data};
+	const ttl = res.headers['cache-control'].match(/max-age=(\d+)/i)[1];
+	cache.set(url, result, ttl);
+	return result;
 }
 
 async function score(rankScale, phoneScore) {
