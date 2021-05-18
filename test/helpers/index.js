@@ -4,7 +4,7 @@ import cache from '../../src/helpers/cache.js';
 
 function cleanupCache() {
 	cache.flushAll();
-}	
+}
 
 function cleanupDataDir() {
 	for (const file of fs.readdirSync(process.env.DATA_DIR)) {
