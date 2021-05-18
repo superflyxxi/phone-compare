@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import nock from 'nock';
 import app from '../../../../src/index.js';
-import cleanupDataDir from '../../../helpers/index.js';
+import cleanupEverything from '../../../helpers/index.js';
 const {expect} = chai;
 
 let pixel5Etag;
@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
 	afterEach(() => nock.cleanAll());
-	after(cleanupDataDir);
+	after(cleanupEverything);
 	before(() => {
 		chai
 			.request(app)
@@ -159,7 +159,7 @@ describe('Phones positive tests', () => {
 });
 
 describe('Phones negative tests', () => {
-	after(cleanupDataDir);
+	after(cleanupEverything);
 	it('Ensure ETag for diff URL returns 404', (done) => {
 		chai
 			.request(app)

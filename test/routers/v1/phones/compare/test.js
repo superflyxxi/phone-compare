@@ -3,14 +3,14 @@ import chaiHttp from 'chai-http';
 import chaiAlmost from 'chai-almost';
 import nock from 'nock';
 import app from '../../../../../src/index.js';
-import cache from '../../../../../src/helpers/cache.js';
+import cleanupEverything from '../../../../helpers/index.js';
 const {expect} = chai;
 
 chai.use(chaiHttp);
 chai.use(chaiAlmost(0.1));
 
 describe('Phone-compare positive tests', () => {
-	after(cache.flushAll);
+	after(cleanupEverything);
 	afterEach(() => nock.cleanAll());
 	beforeEach(() => {
 		// Mock the phones

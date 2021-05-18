@@ -1,8 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import cache from '../../src/helpers/cache.js';
 
-export default function cleanupDataDir() {
+function cleanupCache() {
+	cache.flushAll();
+}	
+
+function cleanupDataDir() {
 	for (const file of fs.readdirSync(process.env.DATA_DIR)) {
 		fs.unlinkSync(path.join(process.env.DATA_DIR, file));
 	}
+}
+
+export default function cleanupEverything() {
+	cleanupCache();
+	cleanupDataDir();
 }
