@@ -65,8 +65,13 @@ function validate(body) {
 async function getPhoneScoreList(phones) {
 	let phoneList = phones;
 	if (!phoneList) {
-		const res = await axios.get(PHONE_BASE_URL + '/v1/phones');
-		phoneList = res.data;
+		phoneList = cache.get('/v1/phones');
+		if (!phoneList) {
+			const res = await axios.get(PHONE_BASE_URL + '/v1/phones');
+			phoneList = res.data;
+			const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/i)[1] : 600;
+			cache.set('/v1/phones', phoneList, ttl);
+		}
 	}
 
 	const promises = [];
@@ -170,7 +175,7 @@ async function getPhoneScore(phone) {
 
 	const res = await axios.get(PHONE_BASE_URL + url);
 	result = {href: url, phone: res.data};
-	const ttl = res.headers['cache-control'] ? res.headers['cache-control']..match(/max-age=(\d+)/i)[1] : 600;
+	const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/i)[1] : 600;
 	cache.set(url, result, ttl);
 	return result;
 }
