@@ -170,7 +170,7 @@ async function getPhoneScore(phone) {
 
 	const res = await axios.get(PHONE_BASE_URL + url);
 	result = {href: url, phone: res.data};
-	const ttl = res.headers['cache-control']?.match(/max-age=(\d+)/i)[1];
+	const ttl = res.headers['cache-control'] ? res.headers['cache-control']..match(/max-age=(\d+)/i)[1] : 600;
 	cache.set(url, result, ttl);
 	return result;
 }
