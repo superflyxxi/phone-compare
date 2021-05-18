@@ -1,11 +1,13 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../../../src/index.js';
+import cleanupEverything from '../../../../helpers/index.js';
 const {expect} = chai;
 
 chai.use(chaiHttp);
 
 describe('Phone-compare negative tests', () => {
+	after(cleanupEverything);
 	it('Unsupport ranking only', (done) => {
 		chai
 			.request(app)

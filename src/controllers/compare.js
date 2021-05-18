@@ -3,6 +3,7 @@ import lodash from 'lodash';
 import {server, rankRules} from '../config/index.js';
 import validation from '../helpers/validation.js';
 import * as versions from '../helpers/versions.js';
+import cache from '../helpers/cache.js';
 
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
 
@@ -63,8 +64,13 @@ function validate(body) {
 async function getPhoneScoreList(phones) {
 	let phoneList = phones;
 	if (!phoneList) {
-		const res = await axios.get(PHONE_BASE_URL + '/v1/phones');
-		phoneList = res.data;
+		phoneList = cache.get('/v1/phones');
+		if (!phoneList) {
+			const res = await axios.get(PHONE_BASE_URL + '/v1/phones');
+			phoneList = res.data;
+			const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/i)[1] : 600;
+			cache.set('/v1/phones', phoneList, ttl);
+		}
 	}
 
 	const promises = [];
@@ -160,9 +166,18 @@ async function generateScoreScale(rankList, phoneScoreList) {
 }
 
 async function getPhoneScore(phone) {
-	const url = '/v1/phones/' + (phone.href ?? 'manufacturers/' + phone.manufacturer + '/models/' + phone.model);
-	const res = await axios.get(PHONE_BASE_URL + url);
-	return {href: url, phone: res.data};
+	const url =
+		'/v1/phones/' +
+		(phone.href ?? 'manufacturers/' + phone.manufacturer.toLowerCase() + '/models/' + phone.model.toLowerCase());
+	let data = cache.get(url);
+	if (!data) {
+		const res = await axios.get(PHONE_BASE_URL + url);
+		data = res.data;
+		const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/i)[1] : 600;
+		cache.set(url, data, ttl);
+	}
+
+	return {href: url, phone: data};
 }
 
 async function score(rankScale, phoneScore) {
