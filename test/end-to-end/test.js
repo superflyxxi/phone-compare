@@ -3,6 +3,8 @@ import chaiHttp from 'chai-http';
 import chaiAlmost from 'chai-almost';
 import app from '../../src/index.js';
 import cleanupDataDir from '../helpers/index.js';
+import cache from '../../src/helpers/cache.js';
+
 const {expect} = chai;
 
 chai.use(chaiHttp);
@@ -10,6 +12,7 @@ chai.use(chaiAlmost(0.1));
 
 describe('End-to-end tests', () => {
 	after(cleanupDataDir);
+	after(cache.flushAll);
 
 	it('Compare 3 phones', (done) => {
 		// Create the pixel 5
