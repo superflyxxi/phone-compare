@@ -4,9 +4,9 @@ import NodeCache from 'node-cache';
 import {server, rankRules} from '../config/index.js';
 import validation from '../helpers/validation.js';
 import * as versions from '../helpers/versions.js';
+import cache from '../helpers/cache.js';
 
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
-const cache = new NodeCache();
 
 export default async function comparePhones(req, res) {
 	validate(req.body);
