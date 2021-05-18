@@ -159,6 +159,7 @@ describe('Phones positive tests', () => {
 });
 
 describe('Phones negative tests', () => {
+	after(cleanupDataDir);
 	it('Ensure ETag for diff URL returns 404', (done) => {
 		chai
 			.request(app)
