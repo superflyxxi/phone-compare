@@ -1,6 +1,5 @@
 import axios from 'axios';
 import lodash from 'lodash';
-import NodeCache from 'node-cache';
 import {server, rankRules} from '../config/index.js';
 import validation from '../helpers/validation.js';
 import * as versions from '../helpers/versions.js';
@@ -167,7 +166,9 @@ async function generateScoreScale(rankList, phoneScoreList) {
 }
 
 async function getPhoneScore(phone) {
-	const url = '/v1/phones/' + (phone.href ?? 'manufacturers/' + phone.manufacturer.toLowerCase() + '/models/' + phone.model.toLowerCase());
+	const url =
+		'/v1/phones/' +
+		(phone.href ?? 'manufacturers/' + phone.manufacturer.toLowerCase() + '/models/' + phone.model.toLowerCase());
 	let data = cache.get(url);
 	if (!data) {
 		const res = await axios.get(PHONE_BASE_URL + url);
