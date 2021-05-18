@@ -167,17 +167,16 @@ async function generateScoreScale(rankList, phoneScoreList) {
 }
 
 async function getPhoneScore(phone) {
-	const url = '/v1/phones/' + (phone.href ?? 'manufacturers/' + phone.manufacturer + '/models/' + phone.model);
-	let result = cache.get(url);
-	if (result) {
-		return result;
+	const url = '/v1/phones/' + (phone.href ?? 'manufacturers/' + phone.manufacturer.toLowerCase() + '/models/' + phone.model.toLowerCase());
+	let data = cache.get(url);
+	if (!data) {
+		const res = await axios.get(PHONE_BASE_URL + url);
+		data = res.data;
+		const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/i)[1] : 600;
+		cache.set(url, data, ttl);
 	}
 
-	const res = await axios.get(PHONE_BASE_URL + url);
-	result = {href: url, phone: res.data};
-	const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/i)[1] : 600;
-	cache.set(url, result, ttl);
-	return result;
+	return {href: url, phone: data};
 }
 
 async function score(rankScale, phoneScore) {
