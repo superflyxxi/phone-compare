@@ -52,7 +52,7 @@ const server = {
 };
 
 function getVersion() {
-	return fs.readFileSync('./version.txt', {encoding: 'utf-8'}).trim();
+	return fs.readFileSync('./src/version.txt', {encoding: 'utf-8'}).trim();
 }
 
 export {rankRules, server};
