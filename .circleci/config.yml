@@ -35,6 +35,8 @@ jobs:
   docker:
     machine: 
       enabled: true
+    environment:
+      FROM_IMAGE: node:<< pipeline.parameters.nodeVersion >>-alpine3.13
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -48,7 +50,10 @@ jobs:
       - run: 
           name: Determine version.txt
           command: |
-            cp -v /tmp/workspace/full_version.txt ./version.txt
+            cp -v /tmp/workspace/full_version.txt ./src/version.txt
+      - docker/pull:
+          ignore-docker-pull-error: true
+          images: ${FROM_IMAGE}
       - when:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
@@ -74,7 +79,7 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${ALTERNATE_TAG}
-          extra_build_args: ${CACHE_FROM_ARGS} --build-arg NODE_VERSION=<< pipeline.parameters.nodeVersion >>
+          extra_build_args: ${CACHE_FROM_ARGS} --build-arg FROM_IMAGE=${FROM_IMAGE}
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
