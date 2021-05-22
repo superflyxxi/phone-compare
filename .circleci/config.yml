@@ -51,6 +51,9 @@ jobs:
           name: Determine version.txt
           command: |
             cp -v /tmp/workspace/full_version.txt ./src/version.txt
+      - docker/pull:
+          ignore-docker-pull-error: true
+          images: ${FROM_IMAGE}
       - when:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
@@ -72,9 +75,6 @@ jobs:
             - docker/pull:
                 ignore-docker-pull-error: true
                 images: ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
-      - docker/pull:
-          ignore-docker-pull-error: true
-          images: ${FROM_IMAGE}
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
