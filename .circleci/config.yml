@@ -48,7 +48,7 @@ jobs:
       - run: 
           name: Determine version.txt
           command: |
-            cp -v /tmp/workspace/full_version.txt ./version.txt
+            cp -v /tmp/workspace/full_version.txt ./src/version.txt
       - when:
           condition:
             equal: [ main, << pipeline.git.branch >> ]

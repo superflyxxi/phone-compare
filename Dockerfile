@@ -8,5 +8,6 @@ RUN mkdir ${DATA_DIR}
 WORKDIR /app
 ENTRYPOINT ["npm"]
 CMD ["start"]
-ADD . /app
+ADD package* /app/
 RUN npm install
+ADD src /app/src
