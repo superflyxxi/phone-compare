@@ -35,6 +35,8 @@ jobs:
   docker:
     machine: 
       enabled: true
+    environment:
+      FROM_IMAGE: node:<< pipeline.parameters.nodeVersion >>-alpine3.13
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -70,11 +72,14 @@ jobs:
             - docker/pull:
                 ignore-docker-pull-error: true
                 images: ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
+      - docker/pull:
+          ignore-docker-pull-error: true
+          images: ${FROM_IMAGE}
       - docker/build:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${ALTERNATE_TAG}
-          extra_build_args: ${CACHE_FROM_ARGS} --build-arg NODE_VERSION=<< pipeline.parameters.nodeVersion >>
+          extra_build_args: ${CACHE_FROM_ARGS} --build-arg FROM_IMAGE=${FROM_IMAGE}
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
