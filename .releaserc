@@ -8,6 +8,7 @@
 				{"type":"feat", "release":"minor"},
 				{"type":"major", "release":"major"},
 				{"scope":"ci", "release":false},
+				{"scope":"deps-dev", "release":false},
 				{"scope":"doc", "release":false}
 			],
 			"parserOpts": {

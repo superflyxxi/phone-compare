@@ -2,14 +2,15 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import chaiAlmost from 'chai-almost';
 import app from '../../src/index.js';
-import cleanupDataDir from '../helpers/index.js';
+import cleanupEverything from '../helpers/index.js';
+
 const {expect} = chai;
 
 chai.use(chaiHttp);
 chai.use(chaiAlmost(0.1));
 
 describe('End-to-end tests', () => {
-	after(cleanupDataDir);
+	after(cleanupEverything);
 
 	it('Compare 3 phones', (done) => {
 		// Create the pixel 5
