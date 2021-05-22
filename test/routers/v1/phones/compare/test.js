@@ -3,12 +3,14 @@ import chaiHttp from 'chai-http';
 import chaiAlmost from 'chai-almost';
 import nock from 'nock';
 import app from '../../../../../src/index.js';
+import cleanupEverything from '../../../../helpers/index.js';
 const {expect} = chai;
 
 chai.use(chaiHttp);
 chai.use(chaiAlmost(0.1));
 
 describe('Phone-compare positive tests', () => {
+	after(cleanupEverything);
 	afterEach(() => nock.cleanAll());
 	beforeEach(() => {
 		// Mock the phones
@@ -71,26 +73,32 @@ describe('Phone-compare positive tests', () => {
 		};
 
 		// Pixel 5
-		nock('http://localhost:3000').get('/v1/phones/manufacturers/Google/models/GD1YQ').reply(200, googlePixel5);
+		nock('http://localhost:3000').get('/v1/phones/manufacturers/google/models/gd1yq').reply(200, googlePixel5);
 
 		// Pixel 4
-		nock('http://localhost:3000').get('/v1/phones/manufacturers/Google/models/G020I').reply(200, googlePixel4);
+		nock('http://localhost:3000').get('/v1/phones/manufacturers/google/models/g020i').reply(200, googlePixel4);
 
 		// Nexus 4
-		nock('http://localhost:3000').get('/v1/phones/manufacturers/LG/models/E960').reply(200, lgNexus4);
+		nock('http://localhost:3000').get('/v1/phones/manufacturers/lg/models/e960').reply(200, lgNexus4);
 
 		nock('http://localhost:3000')
 			.get('/v1/phones')
 			.reply(200, [
-				{href: 'manufacturers/' + googlePixel5.manufacturer + '/models/' + googlePixel5.model},
-				{href: 'manufacturers/' + googlePixel4.manufacturer + '/models/' + googlePixel4.model},
-				{href: 'manufacturers/' + lgNexus4.manufacturer + '/models/' + lgNexus4.model}
+				{
+					href:
+						'manufacturers/' + googlePixel5.manufacturer.toLowerCase() + '/models/' + googlePixel5.model.toLowerCase()
+				},
+				{
+					href:
+						'manufacturers/' + googlePixel4.manufacturer.toLowerCase() + '/models/' + googlePixel4.model.toLowerCase()
+				},
+				{href: 'manufacturers/' + lgNexus4.manufacturer.toLowerCase() + '/models/' + lgNexus4.model.toLowerCase()}
 			]);
 	});
 
 	const allPhoneHeightExpected = {
 		best: {
-			href: '/v1/phones/manufacturers/LG/models/E960',
+			href: '/v1/phones/manufacturers/lg/models/e960',
 			score: 2,
 			scoreBreakdown: {
 				'dimensions.height': 2
@@ -98,21 +106,21 @@ describe('Phone-compare positive tests', () => {
 		},
 		results: [
 			{
-				href: '/v1/phones/manufacturers/LG/models/E960',
+				href: '/v1/phones/manufacturers/lg/models/e960',
 				score: 2,
 				scoreBreakdown: {
 					'dimensions.height': 2
 				}
 			},
 			{
-				href: '/v1/phones/manufacturers/Google/models/GD1YQ',
+				href: '/v1/phones/manufacturers/google/models/gd1yq',
 				score: 0.4,
 				scoreBreakdown: {
 					'dimensions.height': 0.4
 				}
 			},
 			{
-				href: '/v1/phones/manufacturers/Google/models/G020I',
+				href: '/v1/phones/manufacturers/google/models/g020i',
 				score: 0,
 				scoreBreakdown: {
 					'dimensions.height': 0
@@ -182,7 +190,7 @@ describe('Phone-compare positive tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
-						href: '/v1/phones/manufacturers/LG/models/E960',
+						href: '/v1/phones/manufacturers/lg/models/e960',
 						score: 6,
 						scoreBreakdown: {
 							'dimensions.height': 4,
@@ -191,7 +199,7 @@ describe('Phone-compare positive tests', () => {
 					},
 					results: [
 						{
-							href: '/v1/phones/manufacturers/LG/models/E960',
+							href: '/v1/phones/manufacturers/lg/models/e960',
 							score: 6,
 							scoreBreakdown: {
 								'dimensions.height': 4,
@@ -199,7 +207,7 @@ describe('Phone-compare positive tests', () => {
 							}
 						},
 						{
-							href: '/v1/phones/manufacturers/Google/models/G020I',
+							href: '/v1/phones/manufacturers/google/models/g020i',
 							score: 1.9,
 							scoreBreakdown: {
 								'dimensions.height': 0,
@@ -207,7 +215,7 @@ describe('Phone-compare positive tests', () => {
 							}
 						},
 						{
-							href: '/v1/phones/manufacturers/Google/models/GD1YQ',
+							href: '/v1/phones/manufacturers/google/models/gd1yq',
 							score: 0.7,
 							scoreBreakdown: {
 								'dimensions.height': 0.7,
@@ -255,7 +263,7 @@ describe('Phone-compare positive tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
-						href: '/v1/phones/manufacturers/LG/models/E960',
+						href: '/v1/phones/manufacturers/lg/models/e960',
 						score: 10,
 						scoreBreakdown: {
 							'dimensions.height': 8,
@@ -265,7 +273,7 @@ describe('Phone-compare positive tests', () => {
 					},
 					results: [
 						{
-							href: '/v1/phones/manufacturers/LG/models/E960',
+							href: '/v1/phones/manufacturers/lg/models/e960',
 							score: 10,
 							scoreBreakdown: {
 								'dimensions.height': 8,
@@ -274,7 +282,7 @@ describe('Phone-compare positive tests', () => {
 							}
 						},
 						{
-							href: '/v1/phones/manufacturers/Google/models/GD1YQ',
+							href: '/v1/phones/manufacturers/google/models/gd1yq',
 							score: 7.5,
 							scoreBreakdown: {
 								'dimensions.height': 1.5,
@@ -283,7 +291,7 @@ describe('Phone-compare positive tests', () => {
 							}
 						},
 						{
-							href: '/v1/phones/manufacturers/Google/models/G020I',
+							href: '/v1/phones/manufacturers/google/models/g020i',
 							score: 6,
 							scoreBreakdown: {
 								'dimensions.height': 0,
@@ -326,7 +334,7 @@ describe('Phone-compare positive tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
-						href: '/v1/phones/manufacturers/Google/models/G020I',
+						href: '/v1/phones/manufacturers/google/models/g020i',
 						score: 2,
 						scoreBreakdown: {
 							lineageos: 2
@@ -334,14 +342,14 @@ describe('Phone-compare positive tests', () => {
 					},
 					results: [
 						{
-							href: '/v1/phones/manufacturers/Google/models/G020I',
+							href: '/v1/phones/manufacturers/google/models/g020i',
 							score: 2,
 							scoreBreakdown: {
 								lineageos: 2
 							}
 						},
 						{
-							href: '/v1/phones/manufacturers/LG/models/E960',
+							href: '/v1/phones/manufacturers/lg/models/e960',
 							score: 0,
 							scoreBreakdown: {
 								lineageos: 0
@@ -368,7 +376,7 @@ describe('Phone-compare positive tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
-						href: '/v1/phones/manufacturers/Google/models/GD1YQ',
+						href: '/v1/phones/manufacturers/google/models/gd1yq',
 						score: 2,
 						scoreBreakdown: {
 							lineageos: 2
@@ -376,14 +384,98 @@ describe('Phone-compare positive tests', () => {
 					},
 					results: [
 						{
-							href: '/v1/phones/manufacturers/Google/models/GD1YQ',
+							href: '/v1/phones/manufacturers/google/models/gd1yq',
 							score: 2,
 							scoreBreakdown: {
 								lineageos: 2
 							}
 						},
 						{
-							href: '/v1/phones/manufacturers/Google/models/G020I',
+							href: '/v1/phones/manufacturers/google/models/g020i',
+							score: 0,
+							scoreBreakdown: {
+								lineageos: 0
+							}
+						}
+					]
+				});
+				done();
+			});
+	});
+
+	it('Rank on a patch version (lineageos)', (done) => {
+		nock('http://localhost:3000')
+			.get('/v1/phones/manufacturers/fake/models/one')
+			.reply(200, {
+				manufacturer: 'Fake',
+				model: 'One',
+				name: 'Fake One',
+				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
+				lineageos: '18.1.1',
+				dimensions: {
+					height: 144.7,
+					width: 70.4,
+					depth: 8
+				},
+				ram: 8,
+				nfc: true,
+				sensors: {fingerprint: true},
+				price: {usd: 649.99, eur: 649.99},
+				year: 2020,
+				charging: {wireless: true},
+				android: {official: '11', lineageos: '11', max: '11'}
+			});
+		nock('http://localhost:3000')
+			.get('/v1/phones/manufacturers/fake/models/two')
+			.reply(200, {
+				manufacturer: 'Fake',
+				model: 'Tow',
+				name: 'Fake Two',
+				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
+				lineageos: '18.1.2',
+				dimensions: {
+					height: 144.7,
+					width: 70.4,
+					depth: 8
+				},
+				ram: 8,
+				nfc: true,
+				sensors: {fingerprint: true},
+				price: {usd: 649.99, eur: 649.99},
+				year: 2020,
+				charging: {wireless: true},
+				android: {official: '11', lineageos: '11', max: '11'}
+			});
+		chai
+			.request(app)
+			.post('/v1/phones/compare')
+			.send({
+				phones: [
+					{manufacturer: 'Fake', model: 'One'},
+					{manufacturer: 'Fake', model: 'Two'}
+				],
+				ranking: ['lineageos']
+			})
+			.end((error, res) => {
+				expect(res).to.have.status(200);
+				expect(res.body).to.deep.include.almost({
+					best: {
+						href: '/v1/phones/manufacturers/fake/models/two',
+						score: 2,
+						scoreBreakdown: {
+							lineageos: 2
+						}
+					},
+					results: [
+						{
+							href: '/v1/phones/manufacturers/fake/models/two',
+							score: 2,
+							scoreBreakdown: {
+								lineageos: 2
+							}
+						},
+						{
+							href: '/v1/phones/manufacturers/fake/models/one',
 							score: 0,
 							scoreBreakdown: {
 								lineageos: 0
