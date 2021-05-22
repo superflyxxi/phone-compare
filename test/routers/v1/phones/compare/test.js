@@ -405,7 +405,7 @@ describe('Phone-compare positive tests', () => {
 
 	it('Rank on a patch version (lineageos)', (done) => {
 		nock('http://localhost:3000')
-			.get('/v1/phones/manufacturers/Fake/models/One')
+			.get('/v1/phones/manufacturers/fake/models/one')
 			.reply(200, {
 				manufacturer: 'Fake',
 				model: 'One',
@@ -426,7 +426,7 @@ describe('Phone-compare positive tests', () => {
 				android: {official: '11', lineageos: '11', max: '11'}
 			});
 		nock('http://localhost:3000')
-			.get('/v1/phones/manufacturers/Fake/models/Two')
+			.get('/v1/phones/manufacturers/fake/models/two')
 			.reply(200, {
 				manufacturer: 'Fake',
 				model: 'Tow',
@@ -460,7 +460,7 @@ describe('Phone-compare positive tests', () => {
 				expect(res).to.have.status(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
-						href: '/v1/phones/manufacturers/Fake/models/Two',
+						href: '/v1/phones/manufacturers/fake/models/two',
 						score: 2,
 						scoreBreakdown: {
 							lineageos: 2
@@ -468,14 +468,14 @@ describe('Phone-compare positive tests', () => {
 					},
 					results: [
 						{
-							href: '/v1/phones/manufacturers/Fake/models/Two',
+							href: '/v1/phones/manufacturers/fake/models/two',
 							score: 2,
 							scoreBreakdown: {
 								lineageos: 2
 							}
 						},
 						{
-							href: '/v1/phones/manufacturers/Fake/models/One',
+							href: '/v1/phones/manufacturers/fake/models/one',
 							score: 0,
 							scoreBreakdown: {
 								lineageos: 0
