@@ -403,6 +403,90 @@ describe('Phone-compare positive tests', () => {
 			});
 	});
 
+	it('Rank on a patch version (lineageos)', (done) => {
+		nock('http://localhost:3000')
+			.get('/v1/phones/manufacturers/fake/models/one')
+			.reply(200, {
+				manufacturer: 'Fake',
+				model: 'One',
+				name: 'Fake One',
+				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
+				lineageos: '18.1.1',
+				dimensions: {
+					height: 144.7,
+					width: 70.4,
+					depth: 8
+				},
+				ram: 8,
+				nfc: true,
+				sensors: {fingerprint: true},
+				price: {usd: 649.99, eur: 649.99},
+				year: 2020,
+				charging: {wireless: true},
+				android: {official: '11', lineageos: '11', max: '11'}
+			});
+		nock('http://localhost:3000')
+			.get('/v1/phones/manufacturers/fake/models/two')
+			.reply(200, {
+				manufacturer: 'Fake',
+				model: 'Tow',
+				name: 'Fake Two',
+				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
+				lineageos: '18.1.2',
+				dimensions: {
+					height: 144.7,
+					width: 70.4,
+					depth: 8
+				},
+				ram: 8,
+				nfc: true,
+				sensors: {fingerprint: true},
+				price: {usd: 649.99, eur: 649.99},
+				year: 2020,
+				charging: {wireless: true},
+				android: {official: '11', lineageos: '11', max: '11'}
+			});
+		chai
+			.request(app)
+			.post('/v1/phones/compare')
+			.send({
+				phones: [
+					{manufacturer: 'Fake', model: 'One'},
+					{manufacturer: 'Fake', model: 'Two'}
+				],
+				ranking: ['lineageos']
+			})
+			.end((error, res) => {
+				expect(res).to.have.status(200);
+				expect(res.body).to.deep.include.almost({
+					best: {
+						href: '/v1/phones/manufacturers/fake/models/two',
+						score: 2,
+						scoreBreakdown: {
+							lineageos: 2
+						}
+					},
+					results: [
+						{
+							href: '/v1/phones/manufacturers/fake/models/two',
+							score: 2,
+							scoreBreakdown: {
+								lineageos: 2
+							}
+						},
+						{
+							href: '/v1/phones/manufacturers/fake/models/one',
+							score: 0,
+							scoreBreakdown: {
+								lineageos: 0
+							}
+						}
+					]
+				});
+				done();
+			});
+	});
+
 	it('Rank everything', (done) => {
 		chai
 			.request(app)

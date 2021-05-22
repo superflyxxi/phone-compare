@@ -3,7 +3,7 @@ import path from 'node:path';
 import NotFoundError from '../error-handler/not-found-error.js';
 import * as versions from '../helpers/versions.js';
 import getGsmArenaData from '../helpers/gsm-arena.js';
-import validate from '../helpers/validation.js';
+import validation from '../helpers/validation.js';
 
 const DATA_DIRECTORY = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
 
@@ -16,25 +16,6 @@ async function getAllPhones() {
 
 	return result;
 }
-
-const validationConstraints = {
-	manufacturer: {
-		presence: true,
-		type: 'string'
-	},
-	model: {
-		presence: true,
-		type: 'string'
-	},
-	gsmArenaUrl: {
-		presence: true,
-		url: true
-	},
-	lineageos: {
-		presence: false,
-		type: 'string'
-	}
-};
 
 async function getPhone(manufacturer, model) {
 	let phone;
@@ -68,13 +49,34 @@ async function getPhone(manufacturer, model) {
 }
 
 async function savePhone(phone) {
-	validate(phone, validationConstraints);
+	validate(phone);
 	const manufacturer = phone.manufacturer;
 	const model = phone.model;
 	await fs.writeFile(
 		path.join(DATA_DIRECTORY, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'),
 		JSON.stringify(phone)
 	);
+}
+
+function validate(phone) {
+	validation(phone, {
+		manufacturer: {
+			presence: true,
+			type: 'string'
+		},
+		model: {
+			presence: true,
+			type: 'string'
+		},
+		gsmArenaUrl: {
+			presence: true,
+			url: true
+		},
+		lineageos: {
+			presence: false,
+			type: 'string'
+		}
+	});
 }
 
 export {getPhone, getAllPhones, savePhone};
