@@ -11,7 +11,7 @@ parameters:
     default: '14.16'
 
 jobs:
-  test:
+  unit-test:
     executor: 
       name: node/default
       tag: << pipeline.parameters.nodeVersion >>
@@ -166,12 +166,12 @@ workflows:
           name: pre-release
           context: default
           prerelease: true
-      - test:
+      - unit-test:
           context: default
       - docker:
           context: default
           requires:
-            - test
+            - unit-test
             - pre-release
       - release:
           prerelease: false
