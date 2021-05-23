@@ -3,4 +3,4 @@ version: '3'
 services:
   phone-compare-inttest:
     image: ${DOCKER_REGISTRY}/phone-compare-inttest:${DOCKER_TAG}
-    restart: never
+    restart: no
