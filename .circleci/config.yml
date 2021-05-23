@@ -32,9 +32,9 @@ commands:
         type: string
     steps:
       - run:
-          name: Upload docker-compose file
+          name: Upload << parameters.file >>
           command: |
-            sshpass -e scp -P ${SSH_PORT} << parameters.file >>.yml ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
+            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
   execute-remote:
     parameters:
       command:
@@ -42,7 +42,7 @@ commands:
         type: string
     steps:
       - run:
-          name: Execute
+          name: Execute a remote command
           command: |
             sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.command >>"
 
