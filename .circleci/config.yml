@@ -10,6 +10,15 @@ parameters:
     type: string
     default: '14.16'
 
+commands:
+  export-docker-tag:
+    # Assuming /tmp/workspace as the files required
+    steps:
+      - run:
+          name: Determine docker tag
+          command: |
+            echo "export DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
+
 jobs:
   unit-test:
     executor: 
@@ -43,10 +52,7 @@ jobs:
           at: /tmp/workspace
       - docker/check:
           registry: ${DOCKER_REGISTRY}
-      - run: &dockertag
-          name: Determine docker tag
-          command: |
-            echo "export DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
+      - export-docker-tag
       - checkout
       - run: 
           name: Determine version.txt
@@ -150,7 +156,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run: *dockertag
+      - export-docker-tag
       - checkout
       - run:
           name: Generate docker-compose file
@@ -182,7 +188,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run: *dockertag
+      - export-docker-tag
       - checkout
       - run:
           name: Generate docker-compose file
