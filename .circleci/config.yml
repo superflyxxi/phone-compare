@@ -200,7 +200,7 @@ jobs:
       - execute-remote:
           command: ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
 
-  int-test:
+  integration-test:
     machine:
       enabled: true
     steps:
@@ -261,7 +261,7 @@ workflows:
             branches:
               only:
                 - main
-      - int-test:
+      - integration-test:
           context: default
           requires:
             - deploy-wip
