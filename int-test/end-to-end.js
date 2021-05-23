@@ -52,6 +52,11 @@ describe('End-to-end integration tests', () => {
 			.request(BASE_URL)
 			.post('/v1/phones/compare')
 			.send({
+				phones: [
+					{manufacturer: 'lg', model: 'e960'},
+					{manufacturer: 'google', model: 'g020i'},
+					{manufacturer: 'google', model: 'gd1yq'}
+				],
 				ranking: ['android.max', 'dimensions.height', 'sensors.fingerprint', 'charging.wireless', 'ram', 'nfc', 'year']
 			})
 			.end((error, res) => {
