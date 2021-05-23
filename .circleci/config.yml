@@ -35,6 +35,16 @@ commands:
           name: Upload docker-compose file
           command: |
             sshpass -e scp -P ${SSH_PORT} << parameters.file >>.yml ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
+  execute-remote:
+    parameters:
+      command:
+        description: The command to execute
+        type: string
+    steps:
+      - run:
+          name: Execute
+          command: |
+            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.command >>"
 
 jobs:
   unit-test:
@@ -187,10 +197,8 @@ jobs:
       - install-ssh-dependencies
       - upload-file:
           file: docker-compose.<< parameters.env >>.yml
-      - run:
-          name: Deploy
-          command: |
-            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>"
+      - execute-remote:
+          command: ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
 
   int-test:
     machine:
@@ -211,10 +219,8 @@ jobs:
       - install-ssh-dependencies
       - upload-file:
           file: docker-compose.ci-test.yml
-      - run:
-          name: Run tests
-          command: |
-            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/ci-test.sh ${CIRCLE_PROJECT_REPONAME}"
+      - execute-remote:
+          command: ci-test.sh ${CIRCLE_PROJECT_REPONAME}
 
 workflows:
   default:
