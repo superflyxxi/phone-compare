@@ -10,8 +10,44 @@ parameters:
     type: string
     default: '14.16'
 
+commands:
+  export-docker-tag:
+    # Assuming /tmp/workspace as the files required
+    steps:
+      - run:
+          name: Determine docker tag
+          command: |
+            echo "export DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
+  install-ssh-dependencies:
+    steps:
+      - run:
+          name: Install sshpass
+          command: |
+            sudo apt-get update
+            sudo apt-get install sshpass
+  upload-file:
+    parameters:
+      file:
+        description: the file to upload
+        type: string
+    steps:
+      - run:
+          name: Upload << parameters.file >>
+          command: |
+            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
+  execute-remote:
+    parameters:
+      command:
+        description: The command to execute
+        type: string
+    steps:
+      - run:
+          name: Execute a remote command
+          command: |
+            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.command >>"
+
 jobs:
-  test:
+  unit-test:
     executor: 
       name: node/default
       tag: << pipeline.parameters.nodeVersion >>
@@ -32,6 +68,7 @@ jobs:
       - run:
           name: Verify XO
           command: npm run xo-verify
+
   docker:
     machine: 
       enabled: true
@@ -42,10 +79,7 @@ jobs:
           at: /tmp/workspace
       - docker/check:
           registry: ${DOCKER_REGISTRY}
-      - run: &dockertag
-          name: Determine docker tag
-          command: |
-            echo "export DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
+      - export-docker-tag
       - checkout
       - run: 
           name: Determine version.txt
@@ -76,14 +110,29 @@ jobs:
                 ignore-docker-pull-error: true
                 images: ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
       - docker/build:
+          step-name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${ALTERNATE_TAG}
           extra_build_args: ${CACHE_FROM_ARGS} --build-arg FROM_IMAGE=${FROM_IMAGE}
       - docker/push:
+          step-name: Push application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${ALTERNATE_TAG}
+      - docker/build:
+          step-name: Build integration testing docker image
+          image: ${CIRCLE_PROJECT_REPONAME}-inttest
+          registry: ${DOCKER_REGISTRY}
+          tag: ${DOCKER_TAG}
+          dockerfile: int-test/Dockerfile
+          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${DOCKER_TAG}
+      - docker/push:
+          step-name: Push integration testing docker image
+          image: ${CIRCLE_PROJECT_REPONAME}-inttest
+          registry: ${DOCKER_REGISTRY}
+          tag: ${DOCKER_TAG}
+
   release:
     docker:
       - image: circleci/node
@@ -121,6 +170,7 @@ jobs:
           paths:
             - full_version.txt
             - short_version.txt
+
   deploy:
     parameters:
       env:
@@ -133,7 +183,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run: *dockertag
+      - export-docker-tag
       - checkout
       - run:
           name: Generate docker-compose file
@@ -144,20 +194,33 @@ jobs:
               sed "s#\${ENV}#<< parameters.env >>#g" \
               > docker-compose.<< parameters.env >>.yml
             cat docker-compose.<< parameters.env >>.yml
+      - install-ssh-dependencies
+      - upload-file:
+          file: docker-compose.<< parameters.env >>.yml
+      - execute-remote:
+          command: ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
+
+  integration-test:
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - export-docker-tag
+      - checkout
       - run:
-          name: Install sshpass
+          name: Generate docker-compose file
           command: |
-            sudo apt-get update
-            sudo apt-get install sshpass
-      - run:
-          name: Upload docker-compose file
-          command: |
-            export REMOTE_DIR=${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
-            sshpass -e scp -P ${SSH_PORT} docker-compose.<< parameters.env >>.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
-      - run:
-          name: Deploy
-          command: |
-            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>"
+            cat int-test/docker-compose-template.yml |\
+              sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
+              sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" \
+              > docker-compose.ci-test.yml
+            cat docker-compose.ci-test.yml
+      - install-ssh-dependencies
+      - upload-file:
+          file: docker-compose.ci-test.yml
+      - execute-remote:
+          command: ci-test.sh ${CIRCLE_PROJECT_REPONAME}
 
 workflows:
   default:
@@ -166,12 +229,12 @@ workflows:
           name: pre-release
           context: default
           prerelease: true
-      - test:
+      - unit-test:
           context: default
       - docker:
           context: default
           requires:
-            - test
+            - unit-test
             - pre-release
       - release:
           prerelease: false
@@ -197,4 +260,12 @@ workflows:
           filters:
             branches:
               only:
+                - main
+      - integration-test:
+          context: default
+          requires:
+            - deploy-wip
+          filters:
+            branches:
+              ignore:
                 - main
