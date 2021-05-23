@@ -89,6 +89,7 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}-inttest
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG}
+          dockerfile: int-test/Dockerfile
           extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${DOCKER_TAG}
       - docker/push:
           image: ${CIRCLE_PROJECT_REPONAME}-inttest
