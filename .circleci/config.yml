@@ -77,21 +77,25 @@ jobs:
                 ignore-docker-pull-error: true
                 images: ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
       - docker/build:
+          step-name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${ALTERNATE_TAG}
           extra_build_args: ${CACHE_FROM_ARGS} --build-arg FROM_IMAGE=${FROM_IMAGE}
       - docker/push:
+          step-name: Push application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${ALTERNATE_TAG}
       - docker/build:
+          step-name: Build integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}-inttest
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG}
           dockerfile: int-test/Dockerfile
           extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${DOCKER_TAG}
       - docker/push:
+          step-name: Push integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}-inttest
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG}
