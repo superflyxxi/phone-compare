@@ -25,6 +25,16 @@ commands:
           command: |
             sudo apt-get update
             sudo apt-get install sshpass
+  upload-file:
+    parameters:
+      file:
+        description: the file to upload
+        type: string
+    steps:
+      - run:
+          name: Upload docker-compose file
+          command: |
+            sshpass -e scp -P ${SSH_PORT} << parameters.file >>.yml ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
 
 jobs:
   unit-test:
@@ -175,11 +185,8 @@ jobs:
               > docker-compose.<< parameters.env >>.yml
             cat docker-compose.<< parameters.env >>.yml
       - install-ssh-dependencies
-      - run:
-          name: Upload docker-compose file
-          command: |
-            export REMOTE_DIR=${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
-            sshpass -e scp -P ${SSH_PORT} docker-compose.<< parameters.env >>.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+      - upload-file:
+          file: docker-compose.<< parameters.env >>.yml
       - run:
           name: Deploy
           command: |
@@ -202,11 +209,8 @@ jobs:
               > docker-compose.ci-test.yml
             cat docker-compose.ci-test.yml
       - install-ssh-dependencies
-      - run:
-          name: Upload docker-compose file
-          command: |
-            export REMOTE_DIR=${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
-            sshpass -e scp -P ${SSH_PORT} docker-compose.ci-test.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+      - upload-file:
+          file: docker-compose.ci-test.yml
       - run:
           name: Run tests
           command: |
