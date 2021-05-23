@@ -248,5 +248,5 @@ workflows:
             - deploy-wip
           filters:
             branches:
-              not:
+              ignore:
                 - main
