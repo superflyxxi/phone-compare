@@ -32,6 +32,7 @@ jobs:
       - run:
           name: Verify XO
           command: npm run xo-verify
+
   docker:
     machine: 
       enabled: true
@@ -84,6 +85,16 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAG},${ALTERNATE_TAG}
+      - docker/build:
+          image: ${CIRCLE_PROJECT_REPONAME}-inttest
+          registry: ${DOCKER_REGISTRY}
+          tag: ${DOCKER_TAG}
+          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${DOCKER_TAG}
+      - docker/push:
+          image: ${CIRCLE_PROJECT_REPONAME}-inttest
+          registry: ${DOCKER_REGISTRY}
+          tag: ${DOCKER_TAG}
+
   release:
     docker:
       - image: circleci/node
@@ -121,6 +132,7 @@ jobs:
           paths:
             - full_version.txt
             - short_version.txt
+
   deploy:
     parameters:
       env:
@@ -158,6 +170,38 @@ jobs:
           name: Deploy
           command: |
             sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>"
+
+  int-test:
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: *dockertag
+      - checkout
+      - run:
+          name: Generate docker-compose file
+          command: |
+            cat int-test/docker-compose-template.yml |\
+              sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
+              sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
+              sed "s#\${ENV}#<< parameters.env >>#g" \
+              > docker-compose.ci-test.yml
+            cat docker-compose.ci-test.yml
+      - run:
+          name: Install sshpass
+          command: |
+            sudo apt-get update
+            sudo apt-get install sshpass
+      - run:
+          name: Upload docker-compose file
+          command: |
+            export REMOTE_DIR=${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
+            sshpass -e scp -P ${SSH_PORT} docker-compose.ci-test.yml ${SSH_USER}@${SSH_SERVER}:${REMOTE_DIR}
+      - run:
+          name: Deploy
+          command: |
+            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/ci-test.sh ${CIRCLE_PROJECT_REPONAME}"
 
 workflows:
   default:
@@ -197,4 +241,12 @@ workflows:
           filters:
             branches:
               only:
+                - main
+      - int-test:
+          context: default
+          requires:
+            - deploy-wip
+          filters:
+            branches:
+              not:
                 - main
