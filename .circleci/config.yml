@@ -18,6 +18,13 @@ commands:
           name: Determine docker tag
           command: |
             echo "export DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
+  install-ssh-dependencies:
+    steps:
+      - run:
+          name: Install sshpass
+          command: |
+            sudo apt-get update
+            sudo apt-get install sshpass
 
 jobs:
   unit-test:
@@ -167,11 +174,7 @@ jobs:
               sed "s#\${ENV}#<< parameters.env >>#g" \
               > docker-compose.<< parameters.env >>.yml
             cat docker-compose.<< parameters.env >>.yml
-      - run:
-          name: Install sshpass
-          command: |
-            sudo apt-get update
-            sudo apt-get install sshpass
+      - install-ssh-dependencies
       - run:
           name: Upload docker-compose file
           command: |
@@ -198,11 +201,7 @@ jobs:
               sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" \
               > docker-compose.ci-test.yml
             cat docker-compose.ci-test.yml
-      - run:
-          name: Install sshpass
-          command: |
-            sudo apt-get update
-            sudo apt-get install sshpass
+      - install-ssh-dependencies
       - run:
           name: Upload docker-compose file
           command: |
