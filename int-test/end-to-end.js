@@ -4,7 +4,7 @@ import chaiAlmost from 'chai-almost';
 
 const {expect} = chai;
 
-const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000';
 
 chai.use(chaiHttp);
 chai.use(chaiAlmost(0.1));
