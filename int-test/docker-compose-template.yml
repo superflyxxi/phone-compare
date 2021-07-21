@@ -2,5 +2,5 @@ version: '3'
 
 services:
   phone-compare-ci-test:
-    image: ${DOCKER_REGISTRY}/phone-compare-inttest:${DOCKER_TAG}
+    image: ${DOCKER_REGISTRY}/phone-compare-inttest:${PRIMARY_DOCKER_TAG}
     restart: "no"

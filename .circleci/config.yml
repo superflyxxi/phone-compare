@@ -17,7 +17,7 @@ commands:
       - run:
           name: Determine docker tag
           command: |
-            echo "export DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
+            echo "export PRIMARY_DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
   install-ssh-dependencies:
     steps:
       - run:
@@ -88,20 +88,26 @@ jobs:
       - docker/pull:
           ignore-docker-pull-error: true
           images: ${FROM_IMAGE}
-      - run: 
-          name: Determine docker tags to push
+      - run:
+          name: Custom enviroment variables
           command: |
-            export PUSH_DOCKER_TAGS=${DOCKER_TAG}
-            if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ "main" != "${DOCKER_TAG}" ]]; then
-              for A in $(echo ${DOCKER_TAG} | tr "." "\n"); do 
+            export CACHE_FROM_IMAGES=$(grep "^FROM " Dockerfile | sed 's/FROM //g')
+            if [[ "<< pipeline.git.branch >>" != "main" ]]; then
+              export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest"
+            fi
+            echo "export CACHE_FROM_IMAGES=${CACHE_FROM_IMAGES}" >> ${BASH_ENV}
+
+            export DOCKER_TAGS=${PRIMARY_DOCKER_TAG}
+            if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ "main" != "${PRIMARY_DOCKER_TAG}" ]]; then
+              for A in $(echo ${PRIMARY_DOCKER_TAG} | tr "." "\n"); do 
                 NOW="$PREV.$A"
-                export PUSH_DOCKER_TAGS="${PUSH_DOCKER_TAGS},${NOW:1}"
+                export DOCKER_TAGS="${DOCKER_TAGS},${NOW:1}"
                 PREV=$NOW
               done
-              export PUSH_DOCKER_TAGS="${PUSH_DOCKER_TAGS},latest"
+              export DOCKER_TAGS="${DOCKER_TAGS},latest"
             fi
-            echo "Docker tags: ${PUSH_DOCKER_TAGS}"
-            echo "export PUSH_DOCKER_TAGS=${PUSH_DOCKER_TAGS}" >> ${BASH_ENV}
+            echo "export DOCKER_TAGS=${DOCKER_TAGS}" >> ${BASH_ENV}
+            cat ${BASH_ENV}
       - unless:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
@@ -117,25 +123,25 @@ jobs:
           step-name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${PUSH_DOCKER_TAGS}
+          tag: ${DOCKER_TAGS}
           extra_build_args: ${CACHE_FROM_ARGS}
       - docker/push:
           step-name: Push application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${PUSH_DOCKER_TAGS}
+          tag: ${DOCKER_TAGS}
       - docker/build:
           step-name: Build integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}-inttest
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG}
+          tag: ${PRIMARY_DOCKER_TAG}
           dockerfile: int-test/Dockerfile
-          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${DOCKER_TAG}
+          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
       - docker/push:
           step-name: Push integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}-inttest
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG}
+          tag: ${PRIMARY_DOCKER_TAG}
 
   release:
     docker:
@@ -194,7 +200,7 @@ jobs:
           command: |
             cat docker-compose-template.yml |\
               sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
-              sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
+              sed "s#\${PRIMARY_DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" |\
               sed "s#\${ENV}#<< parameters.env >>#g" \
               > docker-compose.<< parameters.env >>.yml
             cat docker-compose.<< parameters.env >>.yml
@@ -217,7 +223,7 @@ jobs:
           command: |
             cat int-test/docker-compose-template.yml |\
               sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
-              sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" \
+              sed "s#\${PRIMARY_DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" \
               > docker-compose.ci-test.yml
             cat docker-compose.ci-test.yml
       - install-ssh-dependencies
