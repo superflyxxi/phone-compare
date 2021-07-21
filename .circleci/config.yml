@@ -4,20 +4,14 @@ orbs:
   node: circleci/node@4
   docker: circleci/docker@1
 
-parameters:
-  nodeVersion:
-    description: The version of node to build.
-    type: string
-    default: '14.16'
-
 commands:
-  export-docker-tag:
+  export-primary-docker-tag:
     # Assuming /tmp/workspace as the files required
     steps:
       - run:
           name: Determine docker tag
           command: |
-            echo "export DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
+            echo "export PRIMARY_DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
   install-ssh-dependencies:
     steps:
       - run:
@@ -50,7 +44,7 @@ jobs:
   unit-test:
     executor: 
       name: node/default
-      tag: << pipeline.parameters.nodeVersion >>
+      tag: '14.17'
     steps:
       - checkout
       - node/install-packages
@@ -72,66 +66,60 @@ jobs:
   docker:
     machine: 
       enabled: true
-    environment:
-      FROM_IMAGE: node:<< pipeline.parameters.nodeVersion >>-alpine3.13
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - docker/check:
           registry: ${DOCKER_REGISTRY}
-      - export-docker-tag
+      - export-primary-docker-tag
       - checkout
       - run: 
           name: Determine version.txt
           command: |
             cp -v /tmp/workspace/full_version.txt ./src/version.txt
-      - docker/pull:
-          ignore-docker-pull-error: true
-          images: ${FROM_IMAGE}
-      - when:
-          condition:
-            equal: [ main, << pipeline.git.branch >> ]
-          steps:
-            - run:
-                name: Determine alternate tags
-                command: |
-                  if [[ "${DOCKER_TAG}" != "main" ]]; then
-                    echo "export ALTERNATE_TAG=main,latest" >> ${BASH_ENV}
-                  fi
-      - unless:
-          condition:
-            equal: [ main, << pipeline.git.branch >> ]
-          steps:
-            - run:
-                name: Set cache from args
-                command: |
-                  echo "export CACHE_FROM_ARGS='--cache-from ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest'" >> ${BASH_ENV}
-            - docker/pull:
-                ignore-docker-pull-error: true
-                images: ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
+      - run:
+          name: Custom enviroment variables
+          command: |
+            export CACHE_FROM_IMAGES=$(grep "^FROM " Dockerfile | sed 's/FROM //g')
+            if [[ "<< pipeline.git.branch >>" != "main" ]]; then
+              export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest"
+            fi
+            echo "export CACHE_FROM_IMAGES=${CACHE_FROM_IMAGES}" >> ${BASH_ENV}
+
+            export DOCKER_TAGS=${PRIMARY_DOCKER_TAG}
+            if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ "main" != "${PRIMARY_DOCKER_TAG}" ]]; then
+              for A in $(echo ${PRIMARY_DOCKER_TAG} | tr "." "\n"); do 
+                NOW="$PREV.$A"
+                export DOCKER_TAGS="${DOCKER_TAGS},${NOW:1}"
+                PREV=$NOW
+              done
+              export DOCKER_TAGS="${DOCKER_TAGS},latest"
+            fi
+            echo "export DOCKER_TAGS=${DOCKER_TAGS}" >> ${BASH_ENV}
+            cat ${BASH_ENV}
       - docker/build:
           step-name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG},${ALTERNATE_TAG}
-          extra_build_args: ${CACHE_FROM_ARGS} --build-arg FROM_IMAGE=${FROM_IMAGE}
+          tag: ${DOCKER_TAGS}
+          cache_from: ${CACHE_FROM_IMAGES}
       - docker/push:
           step-name: Push application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG},${ALTERNATE_TAG}
+          tag: ${DOCKER_TAGS}
       - docker/build:
           step-name: Build integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}-inttest
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG}
+          tag: ${PRIMARY_DOCKER_TAG}
           dockerfile: int-test/Dockerfile
-          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${DOCKER_TAG}
+          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
       - docker/push:
           step-name: Push integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}-inttest
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG}
+          tag: ${PRIMARY_DOCKER_TAG}
 
   release:
     docker:
@@ -183,14 +171,14 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - export-docker-tag
+      - export-primary-docker-tag
       - checkout
       - run:
           name: Generate docker-compose file
           command: |
             cat docker-compose-template.yml |\
               sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
-              sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" |\
+              sed "s#\${PRIMARY_DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" |\
               sed "s#\${ENV}#<< parameters.env >>#g" \
               > docker-compose.<< parameters.env >>.yml
             cat docker-compose.<< parameters.env >>.yml
@@ -206,14 +194,14 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - export-docker-tag
+      - export-primary-docker-tag
       - checkout
       - run:
           name: Generate docker-compose file
           command: |
             cat int-test/docker-compose-template.yml |\
               sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
-              sed "s#\${DOCKER_TAG}#${DOCKER_TAG}#g" \
+              sed "s#\${PRIMARY_DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" \
               > docker-compose.ci-test.yml
             cat docker-compose.ci-test.yml
       - install-ssh-dependencies
