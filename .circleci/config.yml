@@ -4,12 +4,6 @@ orbs:
   node: circleci/node@4
   docker: circleci/docker@1
 
-parameters:
-  nodeVersion:
-    description: The version of node to build.
-    type: string
-    default: '14.16'
-
 commands:
   export-docker-tag:
     # Assuming /tmp/workspace as the files required
@@ -50,7 +44,7 @@ jobs:
   unit-test:
     executor: 
       name: node/default
-      tag: << pipeline.parameters.nodeVersion >>
+      tag: 14.16
     steps:
       - checkout
       - node/install-packages
@@ -72,8 +66,6 @@ jobs:
   docker:
     machine: 
       enabled: true
-    environment:
-      FROM_IMAGE: node:<< pipeline.parameters.nodeVersion >>-alpine3.13
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -85,9 +77,6 @@ jobs:
           name: Determine version.txt
           command: |
             cp -v /tmp/workspace/full_version.txt ./src/version.txt
-      - docker/pull:
-          ignore-docker-pull-error: true
-          images: ${FROM_IMAGE}
       - run:
           name: Custom enviroment variables
           command: |
@@ -108,23 +97,12 @@ jobs:
             fi
             echo "export DOCKER_TAGS=${DOCKER_TAGS}" >> ${BASH_ENV}
             cat ${BASH_ENV}
-      - unless:
-          condition:
-            equal: [ main, << pipeline.git.branch >> ]
-          steps:
-            - run:
-                name: Set cache from args
-                command: |
-                  echo "export CACHE_FROM_ARGS='--cache-from ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest'" >> ${BASH_ENV}
-            - docker/pull:
-                ignore-docker-pull-error: true
-                images: ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
       - docker/build:
           step-name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAGS}
-          extra_build_args: ${CACHE_FROM_ARGS}
+          cache_from: ${CACHE_FROM_IMAGES}
       - docker/push:
           step-name: Push application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
