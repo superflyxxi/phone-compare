@@ -9,11 +9,14 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    target-branch: "security-updates"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "monthly"
+    target-branch: "security-updates"
   - package-ecosystem: "docker"
     directory: "/int-test"
     schedule:
       interval: "monthly"
+    target-branch: "security-updates"
