@@ -88,16 +88,20 @@ jobs:
       - docker/pull:
           ignore-docker-pull-error: true
           images: ${FROM_IMAGE}
-      - when:
-          condition:
-            equal: [ main, << pipeline.git.branch >> ]
-          steps:
-            - run:
-                name: Determine alternate tags
-                command: |
-                  if [[ "${DOCKER_TAG}" != "main" ]]; then
-                    echo "export ALTERNATE_TAG=main,latest" >> ${BASH_ENV}
-                  fi
+      - run: 
+          name: Determine docker tags to push
+          command: |
+            export PUSH_DOCKER_TAGS=${DOCKER_TAG}
+            if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ "main" != "${DOCKER_TAG}" ]]; then
+              for A in $(echo ${DOCKER_TAG} | tr "." "\n"); do 
+                NOW="$PREV.$A"
+                export PUSH_DOCKER_TAGS="${PUSH_DOCKER_TAGS},${NOW:1}"
+                PREV=$NOW
+              done
+              export PUSH_DOCKER_TAGS="${PUSH_DOCKER_TAGS},latest"
+            fi
+            echo "Docker tags: ${PUSH_DOCKER_TAGS}"
+            echo "export PUSH_DOCKER_TAGS=${PUSH_DOCKER_TAGS}" >> ${BASH_ENV}
       - unless:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
@@ -113,13 +117,13 @@ jobs:
           step-name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG},${ALTERNATE_TAG}
+          tag: ${PUSH_DOCKER_TAGS}
           extra_build_args: ${CACHE_FROM_ARGS}
       - docker/push:
           step-name: Push application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAG},${ALTERNATE_TAG}
+          tag: ${PUSH_DOCKER_TAGS}
       - docker/build:
           step-name: Build integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}-inttest
