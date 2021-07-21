@@ -44,7 +44,7 @@ jobs:
   unit-test:
     executor: 
       name: node/default
-      tag: '14.17'
+      tag: '16.5.0'
     steps:
       - checkout
       - node/install-packages
