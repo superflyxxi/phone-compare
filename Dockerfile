@@ -1,5 +1,4 @@
-ARG FROM_IMAGE=node:14-alpine3.11
-FROM ${FROM_IMAGE}
+FROM node:14.17.3-alpine3.11
 EXPOSE 3000
 MAINTAINER SuperFlyXXI
 ENV 	NODE_ENV=production \
