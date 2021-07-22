@@ -3,6 +3,7 @@ import chaiHttp from 'chai-http';
 import nock from 'nock';
 import app from '../../../../src/index.js';
 import cleanupEverything from '../../../helpers/index.js';
+
 const {expect} = chai;
 
 let pixel5Etag;

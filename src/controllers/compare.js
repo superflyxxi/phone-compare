@@ -28,9 +28,7 @@ async function scoreAndSortPhones(phoneScoreList, rankScale) {
 
 	await Promise.all(promises);
 
-	phoneScoreList.sort((alpha, beta) => {
-		return beta.score - alpha.score;
-	});
+	phoneScoreList.sort((alpha, beta) => beta.score - alpha.score);
 }
 
 function validate(body) {
