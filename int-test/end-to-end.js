@@ -1,3 +1,4 @@
+import process from 'node:process';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import chaiAlmost from 'chai-almost';

@@ -1,10 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
 import NotFoundError from '../error-handler/not-found-error.js';
 import * as versions from '../helpers/versions.js';
 import getGsmArenaData from '../helpers/gsm-arena.js';
 import validation from '../helpers/validation.js';
-import process from 'process';
 
 const DATA_DIRECTORY = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
 

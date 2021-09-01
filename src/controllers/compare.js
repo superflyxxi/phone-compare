@@ -1,3 +1,4 @@
+import process from 'node:process';
 import axios from 'axios';
 import lodash from 'lodash';
 import {server, rankRules} from '../config/index.js';
