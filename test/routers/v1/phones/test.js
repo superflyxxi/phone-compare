@@ -19,7 +19,7 @@ describe('Phones positive tests', () => {
 			.send({
 				name: 'LG Nexus 4',
 				gsmArenaUrl: 'http://www.gsmarena.test/lg_nexus_4_e960-5048.php',
-				lineageos: '16.1'
+				lineageos: '16.1',
 			})
 			.end();
 	});
@@ -31,7 +31,7 @@ describe('Phones positive tests', () => {
 			.send({
 				name: 'Google Pixel 5 Initial',
 				gsmArenaUrl: 'http://www.gsmarena.test/google_pixel_5-10386.php',
-				lineageos: '18.1'
+				lineageos: '18.1',
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(204);
@@ -46,7 +46,7 @@ describe('Phones positive tests', () => {
 			.send({
 				name: 'Google Pixel 5',
 				gsmArenaUrl: 'http://www.gsmarena.test/google_pixel_5-10386.php',
-				lineageos: '18.1'
+				lineageos: '18.1',
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(204);
@@ -73,16 +73,16 @@ describe('Phones positive tests', () => {
 					dimensions: {
 						height: 133.9,
 						width: 68.7,
-						depth: 9.1
+						depth: 9.1,
 					},
 					ram: 2,
 					nfc: true,
 					sensors: {
-						fingerprint: false
+						fingerprint: false,
 					},
 					year: 2012,
 					charging: {wireless: true},
-					android: {official: '5.1', lineageos: '9', max: '9'}
+					android: {official: '5.1', lineageos: '9', max: '9'},
 				});
 				expect(nock.pendingMocks.length).to.equal(0);
 				done();
@@ -108,20 +108,20 @@ describe('Phones positive tests', () => {
 					dimensions: {
 						height: 144.7,
 						width: 70.4,
-						depth: 8
+						depth: 8,
 					},
 					ram: 8,
 					nfc: true,
 					sensors: {
-						fingerprint: true
+						fingerprint: true,
 					},
 					price: {
 						usd: 650,
-						eur: 499.99
+						eur: 499.99,
 					},
 					year: 2020,
 					charging: {wireless: true},
-					android: {official: '11', lineageos: '11', max: '11'}
+					android: {official: '11', lineageos: '11', max: '11'},
 				});
 				expect(nock.pendingMocks.length).to.equal(0);
 				done();
@@ -151,7 +151,7 @@ describe('Phones positive tests', () => {
 			.end((error, res) => {
 				expect(res).to.have.status(200);
 				expect({test: res.body}).to.deep.include({
-					test: [{href: 'manufacturers/google/models/gd1yq'}, {href: 'manufacturers/lg/models/e960'}]
+					test: [{href: 'manufacturers/google/models/gd1yq'}, {href: 'manufacturers/lg/models/e960'}],
 				});
 				expect(nock.pendingMocks.length).to.equal(0);
 				done();
@@ -178,7 +178,7 @@ describe('Phones negative tests', () => {
 			.put('/v1/phones/manufacturers/test/models/missing')
 			.send({
 				name: 'Test Missing Input',
-				lineageos: '18.1'
+				lineageos: '18.1',
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(400);
@@ -187,8 +187,8 @@ describe('Phones negative tests', () => {
 					title: 'Validation Error',
 					status: res.status,
 					detail: {
-						gsmArenaUrl: ["Gsm arena url can't be blank"]
-					}
+						gsmArenaUrl: ["Gsm arena url can't be blank"],
+					},
 				});
 				done();
 			});

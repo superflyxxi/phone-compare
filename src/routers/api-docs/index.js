@@ -10,10 +10,10 @@ const openapispec = swaggerJsdoc({
 		openapi: '3.0.0',
 		info: {
 			title: 'Phone Compare',
-			version: server.version
-		}
+			version: server.version,
+		},
 	},
-	apis: ['./src/routers/**/*.js', './src/error-handler/*.js']
+	apis: ['./src/routers/**/*.js', './src/error-handler/*.js'],
 });
 
 router.get('/json', (req, res) => res.send(openapispec));

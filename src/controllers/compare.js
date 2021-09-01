@@ -16,7 +16,7 @@ export default async function comparePhones(req, res) {
 	await scoreAndSortPhones(phoneScoreList, rankScale);
 	res.set('cache-control', 'public, max-age=2419200').send({
 		best: phoneScoreList[0],
-		results: phoneScoreList
+		results: phoneScoreList,
 	});
 }
 
@@ -34,13 +34,13 @@ async function scoreAndSortPhones(phoneScoreList, rankScale) {
 function validate(body) {
 	validation(body, {
 		phones: {presence: false, type: 'array'},
-		ranking: {presence: true, type: 'array'}
+		ranking: {presence: true, type: 'array'},
 	});
 	if (body.phones) {
 		for (const item of body.phones) {
 			validation(item, {
 				manufacturer: {presence: true, type: 'string'},
-				model: {presence: true, type: 'string'}
+				model: {presence: true, type: 'string'},
 			});
 		}
 	}
@@ -52,9 +52,9 @@ function validate(body) {
 				item: {
 					presence: true,
 					type: 'string',
-					inclusion: Object.keys(rankRules)
-				}
-			}
+					inclusion: Object.keys(rankRules),
+				},
+			},
 		);
 	}
 }

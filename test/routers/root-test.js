@@ -17,7 +17,7 @@ describe('Root test', () => {
 					type: '/errors/NOT_FOUND',
 					title: 'Not Found',
 					status: res.status,
-					detail: 'GET / not a valid API.'
+					detail: 'GET / not a valid API.',
 				});
 				expect(res.body).to.have.property('instance');
 				done();
