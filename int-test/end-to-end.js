@@ -21,7 +21,8 @@ describe('End-to-end integration tests', () => {
 				lineageos: '18.1'
 			})
 			.end((error, res) => {
-				expect(res).to.have.status(204);
+				expect(error).to.equal(null);
+				expect(res.status).to.equal(204);
 			});
 		// Create the pixel 4
 		chai
@@ -33,7 +34,8 @@ describe('End-to-end integration tests', () => {
 				lineageos: '18.1'
 			})
 			.end((error, res) => {
-				expect(res).to.have.status(204);
+				expect(error).to.equal(null);
+				expect(res.status).to.equal(204);
 			});
 		// Create the nexus 4
 		chai
@@ -45,7 +47,8 @@ describe('End-to-end integration tests', () => {
 				lineageos: '16.1'
 			})
 			.end((error, res) => {
-				expect(res).to.have.status(204);
+				expect(error).to.equal(null);
+				expect(res.status).to.equal(204);
 			});
 
 		chai
@@ -60,7 +63,8 @@ describe('End-to-end integration tests', () => {
 				ranking: ['android.max', 'dimensions.height', 'sensors.fingerprint', 'charging.wireless', 'ram', 'nfc', 'year']
 			})
 			.end((error, res) => {
-				expect(res).to.have.status(200);
+				expect(error).to.equal(null);
+				expect(res.status).to.equal(200);
 				expect(res.body).to.deep.include.almost({
 					best: {
 						href: '/v1/phones/manufacturers/google/models/gd1yq',
