@@ -1,3 +1,4 @@
+import process from 'node:process';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import chaiAlmost from 'chai-almost';
@@ -18,7 +19,7 @@ describe('End-to-end integration tests', () => {
 			.send({
 				name: 'Google Pixel 5',
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_5-10386.php',
-				lineageos: '18.1'
+				lineageos: '18.1',
 			})
 			.end((error, res) => {
 				expect(error).to.equal(null);
@@ -31,7 +32,7 @@ describe('End-to-end integration tests', () => {
 			.send({
 				name: 'Google Pixel 4',
 				gsmArenaUrl: 'https://www.gsmarena.com/google_pixel_4-9896.php',
-				lineageos: '18.1'
+				lineageos: '18.1',
 			})
 			.end((error, res) => {
 				expect(error).to.equal(null);
@@ -44,7 +45,7 @@ describe('End-to-end integration tests', () => {
 			.send({
 				name: 'LG Nexus 4',
 				gsmArenaUrl: 'https://www.gsmarena.com/lg_nexus_4_e960-5048.php',
-				lineageos: '16.1'
+				lineageos: '16.1',
 			})
 			.end((error, res) => {
 				expect(error).to.equal(null);
@@ -58,9 +59,9 @@ describe('End-to-end integration tests', () => {
 				phones: [
 					{manufacturer: 'lg', model: 'e960'},
 					{manufacturer: 'google', model: 'g020i'},
-					{manufacturer: 'google', model: 'gd1yq'}
+					{manufacturer: 'google', model: 'gd1yq'},
 				],
-				ranking: ['android.max', 'dimensions.height', 'sensors.fingerprint', 'charging.wireless', 'ram', 'nfc', 'year']
+				ranking: ['android.max', 'dimensions.height', 'sensors.fingerprint', 'charging.wireless', 'ram', 'nfc', 'year'],
 			})
 			.end((error, res) => {
 				expect(error).to.equal(null);
@@ -75,9 +76,9 @@ describe('End-to-end integration tests', () => {
 							'charging.wireless': 16,
 							ram: 8,
 							nfc: 4,
-							year: 2
+							year: 2,
 						},
-						score: 201.6
+						score: 201.6,
 					},
 					results: [
 						{
@@ -89,9 +90,9 @@ describe('End-to-end integration tests', () => {
 								'charging.wireless': 16,
 								ram: 8,
 								nfc: 4,
-								year: 2
+								year: 2,
 							},
-							score: 201.6
+							score: 201.6,
 						},
 						{
 							href: '/v1/phones/manufacturers/google/models/g020i',
@@ -103,8 +104,8 @@ describe('End-to-end integration tests', () => {
 								nfc: 4,
 								ram: 5.3,
 								'sensors.fingerprint': 0,
-								year: 1.8
-							}
+								year: 1.8,
+							},
 						},
 						{
 							href: '/v1/phones/manufacturers/lg/models/e960',
@@ -116,10 +117,10 @@ describe('End-to-end integration tests', () => {
 								nfc: 4,
 								ram: 0,
 								'sensors.fingerprint': 0,
-								year: 0
-							}
-						}
-					]
+								year: 0,
+							},
+						},
+					],
 				});
 				done();
 			});

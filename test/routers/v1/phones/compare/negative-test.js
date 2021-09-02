@@ -15,7 +15,7 @@ describe('Phone-compare negative tests', () => {
 			.post('/v1/phones/compare')
 			.send({
 				phones: [{manufacturer: 'google', model: 'gd1yq'}],
-				ranking: ['invalid']
+				ranking: ['invalid'],
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(400);
@@ -29,7 +29,7 @@ describe('Phone-compare negative tests', () => {
 			.post('/v1/phones/compare')
 			.send({
 				phones: [{manufacturer: 'google', model: 'gd1yq'}],
-				ranking: ['nfc', 'invalid']
+				ranking: ['nfc', 'invalid'],
 			})
 			.end((error, res) => {
 				expect(res).to.have.status(400);

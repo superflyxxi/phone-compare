@@ -1,3 +1,4 @@
+import process from 'node:process';
 import {v4 as uuidv4} from 'uuid';
 /**
  * @openapi
@@ -41,7 +42,7 @@ export default function errrorHandler(error, req, res, next) {
 		status: error.status ?? 500,
 		detail: error.detail ?? error.message ?? 'An unknown system error has occurred.',
 		instance: uuidv4(),
-		stack: process.env.NODE_ENV === 'production' ? undefined : error.stack
+		stack: process.env.NODE_ENV === 'production' ? undefined : error.stack,
 	};
 	res.status(message.status).send(message);
 }

@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
 import NotFoundError from '../error-handler/not-found-error.js';
 import * as versions from '../helpers/versions.js';
 import getGsmArenaData from '../helpers/gsm-arena.js';
@@ -21,7 +22,7 @@ async function getPhone(manufacturer, model) {
 	let phone;
 	try {
 		phone = JSON.parse(
-			await fs.readFile(path.join(DATA_DIRECTORY, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'))
+			await fs.readFile(path.join(DATA_DIRECTORY, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json')),
 		);
 	} catch (error) {
 		throw new NotFoundError(error.message);
@@ -54,7 +55,7 @@ async function savePhone(phone) {
 	const model = phone.model;
 	await fs.writeFile(
 		path.join(DATA_DIRECTORY, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'),
-		JSON.stringify(phone)
+		JSON.stringify(phone),
 	);
 }
 
@@ -62,20 +63,20 @@ function validate(phone) {
 	validation(phone, {
 		manufacturer: {
 			presence: true,
-			type: 'string'
+			type: 'string',
 		},
 		model: {
 			presence: true,
-			type: 'string'
+			type: 'string',
 		},
 		gsmArenaUrl: {
 			presence: true,
-			url: true
+			url: true,
 		},
 		lineageos: {
 			presence: false,
-			type: 'string'
-		}
+			type: 'string',
+		},
 	});
 }
 
