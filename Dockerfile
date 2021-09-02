@@ -1,4 +1,4 @@
-FROM node:16.6.0-alpine3.11
+FROM node:16.8.0-alpine3.11
 EXPOSE 3000
 MAINTAINER SuperFlyXXI
 ENV 	NODE_ENV=production \
