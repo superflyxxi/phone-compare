@@ -9,11 +9,18 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "fix(ci): "
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "monthly"
+    commit-message:
+      prefix: "fix: "
   - package-ecosystem: "docker"
     directory: "/int-test"
     schedule:
       interval: "monthly"
+    commit-message:
+      prefix: "fix: "
