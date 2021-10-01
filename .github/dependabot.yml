@@ -1,21 +1,30 @@
 version: 2
 
-template: &template
-  schedule:
-    interval: "monthly"
-  commit-message:
-    prefix: "fix: "
-    prefix-development: "fix(ci): "
-  reviewers:
-    - superflyxxi
-
 updates:
   - package-ecosystem: "npm"
-    <<: *template
     directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "fix(ci): "
+    reviewers:
+      - superflyxxi
   - package-ecosystem: "docker"
-    <<: *template
     directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "fix(ci): "
+    reviewers:
+      - superflyxxi
   - package-ecosystem: "docker"
-    <<: *template
     directory: "/int-test"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "fix(ci): "
+    reviewers:
+      - superflyxxi
