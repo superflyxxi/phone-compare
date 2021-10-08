@@ -1,3 +1,14 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=alert_status)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=security_rating)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=bugs)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=code_smells)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=sqale_index)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
+
 # phone-compare
 Tools to compare phones
 
