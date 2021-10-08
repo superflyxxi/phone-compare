@@ -8,7 +8,7 @@ import cache from '../helpers/cache.js';
 
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
 
-export default async function comparePhones(req, res) {
+export default async function compare(req, res) {
 	validate(req.body);
 
 	const ranking = req.body.ranking;
