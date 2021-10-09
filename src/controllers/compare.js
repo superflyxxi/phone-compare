@@ -170,10 +170,7 @@ async function getFinalScore(rankScale, phoneScore) {
 		}
 
 		phoneScore.scoreBreakdown[rank] = score;
-	}
-
-	for (const item in phoneScore.scoreBreakdown) {
-		phoneScore.score += phoneScore.scoreBreakdown[item];
+		phoneScore.score += score;
 	}
 
 	delete phoneScore.phone;
