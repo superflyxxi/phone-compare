@@ -11,8 +11,7 @@ export default async function getGsmArenaData(gsmUrl) {
 		const doc = dom.window.document;
 
 		data.dimensions = getDimensions(doc);
-		const ram = dom.window.document.querySelector('[data-spec="internalmemory"]').innerHTML.match(/\d+GB RAM/g);
-		data.ram = Number.parseFloat(ram[0].match(/\d/g)[0]);
+		data.ram = getRAM(doc);
 
 		const nfcMatch = dom.window.document.querySelector('[data-spec="nfc"]').innerHTML.match(/yes/i);
 		data.nfc = nfcMatch !== undefined && nfcMatch !== null;
@@ -67,4 +66,8 @@ function getDimensions(doc) {
 		width: Number.parseFloat(dimensions[1]),
 		depth: Number.parseFloat(dimensions[2]),
 	};
+}
+
+function getRAM(doc) {
+	return Number.parseFloat(doc.querySelector('[data-spec="internalmemory"]').innerHTML.match(/\d+GB RAM/g)[0].match(/\d/g)[0]);
 }
