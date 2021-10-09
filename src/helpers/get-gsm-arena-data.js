@@ -5,21 +5,20 @@ import cache from './cache.js';
 export default async function getGsmArenaData(gsmUrl) {
 	let data = cache.get(gsmUrl);
 	if (!data) {
-		data = {};
 		const res = await axios.get(gsmUrl);
 		const dom = new jsdom.JSDOM(res.data);
 		const doc = dom.window.document;
 
-		data.dimensions = getDimensions(doc);
-		data.ram = getRAM(doc);
-		data.nfc = getNFC(doc):
-		data.sensors = getSensors(doc);
-		data.price = getPrice(doc);
-		data.year = getYearReleased(doc);
-		data.android = getAndroidVersion(doc);
-
-		// Misc things that aren't easy to find
-		data.charging = getWirelessCharging(doc);
+		data = {
+			dimensions = getDimensions(doc),
+			ram = getRAM(doc),
+			nfc = getNFC(doc),
+			sensors = getSensors(doc),
+			price = getPrice(doc),
+			year = getYearReleased(doc),
+			android = getAndroidVersion(doc),
+			charging = getWirelessCharging(doc)
+		}
 
 		cache.set(gsmUrl, data, 2_419_200); // 1 week
 	}
