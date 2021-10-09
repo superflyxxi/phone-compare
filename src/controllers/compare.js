@@ -121,7 +121,7 @@ function scoreNumber(value, rankRule, rankScale) {
 		return (rankScale.values.max - value) * rankScale.multiplier;
 	}
 
-	if (rankRules.scoreMethod === 'PREFER_HIGH') {
+	if (rankRule.scoreMethod === 'PREFER_HIGH') {
 		return (value - rankScale.values.min) * rankScale.multiplier;
 	}
 
