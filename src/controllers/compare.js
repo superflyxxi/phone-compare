@@ -8,7 +8,7 @@ import cache from '../helpers/cache.js';
 
 const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
 
-export default async function comparePhones(req, res) {
+export default async function compare(req, res) {
 	validate(req.body);
 
 	const ranking = req.body.ranking;
@@ -24,7 +24,7 @@ export default async function comparePhones(req, res) {
 async function scoreAndSortPhones(phoneScoreList, rankScale) {
 	const promises = [];
 	for (const phoneScore of phoneScoreList) {
-		promises.push(score(rankScale, phoneScore));
+		promises.push(getFinalScore(rankScale, phoneScore));
 	}
 
 	await Promise.all(promises);
@@ -179,7 +179,7 @@ async function getPhoneScore(phone) {
 	return {href: url, phone: data};
 }
 
-async function score(rankScale, phoneScore) {
+async function getFinalScore(rankScale, phoneScore) {
 	phoneScore.scoreBreakdown = {};
 	phoneScore.score = 0;
 	for (const rank in rankScale) {
