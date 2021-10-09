@@ -15,11 +15,7 @@ export default async function getGsmArenaData(gsmUrl) {
 		data.nfc = getNFC(doc):
 		data.sensors = getSensors(doc);
 		data.price = getPrice(doc);
-
-		const releasedHtml = dom.window.document.querySelector('[data-spec="released-hl"]')?.innerHTML;
-		if (releasedHtml) {
-			data.year = Number.parseInt(releasedHtml.match(/\d+/g)[0], 10);
-		}
+		data.year = getYearReleased(doc);
 
 		const android = dom.window.document.querySelector('[data-spec="os"]').innerHTML.match(/\d+(\.\d+)?/g);
 		data.android = {
@@ -78,6 +74,14 @@ function getPrice(doc) {
 			usd: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[0]),
 			eur: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[1]),
 		};
+	}
+	return undefined;
+}
+
+function getYearReleased(doc) {
+	const releasedHtml = doc.querySelector('[data-spec="released-hl"]')?.innerHTML;
+	if (releasedHtml) {
+		return Number.parseInt(releasedHtml.match(/\d+/g)[0], 10);
 	}
 	return undefined;
 }
