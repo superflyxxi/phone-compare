@@ -116,38 +116,53 @@ async function getPhoneScore(phone) {
 	return {href: url, phone: data};
 }
 
+function scoreNumber(value, rankRule, rankScale) {
+	if (rankRule.scoreMethod === 'PREFER_LOW') {
+		return (rankScale.values.max - value) * rankScale.multiplier;
+	}
+
+	if (rankRules.scoreMethod === 'PREFER_HIGH') {
+		return (value - rankScale.values.min) * rankScale.multiplier;
+	}
+
+	return 0;
+}
+
+function scoreBoolean(value, rankRule, rankScale) {
+	if (value && rankRule.scoreMethod === 'PREFER_TRUE') {
+		return rankScale.multiplier;
+	}
+
+	return 0;
+}
+
+function scoreVersion(value, rankRule, rankScale) {
+	const version = versions.getVersionObject(value);
+	const semantic = rankScale.semantic;
+	if (version[semantic] && rankRule.scoreMethod === 'PREFER_HIGH') {
+		return (version[semantic] - rankScale[semantic].min) * rankScale.multiplier;
+	}
+
+	return 0;
+}
+
 async function getFinalScore(rankScale, phoneScore) {
 	phoneScore.scoreBreakdown = {};
 	phoneScore.score = 0;
 	for (const rank in rankScale) {
 		const value = lodash.get(phoneScore.phone, rank);
 		let score = 0;
-		let version;
-		let semantic;
 		switch (rankRules[rank].type) {
 			case 'number':
-				if (rankRules[rank].scoreMethod === 'PREFER_LOW') {
-					score = (rankScale[rank].values.max - value) * rankScale[rank].multiplier;
-				} else if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
-					score = (value - rankScale[rank].values.min) * rankScale[rank].multiplier;
-				}
-
+				score = scoreNumber(value, rankRules[rank], rankScale[rank]);
 				break;
 
 			case 'boolean':
-				if (value && rankRules[rank].scoreMethod === 'PREFER_TRUE') {
-					score = rankScale[rank].multiplier;
-				}
-
+				score = scoreBoolean(value, rankRules[rank], rankScale[rank]);
 				break;
 
 			case 'version':
-				version = versions.getVersionObject(value);
-				semantic = rankScale[rank].semantic;
-				if (version[semantic] && rankRules[rank].scoreMethod === 'PREFER_HIGH') {
-					score = (version[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;
-				}
-
+				score = scoreVersion(value, rankRules[rank], rankScale[rank]);
 				break;
 
 			default:
