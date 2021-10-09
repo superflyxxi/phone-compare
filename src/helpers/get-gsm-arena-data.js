@@ -53,7 +53,6 @@ function getWirelessCharging(doc) {
 	const tdList = doc.querySelectorAll('td.nfo');
 	for (const td of tdList) {
 		if (/wireless charg/i.test(td.innerHTML)) {
-			charging.wireless = true;
 			return {wireless: true};
 		}
 	}
