@@ -3,7 +3,7 @@ import path from 'node:path';
 import process from 'node:process';
 import NotFoundError from '../error-handler/not-found-error.js';
 import * as versions from '../helpers/versions.js';
-import getGsmArenaData from '../helpers/gsm-arena.js';
+import getGsmArenaData from '../helpers/get-gsm-arena-data.js';
 import validation from '../helpers/validation.js';
 
 const DATA_DIRECTORY = process.env.DATA_DIR ?? `${process.env.HOME}/data`;
