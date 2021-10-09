@@ -45,22 +45,22 @@ export default async function getGsmArenaData(gsmUrl) {
 		};
 
 		// Misc things that aren't easy to find
-		const tdList = dom.window.document.querySelectorAll('td.nfo');
-		data.charging = {wireless: false};
-		for (const td of tdList) {
-			let considerWirelessCharging = true;
-			if (considerWirelessCharging && /wireless charg/i.test(td.innerHTML)) {
-				data.charging.wireless = true;
-				considerWirelessCharging = false;
-			}
-
-			if (!considerWirelessCharging) {
-				break;
-			}
-		}
+		data.charging = getWirelessCharging(dom.window.document);
 
 		cache.set(gsmUrl, data, 2_419_200); // 1 week
 	}
 
 	return data;
 }
+
+function getWirelessCharging(doc) {
+	const tdList = doc.querySelectorAll('td.nfo');
+	for (const td of tdList) {
+		if (/wireless charg/i.test(td.innerHTML)) {
+			charging.wireless = true;
+			return {wireless: true};
+		}
+	}
+	return {wireless: false};
+}
+	
