@@ -13,15 +13,8 @@ export default async function getGsmArenaData(gsmUrl) {
 		data.dimensions = getDimensions(doc);
 		data.ram = getRAM(doc);
 		data.nfc = getNFC(doc):
-		data.sensors getSensors(doc);
-
-		const priceHtml = dom.window.document.querySelector('[data-spec="price"]')?.querySelector('a')?.innerHTML;
-		if (priceHtml) {
-			data.price = {
-				usd: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[0]),
-				eur: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[1]),
-			};
-		}
+		data.sensors = getSensors(doc);
+		data.price = getPrice(doc);
 
 		const releasedHtml = dom.window.document.querySelector('[data-spec="released-hl"]')?.innerHTML;
 		if (releasedHtml) {
@@ -76,4 +69,15 @@ function getSensors(doc) {
 	return {
 		fingerprint: fingerprintMatch !== undefined && fingerprintMatch !== null,
 	};
+}
+
+function getPrice(doc) {
+	const priceHtml = doc.querySelector('[data-spec="price"]')?.querySelector('a')?.innerHTML;
+	if (priceHtml) {
+		return = {
+			usd: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[0]),
+			eur: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[1]),
+		};
+	}
+	return undefined;
 }
