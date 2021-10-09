@@ -90,48 +90,7 @@ async function generateScoreScale(rankList, phoneScoreList) {
 	const scales = {};
 
 	for (const rank of rankList) {
-		scales[rank] = {};
-		const mapValues = {};
-		switch (rankRules[rank].type) {
-			case 'number':
-				mapValues.values = [];
-				break;
-			case 'version':
-				mapValues.major = [];
-				mapValues.minor = [];
-				mapValues.patch = [];
-				break;
-			default:
-				// Skip any types that don't need counting
-				continue;
-		}
-
-		for (const phoneScore of phoneScoreList) {
-			const value = lodash.get(phoneScore.phone, rank);
-
-			if (value) {
-				let version;
-				switch (rankRules[rank].type) {
-					case 'number':
-						mapValues.values.push(value);
-						break;
-					case 'version':
-						version = versions.getVersionObject(value);
-						if (version?.major) mapValues.major.push(version.major);
-						if (version?.minor) mapValues.minor.push(version.minor);
-						if (version?.patch) mapValues.patch.push(version.patch);
-						break;
-					default:
-					// Should never get here
-				}
-			}
-		}
-
-		for (const item of Object.keys(mapValues)) {
-			scales[rank][item] = {};
-			scales[rank][item].max = Math.max(...mapValues[item]);
-			scales[rank][item].min = Math.min(...mapValues[item]);
-		}
+		scales[rank] = generateScoreScaleForRank(rank, rankRules[rank], phoneScoreList);
 	}
 
 	let i = rankList.length;
@@ -225,4 +184,51 @@ async function getFinalScore(rankScale, phoneScore) {
 	}
 
 	delete phoneScore.phone;
+}
+
+function generateScoreScaleForRank(rank, rankRule, phoneScoreList) {
+	const result = {};
+	const mapValues = {};
+	switch (rankRule.type) {
+		case 'number':
+			mapValues.values = [];
+			break;
+		case 'version':
+			mapValues.major = [];
+			mapValues.minor = [];
+			mapValues.patch = [];
+			break;
+		default:
+			// Skip any types that don't need counting
+			return result;
+	}
+
+	for (const phoneScore of phoneScoreList) {
+		const value = lodash.get(phoneScore.phone, rank);
+
+		if (value) {
+			let version;
+			switch (rankRule.type) {
+				case 'number':
+					mapValues.values.push(value);
+					break;
+				case 'version':
+					version = versions.getVersionObject(value);
+					if (version?.major) mapValues.major.push(version.major);
+					if (version?.minor) mapValues.minor.push(version.minor);
+					if (version?.patch) mapValues.patch.push(version.patch);
+					break;
+				default:
+				// Should never get here
+			}
+		}
+	}
+
+	for (const item of Object.keys(mapValues)) {
+		result[item] = {};
+		result[item].max = Math.max(...mapValues[item]);
+		result[item].min = Math.min(...mapValues[item]);
+	}
+
+	return result;
 }
