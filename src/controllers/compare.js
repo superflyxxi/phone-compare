@@ -90,75 +90,12 @@ async function generateScoreScale(rankList, phoneScoreList) {
 	const scales = {};
 
 	for (const rank of rankList) {
-		scales[rank] = {};
-		const mapValues = {};
-		switch (rankRules[rank].type) {
-			case 'number':
-				mapValues.values = [];
-				break;
-			case 'version':
-				mapValues.major = [];
-				mapValues.minor = [];
-				mapValues.patch = [];
-				break;
-			default:
-				// Skip any types that don't need counting
-				continue;
-		}
-
-		for (const phoneScore of phoneScoreList) {
-			const value = lodash.get(phoneScore.phone, rank);
-
-			if (value) {
-				let version;
-				switch (rankRules[rank].type) {
-					case 'number':
-						mapValues.values.push(value);
-						break;
-					case 'version':
-						version = versions.getVersionObject(value);
-						if (version?.major) mapValues.major.push(version.major);
-						if (version?.minor) mapValues.minor.push(version.minor);
-						if (version?.patch) mapValues.patch.push(version.patch);
-						break;
-					default:
-					// Should never get here
-				}
-			}
-		}
-
-		for (const item of Object.keys(mapValues)) {
-			scales[rank][item] = {};
-			scales[rank][item].max = Math.max(...mapValues[item]);
-			scales[rank][item].min = Math.min(...mapValues[item]);
-		}
+		scales[rank] = initScoreScaleForRank(rank, rankRules[rank], phoneScoreList);
 	}
 
 	let i = rankList.length;
 	for (const rank of rankList) {
-		const maxPoints = 2 ** i;
-		let temporarySemantic;
-		let semantic = 'major';
-		switch (rankRules[rank].type) {
-			case 'number':
-				scales[rank].multiplier = maxPoints / (scales[rank].values.max - scales[rank].values.min);
-				break;
-			case 'version':
-				for (temporarySemantic of ['major', 'minor', 'patch']) {
-					if (scales[rank][temporarySemantic]?.max !== scales[rank][temporarySemantic]?.min) {
-						semantic = temporarySemantic;
-						break;
-					}
-				}
-
-				scales[rank].semantic = semantic;
-				scales[rank].multiplier = maxPoints / (scales[rank][semantic].max - scales[rank][semantic].min);
-				break;
-			default:
-				scales[rank].multiplier = maxPoints;
-		}
-
-		i--;
+		populateScoreScaleForRank(scales[rank], 2 ** i--, rankRules[rank]);
 	}
 
 	return scales;
@@ -179,38 +116,53 @@ async function getPhoneScore(phone) {
 	return {href: url, phone: data};
 }
 
+function scoreNumber(value, rankRule, rankScale) {
+	if (rankRule.scoreMethod === 'PREFER_LOW') {
+		return (rankScale.values.max - value) * rankScale.multiplier;
+	}
+
+	if (rankRule.scoreMethod === 'PREFER_HIGH') {
+		return (value - rankScale.values.min) * rankScale.multiplier;
+	}
+
+	return 0;
+}
+
+function scoreBoolean(value, rankRule, rankScale) {
+	if (value && rankRule.scoreMethod === 'PREFER_TRUE') {
+		return rankScale.multiplier;
+	}
+
+	return 0;
+}
+
+function scoreVersion(value, rankRule, rankScale) {
+	const version = versions.getVersionObject(value);
+	const semantic = rankScale.semantic;
+	if (version[semantic] && rankRule.scoreMethod === 'PREFER_HIGH') {
+		return (version[semantic] - rankScale[semantic].min) * rankScale.multiplier;
+	}
+
+	return 0;
+}
+
 async function getFinalScore(rankScale, phoneScore) {
 	phoneScore.scoreBreakdown = {};
 	phoneScore.score = 0;
 	for (const rank in rankScale) {
 		const value = lodash.get(phoneScore.phone, rank);
 		let score = 0;
-		let version;
-		let semantic;
 		switch (rankRules[rank].type) {
 			case 'number':
-				if (rankRules[rank].scoreMethod === 'PREFER_LOW') {
-					score = (rankScale[rank].values.max - value) * rankScale[rank].multiplier;
-				} else if (rankRules[rank].scoreMethod === 'PREFER_HIGH') {
-					score = (value - rankScale[rank].values.min) * rankScale[rank].multiplier;
-				}
-
+				score = scoreNumber(value, rankRules[rank], rankScale[rank]);
 				break;
 
 			case 'boolean':
-				if (value && rankRules[rank].scoreMethod === 'PREFER_TRUE') {
-					score = rankScale[rank].multiplier;
-				}
-
+				score = scoreBoolean(value, rankRules[rank], rankScale[rank]);
 				break;
 
 			case 'version':
-				version = versions.getVersionObject(value);
-				semantic = rankScale[rank].semantic;
-				if (version[semantic] && rankRules[rank].scoreMethod === 'PREFER_HIGH') {
-					score = (version[semantic] - rankScale[rank][semantic].min) * rankScale[rank].multiplier;
-				}
-
+				score = scoreVersion(value, rankRules[rank], rankScale[rank]);
 				break;
 
 			default:
@@ -218,11 +170,78 @@ async function getFinalScore(rankScale, phoneScore) {
 		}
 
 		phoneScore.scoreBreakdown[rank] = score;
-	}
-
-	for (const item in phoneScore.scoreBreakdown) {
-		phoneScore.score += phoneScore.scoreBreakdown[item];
+		phoneScore.score += score;
 	}
 
 	delete phoneScore.phone;
+}
+
+function initScoreScaleForRank(rank, rankRule, phoneScoreList) {
+	const result = {};
+	const mapValues = {};
+	switch (rankRule.type) {
+		case 'number':
+			mapValues.values = [];
+			break;
+		case 'version':
+			mapValues.major = [];
+			mapValues.minor = [];
+			mapValues.patch = [];
+			break;
+		default:
+			// Skip any types that don't need counting
+			return result;
+	}
+
+	for (const phoneScore of phoneScoreList) {
+		const value = lodash.get(phoneScore.phone, rank);
+
+		if (value) {
+			let version;
+			switch (rankRule.type) {
+				case 'number':
+					mapValues.values.push(value);
+					break;
+				case 'version':
+					version = versions.getVersionObject(value);
+					if (version?.major) mapValues.major.push(version.major);
+					if (version?.minor) mapValues.minor.push(version.minor);
+					if (version?.patch) mapValues.patch.push(version.patch);
+					break;
+				default:
+				// Should never get here
+			}
+		}
+	}
+
+	for (const item of Object.keys(mapValues)) {
+		result[item] = {};
+		result[item].max = Math.max(...mapValues[item]);
+		result[item].min = Math.min(...mapValues[item]);
+	}
+
+	return result;
+}
+
+function populateScoreScaleForRank(scoreScale, maxPoints, rankRule) {
+	let temporarySemantic;
+	let semantic = 'major';
+	switch (rankRule.type) {
+		case 'number':
+			scoreScale.multiplier = maxPoints / (scoreScale.values.max - scoreScale.values.min);
+			break;
+		case 'version':
+			for (temporarySemantic of ['major', 'minor', 'patch']) {
+				if (scoreScale[temporarySemantic]?.max !== scoreScale[temporarySemantic]?.min) {
+					semantic = temporarySemantic;
+					break;
+				}
+			}
+
+			scoreScale.semantic = semantic;
+			scoreScale.multiplier = maxPoints / (scoreScale[semantic].max - scoreScale[semantic].min);
+			break;
+		default:
+			scoreScale.multiplier = maxPoints;
+	}
 }

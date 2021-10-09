@@ -49,16 +49,20 @@ jobs:
       - checkout
       - node/install-packages
       - run:
+          name: Unit Tests
           command: npm test
           environment:
             MOCHA_FILE: ./mocha/test-results.xml
             MOCHA_ARGS: --forbid-pending --forbid-only --reporter mocha-junit-reporter
+      - run:
+          name: Tar coverage
+          command: tar -jvcf coverage.tar.bz2 coverage/
       - store_test_results:
           path: ./mocha
       - store_artifacts:
           path: ./mocha/test-results.xml
       - store_artifacts:
-          path: ./coverage/
+          path: ./coverage.tar.bz2
       - run:
           name: Verify XO
           command: npm run xo-verify

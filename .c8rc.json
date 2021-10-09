@@ -1,0 +1,9 @@
+{
+	"reporter": ["text", "html"],
+	"check-coverage": true,
+	"all": true,
+	"src": ["src/"],
+	"lines": 80,
+	"functions": 80,
+	"branches": 80
+}
