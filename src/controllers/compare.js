@@ -90,34 +90,12 @@ async function generateScoreScale(rankList, phoneScoreList) {
 	const scales = {};
 
 	for (const rank of rankList) {
-		scales[rank] = generateScoreScaleForRank(rank, rankRules[rank], phoneScoreList);
+		scales[rank] = initScoreScaleForRank(rank, rankRules[rank], phoneScoreList);
 	}
 
 	let i = rankList.length;
 	for (const rank of rankList) {
-		const maxPoints = 2 ** i;
-		let temporarySemantic;
-		let semantic = 'major';
-		switch (rankRules[rank].type) {
-			case 'number':
-				scales[rank].multiplier = maxPoints / (scales[rank].values.max - scales[rank].values.min);
-				break;
-			case 'version':
-				for (temporarySemantic of ['major', 'minor', 'patch']) {
-					if (scales[rank][temporarySemantic]?.max !== scales[rank][temporarySemantic]?.min) {
-						semantic = temporarySemantic;
-						break;
-					}
-				}
-
-				scales[rank].semantic = semantic;
-				scales[rank].multiplier = maxPoints / (scales[rank][semantic].max - scales[rank][semantic].min);
-				break;
-			default:
-				scales[rank].multiplier = maxPoints;
-		}
-
-		i--;
+		populateScoreScaleForRank(scales[rank], 2 ** i--, rankRules[rank]);
 	}
 
 	return scales;
@@ -186,7 +164,7 @@ async function getFinalScore(rankScale, phoneScore) {
 	delete phoneScore.phone;
 }
 
-function generateScoreScaleForRank(rank, rankRule, phoneScoreList) {
+function initScoreScaleForRank(rank, rankRule, phoneScoreList) {
 	const result = {};
 	const mapValues = {};
 	switch (rankRule.type) {
@@ -231,4 +209,27 @@ function generateScoreScaleForRank(rank, rankRule, phoneScoreList) {
 	}
 
 	return result;
+}
+
+function populateScoreScaleForRank(scoreScale, maxPoints, rankRule) {
+	let temporarySemantic;
+	let semantic = 'major';
+	switch (rankRule.type) {
+		case 'number':
+			scoreScale.multiplier = maxPoints / (scoreScale.values.max - scoreScale.values.min);
+			break;
+		case 'version':
+			for (temporarySemantic of ['major', 'minor', 'patch']) {
+				if (scoreScale[temporarySemantic]?.max !== scoreScale[temporarySemantic]?.min) {
+					semantic = temporarySemantic;
+					break;
+				}
+			}
+
+			scoreScale.semantic = semantic;
+			scoreScale.multiplier = maxPoints / (scoreScale[semantic].max - scoreScale[semantic].min);
+			break;
+		default:
+			scoreScale.multiplier = maxPoints;
+	}
 }
