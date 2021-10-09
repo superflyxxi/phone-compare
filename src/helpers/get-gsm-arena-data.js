@@ -16,11 +16,7 @@ export default async function getGsmArenaData(gsmUrl) {
 		data.sensors = getSensors(doc);
 		data.price = getPrice(doc);
 		data.year = getYearReleased(doc);
-
-		const android = dom.window.document.querySelector('[data-spec="os"]').innerHTML.match(/\d+(\.\d+)?/g);
-		data.android = {
-			official: android[android.length - 1],
-		};
+		data.android = getAndroidVersion(doc);
 
 		// Misc things that aren't easy to find
 		data.charging = getWirelessCharging(doc);
@@ -84,4 +80,11 @@ function getYearReleased(doc) {
 		return Number.parseInt(releasedHtml.match(/\d+/g)[0], 10);
 	}
 	return undefined;
+}
+
+function getAndroidVersion(doc) {
+	const android = doc.querySelector('[data-spec="os"]').innerHTML.match(/\d+(\.\d+)?/g);
+	return {
+		official: android[android.length - 1],
+	};
 }
