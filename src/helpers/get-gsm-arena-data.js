@@ -8,13 +8,9 @@ export default async function getGsmArenaData(gsmUrl) {
 		data = {};
 		const res = await axios.get(gsmUrl);
 		const dom = new jsdom.JSDOM(res.data);
-		let dimensions = dom.window.document.querySelector('[data-spec="dimensions"]').innerHTML;
-		dimensions = dimensions.match(/\d+\.*\d*/g);
-		data.dimensions = {
-			height: Number.parseFloat(dimensions[0]),
-			width: Number.parseFloat(dimensions[1]),
-			depth: Number.parseFloat(dimensions[2]),
-		};
+		const doc = dom.window.document;
+
+		data.dimensions = getDimensions(doc);
 		const ram = dom.window.document.querySelector('[data-spec="internalmemory"]').innerHTML.match(/\d+GB RAM/g);
 		data.ram = Number.parseFloat(ram[0].match(/\d/g)[0]);
 
@@ -45,7 +41,7 @@ export default async function getGsmArenaData(gsmUrl) {
 		};
 
 		// Misc things that aren't easy to find
-		data.charging = getWirelessCharging(dom.window.document);
+		data.charging = getWirelessCharging(doc);
 
 		cache.set(gsmUrl, data, 2_419_200); // 1 week
 	}
@@ -63,4 +59,13 @@ function getWirelessCharging(doc) {
 	}
 	return {wireless: false};
 }
-	
+
+function getDimensions(doc) {
+	let dimensions = doc.querySelector('[data-spec="dimensions"]').innerHTML;
+	dimensions = dimensions.match(/\d+\.*\d*/g);
+	return {
+		height: Number.parseFloat(dimensions[0]),
+		width: Number.parseFloat(dimensions[1]),
+		depth: Number.parseFloat(dimensions[2]),
+	};
+}
