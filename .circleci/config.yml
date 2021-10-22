@@ -222,7 +222,7 @@ jobs:
       - run:
           name: Bring up
           command: |
-            docker-compose up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test -f docker-compose.ci-test.yml
+            docker-compose -f docker-compose.ci-test.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
 
 workflows:
   default:
