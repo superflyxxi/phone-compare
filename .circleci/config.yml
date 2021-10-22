@@ -113,7 +113,9 @@ jobs:
           tag: ${DOCKER_TAGS}
       - run:
           name: Save docker image
-          command: docker save -o ${CIRCLE_PROJECT_REPONAME}.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+          command: |
+            docker save -o ${CIRCLE_PROJECT_REPONAME}.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+            ls -lha
       - persist_to_workspace:
           root: ./
           paths:
