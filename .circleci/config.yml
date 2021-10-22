@@ -68,8 +68,7 @@ jobs:
           command: npm run xo-verify
 
   docker:
-    machine: 
-      enabled: true
+    executor: docker/machine
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -95,6 +94,7 @@ jobs:
               for A in $(echo ${PRIMARY_DOCKER_TAG} | tr "." "\n"); do 
                 NOW="$PREV.$A"
                 export DOCKER_TAGS="${DOCKER_TAGS},${NOW:1}"
+                export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${NOW:1}"
                 PREV=$NOW
               done
               export DOCKER_TAGS="${DOCKER_TAGS},latest"
@@ -112,18 +112,13 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAGS}
-      - docker/build:
-          step-name: Build integration testing docker image
-          image: ${CIRCLE_PROJECT_REPONAME}-inttest
-          registry: ${DOCKER_REGISTRY}
-          tag: ${PRIMARY_DOCKER_TAG}
-          dockerfile: int-test/Dockerfile
-          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
-      - docker/push:
-          step-name: Push integration testing docker image
-          image: ${CIRCLE_PROJECT_REPONAME}-inttest
-          registry: ${DOCKER_REGISTRY}
-          tag: ${PRIMARY_DOCKER_TAG}
+      - run:
+          name: Save docker image
+          command: docker save -o image.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - image.tar*
 
   release:
     docker:
@@ -193,13 +188,29 @@ jobs:
           command: ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
 
   integration-test:
-    machine:
-      enabled: true
+    executor: docker/machine
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - export-primary-docker-tag
+      - run:
+          name: Load docker image
+          command: docker load -i /tmp/workspace/image.tar
       - checkout
+      - docker/build:
+          step-name: Build integration testing docker image
+          image: ${CIRCLE_PROJECT_REPONAME}
+          registry: ${DOCKER_REGISTRY}
+          tag: inttest-${PRIMARY_DOCKER_TAG}
+          dockerfile: int-test/Dockerfile
+          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+      - docker/check:
+          registry: ${DOCKER_REGISTRY}
+      - docker/push:
+          step-name: Push integration testing docker image
+          image: ${CIRCLE_PROJECT_REPONAME}
+          registry: ${DOCKER_REGISTRY}
+          tag: inttest-${PRIMARY_DOCKER_TAG}
       - run:
           name: Generate docker-compose file
           command: |
@@ -208,11 +219,10 @@ jobs:
               sed "s#\${PRIMARY_DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" \
               > docker-compose.ci-test.yml
             cat docker-compose.ci-test.yml
-      - install-ssh-dependencies
-      - upload-file:
-          file: docker-compose.ci-test.yml
-      - execute-remote:
-          command: ci-test.sh ${CIRCLE_PROJECT_REPONAME}
+      - run:
+          name: Bring up
+          command: |
+            docker-compose -f docker-compose.ci-test.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
 
 workflows:
   default:
@@ -256,7 +266,7 @@ workflows:
       - integration-test:
           context: default
           requires:
-            - deploy-wip
+            - docker
           filters:
             branches:
               ignore:
