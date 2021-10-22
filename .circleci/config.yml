@@ -264,7 +264,7 @@ workflows:
       - integration-test:
           context: default
           requires:
-            - deploy-wip
+            - docker
           filters:
             branches:
               ignore:
