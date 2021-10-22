@@ -87,7 +87,6 @@ jobs:
             if [[ "<< pipeline.git.branch >>" != "main" ]]; then
               export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest"
             fi
-            echo "export CACHE_FROM_IMAGES=${CACHE_FROM_IMAGES}" >> ${BASH_ENV}
 
             export DOCKER_TAGS=${PRIMARY_DOCKER_TAG}
             if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ "main" != "${PRIMARY_DOCKER_TAG}" ]]; then
@@ -100,6 +99,7 @@ jobs:
               export DOCKER_TAGS="${DOCKER_TAGS},latest"
             fi
             echo "export DOCKER_TAGS=${DOCKER_TAGS}" >> ${BASH_ENV}
+            echo "export CACHE_FROM_IMAGES=${CACHE_FROM_IMAGES}" >> ${BASH_ENV}
             cat ${BASH_ENV}
       - docker/build:
           step-name: Build application docker image
