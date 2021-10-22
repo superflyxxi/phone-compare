@@ -189,6 +189,21 @@ jobs:
       - install-ssh-dependencies
       - upload-file:
           file: docker-compose.<< parameters.env >>.yml
+      - run:
+          name: Generate dummy ci-test file
+          command: |
+            echo "version: '3'" >> docker-compose.ci-test.yml
+            echo "services:" >> docker-compose.ci-test.yml
+            echo "  phone-compare-ci-test:" >> docker-compose.ci-test.yml
+            echo "    image: alpine" >> docker-compose.ci-test.yml
+            echo "    command: true" >> docker-compose.ci-test.yml
+            echo "    restart: no" >> docker-compose.ci-test.yml
+      - when:
+          condition: 
+            equals: [ "env", << parameters.env >> ]
+          steps:
+            - upload-file:
+                file: docker-compose.ci-test.yml
       - execute-remote:
           command: ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
 
