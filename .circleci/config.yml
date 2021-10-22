@@ -114,10 +114,7 @@ jobs:
           tag: ${DOCKER_TAGS}
       - run:
           name: Save docker image
-          command: |
-            set -x
-            docker save -o image.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
-            ls -lha
+          command: docker save -o image.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
       - persist_to_workspace:
           root: ./
           paths:
@@ -207,6 +204,8 @@ jobs:
           tag: inttest-${PRIMARY_DOCKER_TAG}
           dockerfile: int-test/Dockerfile
           extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+      - docker/check:
+          registry: ${DOCKER_REGISTRY}
       - docker/push:
           step-name: Push integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}
