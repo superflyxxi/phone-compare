@@ -114,16 +114,16 @@ jobs:
           tag: ${DOCKER_TAGS}
       - docker/build:
           step-name: Build integration testing docker image
-          image: ${CIRCLE_PROJECT_REPONAME}-inttest
+          image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${PRIMARY_DOCKER_TAG}
+          tag: inttest-${PRIMARY_DOCKER_TAG}
           dockerfile: int-test/Dockerfile
           extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
       - docker/push:
           step-name: Push integration testing docker image
-          image: ${CIRCLE_PROJECT_REPONAME}-inttest
+          image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
-          tag: ${PRIMARY_DOCKER_TAG}
+          tag: inttest-${PRIMARY_DOCKER_TAG}
 
   release:
     docker:
