@@ -219,7 +219,6 @@ jobs:
               sed "s#\${PRIMARY_DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" \
               > docker-compose.ci-test.yml
             cat docker-compose.ci-test.yml
-      - docker/install-docker-compose
       - run:
           name: Bring up
           command: |
