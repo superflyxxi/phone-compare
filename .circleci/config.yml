@@ -68,8 +68,7 @@ jobs:
           command: npm run xo-verify
 
   docker:
-    machine: 
-      enabled: true
+    executor: docker/machine
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -112,18 +111,13 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           registry: ${DOCKER_REGISTRY}
           tag: ${DOCKER_TAGS}
-      - docker/build:
-          step-name: Build integration testing docker image
-          image: ${CIRCLE_PROJECT_REPONAME}
-          registry: ${DOCKER_REGISTRY}
-          tag: inttest-${PRIMARY_DOCKER_TAG}
-          dockerfile: int-test/Dockerfile
-          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
-      - docker/push:
-          step-name: Push integration testing docker image
-          image: ${CIRCLE_PROJECT_REPONAME}
-          registry: ${DOCKER_REGISTRY}
-          tag: inttest-${PRIMARY_DOCKER_TAG}
+      - run:
+          name: Save docker image
+          run: docker save -o ${CIRCLE_PROJECT_REPONAME}.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ${CIRCLE_PROJECT_REPONAME}.tar
 
   release:
     docker:
@@ -189,32 +183,31 @@ jobs:
       - install-ssh-dependencies
       - upload-file:
           file: docker-compose.<< parameters.env >>.yml
-      - run:
-          name: Generate dummy ci-test file
-          command: |
-            echo "version: '3'" >> docker-compose.ci-test.yml
-            echo "services:" >> docker-compose.ci-test.yml
-            echo "  phone-compare-ci-test:" >> docker-compose.ci-test.yml
-            echo "    image: alpine" >> docker-compose.ci-test.yml
-            echo "    command: true" >> docker-compose.ci-test.yml
-            echo "    restart: no" >> docker-compose.ci-test.yml
-      - when:
-          condition: 
-            equals: [ "env", << parameters.env >> ]
-          steps:
-            - upload-file:
-                file: docker-compose.ci-test.yml
       - execute-remote:
           command: ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
 
   integration-test:
-    machine:
-      enabled: true
+    executor: docker/machine
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - export-primary-docker-tag
+      - run:
+          name: Load docker image
+          command: docker load -i ${CIRCLE_PROJECT_REPONAME}.tar
       - checkout
+      - docker/build:
+          step-name: Build integration testing docker image
+          image: ${CIRCLE_PROJECT_REPONAME}
+          registry: ${DOCKER_REGISTRY}
+          tag: inttest-${PRIMARY_DOCKER_TAG}
+          dockerfile: int-test/Dockerfile
+          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+      - docker/push:
+          step-name: Push integration testing docker image
+          image: ${CIRCLE_PROJECT_REPONAME}
+          registry: ${DOCKER_REGISTRY}
+          tag: inttest-${PRIMARY_DOCKER_TAG}
       - run:
           name: Generate docker-compose file
           command: |
@@ -223,11 +216,11 @@ jobs:
               sed "s#\${PRIMARY_DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" \
               > docker-compose.ci-test.yml
             cat docker-compose.ci-test.yml
-      - install-ssh-dependencies
-      - upload-file:
-          file: docker-compose.ci-test.yml
-      - execute-remote:
-          command: ci-test.sh ${CIRCLE_PROJECT_REPONAME}
+      - docker/install-docker-compose
+      - run:
+          name: Bring up
+          command: |
+            docker-compose up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test -f docker-compose.ci-test.yml
 
 workflows:
   default:
