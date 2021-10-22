@@ -67,7 +67,7 @@ jobs:
           name: Verify XO
           command: npm run xo-verify
 
-  docker:
+  build-docker:
     executor: docker/machine
     steps:
       - attach_workspace:
@@ -233,7 +233,7 @@ workflows:
           prerelease: true
       - unit-test:
           context: default
-      - docker:
+      - build-docker:
           context: default
           requires:
             - unit-test
@@ -242,7 +242,7 @@ workflows:
           prerelease: false
           context: default
           requires:
-            - docker
+            - build-docker
           filters:
             branches:
               only:
@@ -252,13 +252,13 @@ workflows:
           name: deploy-wip
           env: wip
           requires:
-            - docker
+            - build-docker
       - deploy:
           context: default
           name: deploy-prod
           env: prod
           requires:
-            - docker
+            - build-docker
           filters:
             branches:
               only:
@@ -266,7 +266,7 @@ workflows:
       - integration-test:
           context: default
           requires:
-            - docker
+            - build-docker
           filters:
             branches:
               ignore:
