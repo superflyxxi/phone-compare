@@ -116,12 +116,12 @@ jobs:
           name: Save docker image
           command: |
             set -x
-            docker save -o ${CIRCLE_PROJECT_REPONAME}.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+            docker save -o image.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
             ls -lha
       - persist_to_workspace:
           root: ./
           paths:
-            - ${CIRCLE_PROJECT_REPONAME}.tar*
+            - image.tar*
 
   release:
     docker:
@@ -198,7 +198,7 @@ jobs:
       - export-primary-docker-tag
       - run:
           name: Load docker image
-          command: docker load -i ${CIRCLE_PROJECT_REPONAME}.tar
+          command: docker load -i /tmp/workspace/image.tar
       - checkout
       - docker/build:
           step-name: Build integration testing docker image
