@@ -115,9 +115,9 @@ jobs:
           name: Save docker image
           command: docker save -o ${CIRCLE_PROJECT_REPONAME}.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
       - persist_to_workspace:
-          root: .
+          root: ./
           paths:
-            - ${CIRCLE_PROJECT_REPONAME}.tar
+            - ${CIRCLE_PROJECT_REPONAME}.tar*
 
   release:
     docker:
