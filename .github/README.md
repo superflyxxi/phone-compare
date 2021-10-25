@@ -3,6 +3,7 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=security_rating)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
 
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=coverage)](https://sonarcloud.io/summary/new_code?id=superflyxxi_phone-compare)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=bugs)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=code_smells)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=superflyxxi_phone-compare&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=superflyxxi_phone-compare)
