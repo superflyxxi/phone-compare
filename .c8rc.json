@@ -1,5 +1,5 @@
 {
-	"reporter": ["text", "html", "lcovonly"],
+	"reporter": ["text", "lcov"],
 	"check-coverage": true,
 	"all": true,
 	"src": ["src/"],
