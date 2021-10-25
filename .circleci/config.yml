@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   node: circleci/node@4
   docker: circleci/docker@1
+  sonarcloud: sonarsource/sonarcloud@1
 
 commands:
   export-primary-docker-tag:
@@ -67,6 +68,7 @@ jobs:
       - run:
           name: Verify XO
           command: npm run xo-verify
+      - sonarcloud/scan
 
   build-docker:
     executor: docker/machine
