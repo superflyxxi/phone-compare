@@ -34,7 +34,7 @@
     "validate.js": "^0.13.1"
   },
   "devDependencies": {
-    "c8": "^7.9.0",
+    "c8": "^7.10.0",
     "chai": "^4.3.4",
     "chai-almost": "^1.0.1",
     "chai-http": "^4.3.0",
