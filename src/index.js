@@ -18,7 +18,6 @@ app.use('/v1/phones', phoneRouter);
 app.use('/v1/phones/compare', compareRouter);
 app.use('/api-docs', apiDocsRouter);
 
-// eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
 	next(new RouteNotFoundError(req));
 });
