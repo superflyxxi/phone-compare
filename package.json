@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "test": "DATA_DIR=$(mktemp -d) c8 mocha ${MOCHA_ARGS}",
-    "int-test": "mocha ${MOCHA_ARGS} int-test/",
+    "test": "DATA_DIR=$(mktemp -d) c8 mocha",
+    "int-test": "mocha int-test/",
     "xo-fix": "xo --fix",
     "xo-verify": "xo"
   },
