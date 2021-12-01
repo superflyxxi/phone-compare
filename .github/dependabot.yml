@@ -3,7 +3,6 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
-    target-branch: "dependencies"
     schedule:
       interval: "monthly"
     commit-message:
@@ -13,7 +12,6 @@ updates:
       - superflyxxi
   - package-ecosystem: "docker"
     directory: "/"
-    target-branch: "dependencies"
     schedule:
       interval: "monthly"
     commit-message:
@@ -23,7 +21,6 @@ updates:
       - superflyxxi
   - package-ecosystem: "docker"
     directory: "/int-test"
-    target-branch: "dependencies"
     schedule:
       interval: "monthly"
     commit-message:
