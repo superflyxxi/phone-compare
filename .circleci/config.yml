@@ -318,7 +318,7 @@ workflows:
           context: default
           registry-env: DOCKER_IO_REGISTRY
           docker-username-env: DOCKER_IO_USERNAME
-          docker-password-env: DOCKER_IO_PASSOWRD
+          docker-password-env: DOCKER_IO_PASSWORD
           requires:
             - build-docker
             - integration-test
