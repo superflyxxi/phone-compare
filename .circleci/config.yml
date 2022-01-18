@@ -313,6 +313,11 @@ workflows:
           requires:
             - build-docker
             - integration-test
+          filters:
+            branches:
+              only:
+                - main
+                - dev
       - publish-docker:
           name: publish-docker-dockerio
           context: default
@@ -322,6 +327,11 @@ workflows:
           requires:
             - build-docker
             - integration-test
+          filters:
+            branches:
+              only:
+                - main
+                - dev
       - release:
           prerelease: false
           context: default
