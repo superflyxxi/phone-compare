@@ -258,7 +258,8 @@ jobs:
           name: Load docker image
           command: docker load -i /tmp/workspace/images.tar
       - checkout
-      - run: echo ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+      - run: 
+          echo ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:inttest-${PRIMARY_DOCKER_TAG}
       - docker/build:
           step-name: Build integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}
@@ -271,7 +272,10 @@ jobs:
           docker-password: PRIVATE_DOCKER_PASSWORD
       - run:
           name: Tag image for publishing
-          command: docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}:inttest-${PRIMARY_DOCKER_TAG}
+          command: |
+            docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}:inttest-${PRIMARY_DOCKER_TAG}
+            docker images
+            export
       - docker/push:
           step-name: Push integration testing docker image
           image: ${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}
