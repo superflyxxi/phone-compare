@@ -259,6 +259,7 @@ jobs:
           name: Load docker image
           command: docker load -i /tmp/workspace/images.tar
       - checkout
+      - run: echo ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROECT_REPONAME}:${PRIMARY_DOCKER_TAG}
       - docker/build:
           step-name: Build integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}
