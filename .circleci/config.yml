@@ -302,11 +302,22 @@ workflows:
           docker-password-env: PRIVATE_DOCKER_PASSWORD
           requires:
             - build-docker
+      - publish-docker:
+          name: publish-docker-ghcr
+          context: default
+          registry-env: GHCR_REGISTRY
+          docker-username-env: GHCR_USERNAME
+          docker-password-env: GHCR_TOKEN
+          requires:
+            - build-docker
+            - integration-test
       - release:
           prerelease: false
           context: default
           requires:
             - publish-docker-private
+            - publish-docker-ghcr
+            - integration-test
           filters:
             branches:
               only:
