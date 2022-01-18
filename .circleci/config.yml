@@ -313,12 +313,22 @@ workflows:
           requires:
             - build-docker
             - integration-test
+      - publish-docker:
+          name: publish-docker-dockerio
+          context: default
+          registry-env: DOCKER_IO_REGISTRY
+          docker-username-env: DOCKER_IO_USERNAME
+          docker-password-env: DOCKER_IO_PASSOWRD
+          requires:
+            - build-docker
+            - integration-test
       - release:
           prerelease: false
           context: default
           requires:
             - publish-docker-private
             - publish-docker-ghcr
+            - publish-docker-dockerio
             - integration-test
           filters:
             branches:
