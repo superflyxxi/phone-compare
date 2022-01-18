@@ -71,56 +71,111 @@ jobs:
 
   build-docker:
     executor: docker/machine
+    resource_class: medium
+      CACHE_REGISTRY: ${GHCR_REGISTRY}
+      CACHE_USERNAME: ${GHCR_USERNAME}
+      CACHE_PASSWORD: ${GHCR_TOKEN}
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - docker/check:
-          registry: ${DOCKER_REGISTRY}
-      - export-primary-docker-tag
       - checkout
       - run: 
           name: Determine version.txt
           command: |
             cp -v /tmp/workspace/full_version.txt ./src/version.txt
+      - export-primary-docker-tag
       - run:
           name: Custom enviroment variables
           command: |
             export CACHE_FROM_IMAGES=$(grep "^FROM " Dockerfile | sed 's/FROM //g')
             if ! [[ "<< pipeline.git.branch >>" =~ (main|release-.*|dev) ]]; then
-              export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:dev"
+              export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${CACHE_REGISTRY}/${CACHE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:dev"
             fi
 
+            if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ "main" != "${PRIMARY_DOCKER_TAG}" ]]; then
+              for A in $(echo ${PRIMARY_DOCKER_TAG} | tr "." "\n"); do 
+                NOW="$PREV.$A"
+                export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${CACHE_REGISTRY}/${CACHE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${NOW:1}"
+                PREV=$NOW
+              done
+            fi
+            echo "export CACHE_FROM_IMAGES=${CACHE_FROM_IMAGES}" >> ${BASH_ENV}
+            cat ${BASH_ENV}
+      - docker/check:
+          registry: ${CACHE_REGISTRY}
+          docker-password: ${CACHE_PASSWORD}
+          docker-username: ${CACHE_USERNAME}
+      - docker/build:
+          step-name: Build application docker image
+          image: ${CIRCLE_PROJECT_REPONAME}
+          tag: build
+          cache_from: ${CACHE_FROM_IMAGES}
+      - run:
+          name: Save docker image
+          command: docker save -o images.tar ${CIRCLE_PROJECT_REPONAME}:build
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - images.tar*
+
+  publish-docker:
+    resource_class: medium
+    executor: docker/machine
+    parameters:
+      registry-env:
+        description: The registry envirnment variable to use to publish docker images.
+        type: string
+        default: docker.io
+      docker-username-env:
+        description: The docker registry username env variable to use.
+        type: string
+        default: DOCKER_LOGIN
+      docker-password-env:
+        description: The docker registery password env variable to use.
+        type: string
+        default: DOCKER_PASSWORD
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - export-primary-docker-tag
+      - run:
+          name: Custom enviroment variables
+          command: |
             export DOCKER_TAGS=${PRIMARY_DOCKER_TAG}
             if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ "main" != "${PRIMARY_DOCKER_TAG}" ]]; then
               for A in $(echo ${PRIMARY_DOCKER_TAG} | tr "." "\n"); do 
                 NOW="$PREV.$A"
                 export DOCKER_TAGS="${DOCKER_TAGS},${NOW:1}"
-                export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${NOW:1}"
                 PREV=$NOW
               done
               export DOCKER_TAGS="${DOCKER_TAGS},main,latest"
             fi
             echo "export DOCKER_TAGS=${DOCKER_TAGS}" >> ${BASH_ENV}
-            echo "export CACHE_FROM_IMAGES=${CACHE_FROM_IMAGES}" >> ${BASH_ENV}
+            echo "export FINAL_IMAGE_NAME=${<< parameters.docker-username-env >>}/${CIRCLE_PROJECT_REPONAME}" >> ${BASH_ENV}
             cat ${BASH_ENV}
-      - docker/build:
-          step-name: Build application docker image
-          image: ${CIRCLE_PROJECT_REPONAME}
-          registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAGS}
-          cache_from: ${CACHE_FROM_IMAGES}
-      - docker/push:
-          step-name: Push application docker image
-          image: ${CIRCLE_PROJECT_REPONAME}
-          registry: ${DOCKER_REGISTRY}
-          tag: ${DOCKER_TAGS}
+      - docker/check:
+          registry: ${<< parameters.registry-env >>}
+          docker-password: << parameters.docker-password-env >>
+          docker-username: << parameters.docker-username-env >>
       - run:
-          name: Save docker image
-          command: docker save -o image.tar ${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - image.tar*
+          name: Load docker images
+          command: |
+            docker load -i /tmp/workspace/images.tar
+      - run:
+          name: Tag docker images for repos
+          command: |
+            IFS="," read -ra LOOP_TAGS \<<< "${DOCKER_TAGS}"
+            set -x
+            for TAG in "${LOOP_TAGS[@]}"; do
+              docker tag ${CIRCLE_PROJECT_REPONAME} ${<< parameters.registry-env >>}/${FINAL_IMAGE_NAME}:${TAG}
+            done
+            docker tag test-${CIRCLE_PROJECT_REPONAME} ${<< parameters.registry-env >>}/${FINAL_IMAGE_NAME}:test-${PRIMARY_DOCKER_TAG} 
+            set +x
+      - docker/push:
+          step-name: Pushing image to desired repo
+          registry: ${<< parameters.registry-env >>}
+          image: ${FINAL_IMAGE_NAME}
+          tag: ${DOCKER_TAGS}
 
   release:
     resource_class: small
@@ -198,30 +253,24 @@ jobs:
       - export-primary-docker-tag
       - run:
           name: Load docker image
-          command: docker load -i /tmp/workspace/image.tar
+          command: docker load -i /tmp/workspace/images.tar
       - checkout
       - docker/build:
           step-name: Build integration testing docker image
           image: ${CIRCLE_PROJECT_REPONAME}
-          registry: ${DOCKER_REGISTRY}
-          tag: inttest-${PRIMARY_DOCKER_TAG}
+          tag: inttest
           dockerfile: int-test/Dockerfile
-          extra_build_args: --build-arg FROM_IMAGE=${DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:${PRIMARY_DOCKER_TAG}
+          extra_build_args: --build-arg FROM_IMAGE=${CIRCLE_PROJECT_REPONAME}:build
       - docker/check:
           registry: ${DOCKER_REGISTRY}
+      - run:
+          name: Tag image for publishing
+          command: docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}:inttest-${PRIMARY_DOCKER_TAG}
       - docker/push:
           step-name: Push integration testing docker image
-          image: ${CIRCLE_PROJECT_REPONAME}
-          registry: ${DOCKER_REGISTRY}
+          image: ${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+          registry: ${PRIVATE_DOCKER_REGISTRY}
           tag: inttest-${PRIMARY_DOCKER_TAG}
-      - run:
-          name: Generate docker-compose file
-          command: |
-            cat int-test/docker-compose-template.yml |\
-              sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
-              sed "s#\${PRIMARY_DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" \
-              > docker-compose.ci-test.yml
-            cat docker-compose.ci-test.yml
       - run:
           name: Bring up
           command: |
