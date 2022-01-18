@@ -80,6 +80,8 @@ jobs:
       - run:
           name: Docker cache login
           command: |
+            echo CACHE_REGISTRY=${CACHE_REGISTRY}
+            echo GHCR_REGISTRY=${GHCR_REGISTRY}
             echo "$CACHE_PASSWORD" \
               | docker login -u "$CACHE_USERNAME" \
               --password-stdin ${CACHE_REGISTRY}
