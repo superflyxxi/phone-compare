@@ -103,8 +103,8 @@ jobs:
             cat ${BASH_ENV}
       - docker/check:
           registry: ${CACHE_REGISTRY}
-          docker-password: ${CACHE_PASSWORD}
-          docker-username: ${CACHE_USERNAME}
+          docker-password: CACHE_PASSWORD
+          docker-username: CACHE_USERNAME
       - docker/build:
           step-name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
@@ -234,8 +234,9 @@ jobs:
           name: Generate docker-compose file
           command: |
             cat docker-compose-template.yml |\
-              sed "s#\${DOCKER_REGISTRY}#${DOCKER_REGISTRY}#g" |\
-              sed "s#\${PRIMARY_DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" |\
+              sed "s#\${DOCKER_REGISTRY}#${PRIVATE_DOCKER_REGISTRY}#g" |\
+              sed "s#\${DOCKER_USERNAME}#${PRIVATE_DOCKER_USERNAME}#g" |\
+              sed "s#\${DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" |\
               sed "s#\${ENV}#<< parameters.env >>#g" \
               > docker-compose.<< parameters.env >>.yml
             cat docker-compose.<< parameters.env >>.yml
@@ -262,7 +263,9 @@ jobs:
           dockerfile: int-test/Dockerfile
           extra_build_args: --build-arg FROM_IMAGE=${CIRCLE_PROJECT_REPONAME}:build
       - docker/check:
-          registry: ${DOCKER_REGISTRY}
+          registry: ${PRIVATE_DOCKER_REGISTRY}
+          docker-username: PRIVATE_DOCKER_USERNAME
+          docker-password: PRIVATE_DOCKER_PASSWORD
       - run:
           name: Tag image for publishing
           command: docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}:inttest-${PRIMARY_DOCKER_TAG}
@@ -290,11 +293,19 @@ workflows:
           requires:
             - unit-test
             - pre-release
+      - publish-docker:
+          name: publish-docker-private
+          context: default
+          registry-env: PRIVATE_DOCKER_REGISTRY
+          docker-username-env: PRIVATE_DOCKER_USERNAME
+          docker-password-env: PRIVATE_DOCKER_PASSWORD
+          requires:
+            - build-docker
       - release:
           prerelease: false
           context: default
           requires:
-            - build-docker
+            - publish-docker-private
           filters:
             branches:
               only:
@@ -304,13 +315,13 @@ workflows:
           name: deploy-wip
           env: wip
           requires:
-            - build-docker
+            - publish-docker-private
       - deploy:
           context: default
           name: deploy-prod
           env: prod
           requires:
-            - build-docker
+            - publish-docker-private
           filters:
             branches:
               only:
