@@ -274,15 +274,6 @@ jobs:
           name: Tag image for publishing
           command: |
             docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:inttest-${PRIMARY_DOCKER_TAG}
-            docker images
-            export
-            docker push ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:inttest-${PRIMARY_DOCKER_TAG}
-            echo "export FINAL_IMAGE_NAME=${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}" >> ${BASH_ENV}
-      - docker/push:
-          step-name: Push integration testing docker image (debug)
-          image: ${FINAL_IMAGE_NAME}
-          registry: ${PRIVATE_DOCKER_REGISTRY}
-          tag: inttest-${PRIMARY_DOCKER_TAG}
       - docker/push:
           step-name: Push integration testing docker image
           image: "${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
@@ -291,7 +282,7 @@ jobs:
       - run:
           name: Bring up
           command: |
-            docker-compose -f docker-compose.ci-test.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
+            docker-compose -f int-test/docker-compose.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
 
 workflows:
   default:
