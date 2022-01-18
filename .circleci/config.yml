@@ -74,9 +74,9 @@ jobs:
     resource_class: medium
     steps:
       - run:
-          name: Docker cache login
+          name: Define cache env variables
           command: |
-            echo "CACHE_REGISTRY=${GHCR_REGSITRY}" >> ${BASH_ENV}
+            echo "CACHE_REGISTRY=${GHCR_REGISTRY}" >> ${BASH_ENV}
             echo "CACHE_USERNAME=${GHCR_USERNAME}" >> ${BASH_ENV}
             echo "CACHE_PASSWORD=${GHCR_TOKEN}" >> ${BASH_ENV}
       - attach_workspace:
