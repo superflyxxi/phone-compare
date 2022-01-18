@@ -72,6 +72,7 @@ jobs:
   build-docker:
     executor: docker/machine
     resource_class: medium
+    environment:
       CACHE_REGISTRY: ${GHCR_REGISTRY}
       CACHE_USERNAME: ${GHCR_USERNAME}
       CACHE_PASSWORD: ${GHCR_TOKEN}
