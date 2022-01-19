@@ -331,7 +331,6 @@ workflows:
             branches:
               only:
                 - main
-                - dev
       - release:
           prerelease: false
           context: default
