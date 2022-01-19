@@ -2,7 +2,7 @@ version: '3'
 
 services:
   phone-compare:
-    image: phone-compare:latest
+    image: phone-compare:build
     restart: always
     environment:
       NODE_ENV: development

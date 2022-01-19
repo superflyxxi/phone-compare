@@ -72,11 +72,13 @@ jobs:
   build-docker:
     executor: docker/machine
     resource_class: medium
-    environment:
-      CACHE_REGISTRY: ${GHCR_REGISTRY}
-      CACHE_USERNAME: ${GHCR_USERNAME}
-      CACHE_PASSWORD: ${GHCR_TOKEN}
     steps:
+      - run:
+          name: Define cache env variables
+          command: |
+            echo "CACHE_REGISTRY=${GHCR_REGISTRY}" >> ${BASH_ENV}
+            echo "CACHE_USERNAME=${GHCR_USERNAME}" >> ${BASH_ENV}
+            echo "CACHE_PASSWORD=${GHCR_TOKEN}" >> ${BASH_ENV}
       - attach_workspace:
           at: /tmp/workspace
       - checkout
@@ -104,8 +106,8 @@ jobs:
             cat ${BASH_ENV}
       - docker/check:
           registry: ${CACHE_REGISTRY}
-          docker-password: CACHE_PASSWORD
           docker-username: CACHE_USERNAME
+          docker-password: CACHE_PASSWORD
       - docker/build:
           step-name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
@@ -168,9 +170,8 @@ jobs:
             IFS="," read -ra LOOP_TAGS \<<< "${DOCKER_TAGS}"
             set -x
             for TAG in "${LOOP_TAGS[@]}"; do
-              docker tag ${CIRCLE_PROJECT_REPONAME} ${<< parameters.registry-env >>}/${FINAL_IMAGE_NAME}:${TAG}
+              docker tag ${CIRCLE_PROJECT_REPONAME}:build ${<< parameters.registry-env >>}/${FINAL_IMAGE_NAME}:${TAG}
             done
-            docker tag test-${CIRCLE_PROJECT_REPONAME} ${<< parameters.registry-env >>}/${FINAL_IMAGE_NAME}:test-${PRIMARY_DOCKER_TAG} 
             set +x
       - docker/push:
           step-name: Pushing image to desired repo
@@ -269,16 +270,17 @@ jobs:
           docker-password: PRIVATE_DOCKER_PASSWORD
       - run:
           name: Tag image for publishing
-          command: docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}:inttest-${PRIMARY_DOCKER_TAG}
+          command: |
+            docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:inttest-${PRIMARY_DOCKER_TAG}
       - docker/push:
           step-name: Push integration testing docker image
-          image: ${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+          image: "${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
           registry: ${PRIVATE_DOCKER_REGISTRY}
           tag: inttest-${PRIMARY_DOCKER_TAG}
       - run:
           name: Bring up
           command: |
-            docker-compose -f docker-compose.ci-test.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
+            docker-compose -f int-test/docker-compose.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
 
 workflows:
   default:
@@ -302,11 +304,42 @@ workflows:
           docker-password-env: PRIVATE_DOCKER_PASSWORD
           requires:
             - build-docker
+      - publish-docker:
+          name: publish-docker-ghcr
+          context: default
+          registry-env: GHCR_REGISTRY
+          docker-username-env: GHCR_USERNAME
+          docker-password-env: GHCR_TOKEN
+          requires:
+            - build-docker
+            - integration-test
+          filters:
+            branches:
+              only:
+                - main
+                - dev
+      - publish-docker:
+          name: publish-docker-dockerio
+          context: default
+          registry-env: DOCKER_IO_REGISTRY
+          docker-username-env: DOCKER_IO_USERNAME
+          docker-password-env: DOCKER_IO_PASSWORD
+          requires:
+            - build-docker
+            - integration-test
+          filters:
+            branches:
+              only:
+                - main
+                - dev
       - release:
           prerelease: false
           context: default
           requires:
             - publish-docker-private
+            - publish-docker-ghcr
+            - publish-docker-dockerio
+            - integration-test
           filters:
             branches:
               only:
