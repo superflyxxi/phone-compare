@@ -339,10 +339,6 @@ workflows:
             - publish-docker-ghcr
             - publish-docker-dockerio
             - integration-test
-          filters:
-            branches:
-              only:
-                - main
       - deploy:
           context: default
           name: deploy-wip
