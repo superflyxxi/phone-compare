@@ -2,12 +2,12 @@ version: '3'
 
 services:
   phone-compare:
-    image: ${DOCKER_REGISTRY}/phone-compare:${PRIMARY_DOCKER_TAG}
+    image: phone-compare:build
     restart: always
     environment:
       NODE_ENV: development
   phone-compare-ci-test:
-    image: ${DOCKER_REGISTRY}/phone-compare:inttest-${PRIMARY_DOCKER_TAG}
+    image: phone-compare:inttest
     depends_on:
       - phone-compare
     restart: "no"
