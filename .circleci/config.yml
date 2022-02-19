@@ -190,8 +190,7 @@ jobs:
         default: false
     steps:
       - checkout
-      - run: npm ci
-      - run: npm install -D @semantic-release/exec
+      - run: npm ci --include=dev
       - attach_workspace:
           at: /tmp/workspace
       - when:
