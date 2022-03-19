@@ -25,11 +25,15 @@ commands:
       file:
         description: the file to upload
         type: string
+      remote_dir:
+        description: The remote directory to append
+        type: string
+        default: "."
     steps:
       - run:
           name: Upload << parameters.file >>
           command: |
-            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
+            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>/${CIRCLE_PROJECT_REPONAME}
   execute-remote:
     parameters:
       command:
@@ -40,6 +44,37 @@ commands:
           name: Execute a remote command
           command: |
             sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.command >>"
+  generate-file:
+    parameters:
+      template_file:
+        description: The template file to use
+        type: string
+      output_file:
+        description: The final filename to use
+        type: string
+      docker_registry:
+        description: Replacement DOCKER_REGISTRY
+        type: string
+      docker_username:
+        description: Replacement DOCKER_USERNAME
+        type: string
+      docker_tag:
+        description: Replacement DOCKER_TAG
+        type: string
+      env:
+        description: Replacement ENV
+        type: string
+    steps:
+      - run:
+          name: Generate << parameters.output_file >>
+          command: |
+            cat << parameters.template_file >> |\
+              sed "s#\${DOCKER_REGISTRY}#<< parameters.docker_registry >>#g" |\
+              sed "s#\${DOCKER_USERNAME}#<< parameters.docker_username >>#g" |\
+              sed "s#\${DOCKER_TAG}#<< parameters.docker_tag >>#g" |\
+              sed "s#\${ENV}#<< parameters.env >>#g" \
+              > << parameters.output_file >>
+            cat << parameters.output_file >>
 
 jobs:
   unit-test:
@@ -72,7 +107,7 @@ jobs:
   build-docker:
     executor: 
       name: docker/machine
-      dlc: true
+      dlc: false
     resource_class: medium
     steps:
       - run:
@@ -127,7 +162,7 @@ jobs:
     resource_class: medium
     executor:
       name: docker/machine
-      dlc: true
+      dlc: false
     parameters:
       registry-env:
         description: The registry envirnment variable to use to publish docker images.
@@ -183,7 +218,7 @@ jobs:
           image: ${FINAL_IMAGE_NAME}
           tag: ${DOCKER_TAGS}
 
-  release:
+  release-notes:
     resource_class: small
     docker:
       - image: circleci/node
@@ -221,7 +256,7 @@ jobs:
             - full_version.txt
             - short_version.txt
 
-  deploy:
+  deploy-k8s:
     parameters:
       env:
         description: Which environment to deploy
@@ -235,26 +270,87 @@ jobs:
           at: /tmp/workspace
       - export-primary-docker-tag
       - checkout
-      - run:
-          name: Generate docker-compose file
-          command: |
-            cat docker-compose-template.yml |\
-              sed "s#\${DOCKER_REGISTRY}#${PRIVATE_DOCKER_REGISTRY}#g" |\
-              sed "s#\${DOCKER_USERNAME}#${PRIVATE_DOCKER_USERNAME}#g" |\
-              sed "s#\${DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" |\
-              sed "s#\${ENV}#<< parameters.env >>#g" \
-              > docker-compose.<< parameters.env >>.yml
-            cat docker-compose.<< parameters.env >>.yml
+      - when:
+          condition:
+            equal:
+              - prod
+              - << parameters.env >>
+          steps:
+            - run: |
+                echo "export DOCKER_REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
+                echo "export DOCKER_USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
+      - unless:
+          condition:
+            equal:
+              - prod
+              - << parameters.env >>
+          steps:
+            - run: |
+                echo "export DOCKER_REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
+                echo "export DOCKER_USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
+      - generate-file:
+          template_file: deployments/k8s-template.yml
+          output_file: generated.yml
+          docker_registry: ${DOCKER_REGISTRY}
+          docker_username: ${DOCKER_USERNAME}
+          docker_tag: ${PRIMARY_DOCKER_TAG}
+          env: << parameters.env >>
+      - install-ssh-dependencies
+      - upload-file:
+          file: generated.yml
+          remote_dir: k8s/ci/<< parameters.env >>
+      - execute-remote:
+          command: ci-deploy-k8s.sh << parameters.env >> phone-compare
+
+  deploy-docker-compose:
+    parameters:
+      env:
+        description: Which environment to deploy
+        type: enum
+        default: "wip"
+        enum: ["wip", "prod"]
+    machine:
+      image: ubuntu-2004:202111-02
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - export-primary-docker-tag
+      - checkout
+      - when:
+          condition:
+            equal:
+              - prod
+              - << parameters.env >>
+          steps:
+            - run: |
+                echo "export DOCKER_REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
+                echo "export DOCKER_USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
+      - unless:
+          condition:
+            equal:
+              - prod
+              - << parameters.env >>
+          steps:
+            - run: |
+                echo "export DOCKER_REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
+                echo "export DOCKER_USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
+      - generate-file:
+          template_file: deployments/docker-compose-template.yml
+          output_file: docker-compose.<< parameters.env >>.yml
+          docker_registry: ${DOCKER_REGISTRY}
+          docker_username: ${DOCKER_USERNAME}
+          docker_tag: ${PRIMARY_DOCKER_TAG}
+          env: << parameters.env >>
       - install-ssh-dependencies
       - upload-file:
           file: docker-compose.<< parameters.env >>.yml
       - execute-remote:
-          command: ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
+          command: ci-deploy-docker-compose.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
 
   integration-test:
     executor: 
       name: docker/machine
-      dlc: true
+      dlc: false
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -290,7 +386,7 @@ jobs:
 workflows:
   default:
     jobs:
-      - release:
+      - release-notes:
           name: pre-release
           context: default
           prerelease: true
@@ -336,7 +432,7 @@ workflows:
             branches:
               only:
                 - main
-      - release:
+      - release-notes:
           prerelease: false
           context: default
           requires:
@@ -344,18 +440,20 @@ workflows:
             - publish-docker-ghcr
             - publish-docker-dockerio
             - integration-test
-      - deploy:
+      - deploy-k8s:
           context: default
-          name: deploy-wip
+          name: deploy-k8s-wip
           env: wip
           requires:
             - publish-docker-private
-      - deploy:
+            - pre-release
+      - deploy-k8s:
           context: default
-          name: deploy-prod
+          name: deploy-k8s-prod
           env: prod
           requires:
-            - publish-docker-private
+            - publish-docker-dockerio
+            - pre-release
           filters:
             branches:
               only:
