@@ -448,6 +448,10 @@ workflows:
           requires:
             - publish-docker-dockerio
             - pre-release
+          filters:
+            branches:
+              only:
+                - main
       - deploy-docker-compose:
           context: default
           name: deploy-docker-compose-wip
