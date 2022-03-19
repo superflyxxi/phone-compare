@@ -293,7 +293,7 @@ jobs:
           env: << parameters.env >>
       - install-ssh-dependencies
       - upload-file:
-          file: generated
+          file: generated.yml
           remote_dir: k8s/ci/<< parameters.env >>
       - execute-remote:
           command: ci-deploy-k8s.sh << parameters.env >> ${CIRCLE_PROJECT_REPONAME}
