@@ -273,8 +273,8 @@ jobs:
               - << parameters.env >>
           steps:
             - run: |
-                echo "export REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
-                echo "export USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
+                echo "export REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
+                echo "export USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
       - unless:
           condition:
             equal:
@@ -282,8 +282,8 @@ jobs:
               - << parameters.env >>
           steps:
             - run: |
-                echo "export REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
-                echo "export USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
+                echo "export REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
+                echo "export USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
       - generate-file:
           template_file: deployments/k8s-template.yml
           output_file: ${CIRCLE_PROJECT_REPONAME}.<< parameters.env >>.yml
@@ -319,8 +319,8 @@ jobs:
               - << parameters.env >>
           steps:
             - run: |
-                echo "export REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
-                echo "export USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
+                echo "export REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
+                echo "export USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
       - unless:
           condition:
             equal:
@@ -328,8 +328,8 @@ jobs:
               - << parameters.env >>
           steps:
             - run: |
-                echo "export REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
-                echo "export USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
+                echo "export REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
+                echo "export USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
       - generate-file:
           template_file: deployments/docker-compose-template.yml
           output_file: docker-compose.<< parameters.env >>.yml
