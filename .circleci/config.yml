@@ -294,16 +294,13 @@ jobs:
           at: /tmp/workspace
       - export-primary-docker-tag
       - checkout
-      - run:
-          name: Generate docker-compose file
-          command: |
-            cat deployments/docker-compose-template.yml |\
-              sed "s#\${DOCKER_REGISTRY}#${PRIVATE_DOCKER_REGISTRY}#g" |\
-              sed "s#\${DOCKER_USERNAME}#${PRIVATE_DOCKER_USERNAME}#g" |\
-              sed "s#\${DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" |\
-              sed "s#\${ENV}#<< parameters.env >>#g" \
-              > docker-compose.<< parameters.env >>.yml
-            cat docker-compose.<< parameters.env >>.yml
+      - generate-file:
+          template_file: deployments/docker-compose-template.yml
+          output_file: docker-compose.<< parameters.env >>.yml
+          docker_registry: ${PRIVATE_DOCKER_REGISTRY}
+          docker_username: ${PRIVATE_DOCKER_USERNAME}
+          docker_tag: ${PRIMARY_DOCKER_TAG}
+          env: << parameters.env >>
       - install-ssh-dependencies
       - upload-file:
           file: docker-compose.<< parameters.env >>.yml
