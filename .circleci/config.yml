@@ -220,6 +220,37 @@ jobs:
             - full_version.txt
             - short_version.txt
 
+  deploy-k8s:
+    parameters:
+      env:
+        description: Which environment to deploy
+        type: enum
+        default: "wip"
+        enum: ["wip", "prod"]
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - export-primary-docker-tag
+      - checkout
+      - run:
+          name: Generate k8s manifest file
+          command: |
+            cat deployments/k8s-template.yml |\
+              sed "s#\${DOCKER_REGISTRY}#${PRIVATE_DOCKER_REGISTRY}#g" |\
+              sed "s#\${DOCKER_USERNAME}#${PRIVATE_DOCKER_USERNAME}#g" |\
+              sed "s#\${DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" |\
+              sed "s#\${ENV}#<< parameters.env >>#g" \
+              > phone-compare.<< parameters.env >>.yml
+            cat phone-compare.<< parameters.env >>.yml
+      - install-ssh-dependencies
+      - upload-file:
+          file: phone-compare.<< parameters.env >>.yml
+          remote_dir: k8s/phone-compare
+      - execute-remote:
+          command: ci-deploy-k8s.sh << parameters.env >> ${CIRCLE_PROJECT_REPONAME}
+
   deploy-docker-compose:
     parameters:
       env:
@@ -341,6 +372,12 @@ workflows:
             - publish-docker-ghcr
             - publish-docker-dockerio
             - integration-test
+      - deploy-k8s:
+          context: default
+          name: deploy-k8s-wip
+          env: wip
+          requires:
+            - publish-docker-private
       - deploy-docker-compose:
           context: default
           name: deploy-docker-compose-wip
