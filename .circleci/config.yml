@@ -25,11 +25,14 @@ commands:
       file:
         description: the file to upload
         type: string
+      remote_dir:
+        description: The remote directory to append
+        type: string
     steps:
       - run:
           name: Upload << parameters.file >>
           command: |
-            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/${CIRCLE_PROJECT_REPONAME}
+            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>/${CIRCLE_PROJECT_REPONAME}
   execute-remote:
     parameters:
       command:
