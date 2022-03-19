@@ -286,14 +286,14 @@ jobs:
                 echo "export USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
       - generate-file:
           template_file: deployments/k8s-template.yml
-          output_file: ${CIRCLE_PROJECT_REPONAME}.<< parameters.env >>.yml
+          output_file: << parameters.env >>.yml
           docker_registry: ${REGISTRY}
           docker_username: ${USERNAME}
           docker_tag: ${PRIMARY_DOCKER_TAG}
           env: << parameters.env >>
       - install-ssh-dependencies
       - upload-file:
-          file: phone-compare.<< parameters.env >>.yml
+          file: << parameters.env >>.yml
           remote_dir: k8s/ci
       - execute-remote:
           command: ci-deploy-k8s.sh << parameters.env >> ${CIRCLE_PROJECT_REPONAME}
