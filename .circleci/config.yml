@@ -107,7 +107,7 @@ jobs:
   build-docker:
     executor: 
       name: docker/machine
-      dlc: true
+      dlc: false
     resource_class: medium
     steps:
       - run:
@@ -162,7 +162,7 @@ jobs:
     resource_class: medium
     executor:
       name: docker/machine
-      dlc: true
+      dlc: false
     parameters:
       registry-env:
         description: The registry envirnment variable to use to publish docker images.
@@ -350,7 +350,7 @@ jobs:
   integration-test:
     executor: 
       name: docker/machine
-      dlc: true
+      dlc: false
     steps:
       - attach_workspace:
           at: /tmp/workspace
