@@ -44,6 +44,37 @@ commands:
           name: Execute a remote command
           command: |
             sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.command >>"
+  generate-file:
+    parameters:
+      template_file:
+        description: The template file to use
+        type: string
+      output_file:
+        description: The final filename to use
+        type: string
+      docker_registry:
+        description: Replacement DOCKER_REGISTRY
+        type: string
+      docker_username:
+        description: Replacement DOCKER_USERNAME
+        type: string
+      docker_tag:
+        description: Replacement DOCKER_TAG
+        type: string
+      env:
+        description: Replacement ENV
+        type: string
+    steps:
+      - run:
+          name: Generate << parameters.output_file >>
+          command: |
+            cat << parameters.template_file >> |\
+              sed "s#\${DOCKER_REGISTRY}#<< parameters.docker_registry >>#g" |\
+              sed "s#\${DOCKER_USERNAME}#<< parameters.docker_username >>#g" |\
+              sed "s#\${DOCKER_TAG}#<< parameters.docker_tag >>#g" |\
+              sed "s#\${ENV}#<< parameters.env >>#g" \
+              > << parameters.output_file >>
+            cat << parameters.output_file >>
 
 jobs:
   unit-test:
@@ -235,16 +266,13 @@ jobs:
           at: /tmp/workspace
       - export-primary-docker-tag
       - checkout
-      - run:
-          name: Generate k8s manifest file
-          command: |
-            cat deployments/k8s-template.yml |\
-              sed "s#\${DOCKER_REGISTRY}#${PRIVATE_DOCKER_REGISTRY}#g" |\
-              sed "s#\${DOCKER_USERNAME}#${PRIVATE_DOCKER_USERNAME}#g" |\
-              sed "s#\${DOCKER_TAG}#${PRIMARY_DOCKER_TAG}#g" |\
-              sed "s#\${ENV}#<< parameters.env >>#g" \
-              > phone-compare.<< parameters.env >>.yml
-            cat phone-compare.<< parameters.env >>.yml
+      - generate-file:
+          template_file: deployments/k8s-template.yml
+          output_file: ${CIRCLE_PROJECT_REPONAME}.<< parameters.env >>.yml
+          docker_registry: ${PRIVATE_DOCKER_REGISTRY}
+          docker_username: ${PRIVATE_DOCKER_USERNAME}
+          docker_tag: ${PRIMARY_DOCKER_TAG}
+          env: << parameters.env >>
       - install-ssh-dependencies
       - upload-file:
           file: phone-compare.<< parameters.env >>.yml
