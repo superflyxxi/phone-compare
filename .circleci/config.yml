@@ -217,7 +217,7 @@ jobs:
             - full_version.txt
             - short_version.txt
 
-  deploy:
+  deploy-docker-compose:
     parameters:
       env:
         description: Which environment to deploy
@@ -338,15 +338,15 @@ workflows:
             - publish-docker-ghcr
             - publish-docker-dockerio
             - integration-test
-      - deploy:
+      - deploy-docker-compose:
           context: default
-          name: deploy-wip
+          name: deploy-docker-compose-wip
           env: wip
           requires:
             - publish-docker-private
-      - deploy:
+      - deploy-docker-compose:
           context: default
-          name: deploy-prod
+          name: deploy-docker-compose-prod
           env: prod
           requires:
             - publish-docker-private
