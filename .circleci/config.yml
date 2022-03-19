@@ -458,22 +458,6 @@ workflows:
             branches:
               only:
                 - main
-      - deploy-docker-compose:
-          context: default
-          name: deploy-docker-compose-wip
-          env: wip
-          requires:
-            - publish-docker-private
-      - deploy-docker-compose:
-          context: default
-          name: deploy-docker-compose-prod
-          env: prod
-          requires:
-            - publish-docker-private
-          filters:
-            branches:
-              only:
-                - main
       - integration-test:
           context: default
           requires:
