@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@4
-  docker: circleci/docker@1
+  node: circleci/node@5
+  docker: circleci/docker@2
   sonarcloud: sonarsource/sonarcloud@1
 
 commands:
@@ -105,7 +105,9 @@ jobs:
       - sonarcloud/scan
 
   build-docker:
-    executor: docker/machine
+    executor: 
+      name: docker/machine
+      dlc: true
     resource_class: medium
     steps:
       - run:
@@ -158,7 +160,9 @@ jobs:
 
   publish-docker:
     resource_class: medium
-    executor: docker/machine
+    executor:
+      name: docker/machine
+      dlc: true
     parameters:
       registry-env:
         description: The registry envirnment variable to use to publish docker images.
@@ -344,7 +348,9 @@ jobs:
           command: ci-deploy-docker-compose.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
 
   integration-test:
-    executor: docker/machine
+    executor: 
+      name: docker/machine
+      dlc: true
     steps:
       - attach_workspace:
           at: /tmp/workspace
