@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: phone-compare-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phone-compare
+  labels:
+    app: phone-compare
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phone-compare
+  template:
+    metadata:
+      labels:
+        app: phone-compare
+    spec:
+      restartPolicy: Always
+      volumes:
+      - name: phone-compare-data
+        persistentVolumeClaim:
+          claimName: phone-compare-data
+      containers:
+      - name: phone-compare
+        image: ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/phone-compare:${DOCKER_TAG}
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 3000
+            name: web
+        volumeMounts:
+          - mountPath: "/data"
+            name: "phone-compare-data"
+        startupProbe:
+          httpGet:
+            port: web
+            path: "/"
+            scheme: "HTTP"
+        livenessProbe:
+          httpGet:
+            port: web
+            path: "/"
+            scheme: "HTTP"
+        readinessProbe:
+          httpGet:
+            port: web
+            path: "/"
+            scheme: "HTTP"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phone-compare
+spec:
+  selector:
+    app: phone-compare
+  ports:
+    - name: "web"
+      protocol: TCP
+      port: 80
+      targetPort: "web"
