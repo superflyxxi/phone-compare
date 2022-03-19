@@ -440,14 +440,14 @@ workflows:
           env: wip
           requires:
             - publish-docker-private
-            - prerelease
+            - pre-release
       - deploy-k8s:
           context: default
           name: deploy-k8s-prod
           env: prod
           requires:
             - publish-docker-dockerio
-            - prerelease
+            - pre-release
       - deploy-docker-compose:
           context: default
           name: deploy-docker-compose-wip
