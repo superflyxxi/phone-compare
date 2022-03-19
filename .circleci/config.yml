@@ -273,8 +273,8 @@ jobs:
               - << parameters.env >>
           steps:
             - run: |
-                echo "export REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
-                echo "export USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
+                echo "export DOCKER_REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
+                echo "export DOCKER_USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
       - unless:
           condition:
             equal:
@@ -282,13 +282,13 @@ jobs:
               - << parameters.env >>
           steps:
             - run: |
-                echo "export REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
-                echo "export USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
+                echo "export DOCKER_REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
+                echo "export DOCKER_USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
       - generate-file:
           template_file: deployments/k8s-template.yml
           output_file: << parameters.env >>.yml
-          docker_registry: ${REGISTRY}
-          docker_username: ${USERNAME}
+          docker_registry: ${DOCKER_REGISTRY}
+          docker_username: ${DOCKER_USERNAME}
           docker_tag: ${PRIMARY_DOCKER_TAG}
           env: << parameters.env >>
       - install-ssh-dependencies
@@ -319,8 +319,8 @@ jobs:
               - << parameters.env >>
           steps:
             - run: |
-                echo "export REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
-                echo "export USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
+                echo "export DOCKER_REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
+                echo "export DOCKER_USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
       - unless:
           condition:
             equal:
@@ -328,13 +328,13 @@ jobs:
               - << parameters.env >>
           steps:
             - run: |
-                echo "export REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
-                echo "export USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
+                echo "export DOCKER_REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
+                echo "export DOCKER_USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
       - generate-file:
           template_file: deployments/docker-compose-template.yml
           output_file: docker-compose.<< parameters.env >>.yml
-          docker_registry: ${REGISTRY}
-          docker_username: ${USERNAME}
+          docker_registry: ${DOCKER_REGISTRY}
+          docker_username: ${DOCKER_USERNAME}
           docker_tag: ${PRIMARY_DOCKER_TAG}
           env: << parameters.env >>
       - install-ssh-dependencies
