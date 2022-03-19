@@ -306,7 +306,7 @@ jobs:
         default: "wip"
         enum: ["wip", "prod"]
     machine:
-      enabled: true
+      image: ubuntu-2004:202111-02
     steps:
       - attach_workspace:
           at: /tmp/workspace
