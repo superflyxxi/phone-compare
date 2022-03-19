@@ -183,7 +183,7 @@ jobs:
           image: ${FINAL_IMAGE_NAME}
           tag: ${DOCKER_TAGS}
 
-  release:
+  release-notes:
     resource_class: small
     docker:
       - image: circleci/node
@@ -319,7 +319,7 @@ jobs:
 workflows:
   default:
     jobs:
-      - release:
+      - release-notes:
           name: pre-release
           context: default
           prerelease: true
@@ -365,7 +365,7 @@ workflows:
             branches:
               only:
                 - main
-      - release:
+      - release-notes:
           prerelease: false
           context: default
           requires:
