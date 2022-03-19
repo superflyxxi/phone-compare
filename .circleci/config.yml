@@ -245,7 +245,7 @@ jobs:
       - upload-file:
           file: docker-compose.<< parameters.env >>.yml
       - execute-remote:
-          command: ci-deploy.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
+          command: ci-deploy-docker-compose.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
 
   integration-test:
     executor: docker/machine
