@@ -5,6 +5,10 @@ orbs:
   docker: circleci/docker@2
   sonarcloud: sonarsource/sonarcloud@1
 
+anchors:
+  executor: &node-executor
+    name: node/default
+    tag: '16.5.0'
 commands:
   export-primary-docker-tag:
     # Assuming /tmp/workspace as the files required
@@ -79,9 +83,7 @@ commands:
 jobs:
   unit-test:
     resource_class: small
-    executor: 
-      name: node/default
-      tag: '16.5.0'
+    executor: *node-executor 
     steps:
       - checkout
       - node/install-packages
@@ -220,8 +222,7 @@ jobs:
 
   release-notes:
     resource_class: small
-    docker:
-      - image: circleci/node
+    executor: *node-executor 
     parameters:
       prerelease:
         description: Whether it's a pre-release and not actually release.
