@@ -1,6 +1,6 @@
 FROM node:16.13.0-alpine3.11
+LABEL org.opencontainers.image.authors="SuperFlyXXI <superflyxxi@yahoo.com>"
 EXPOSE 3000
-MAINTAINER SuperFlyXXI
 ENV 	NODE_ENV=production \
 	DATA_DIR=/data
 RUN mkdir ${DATA_DIR}
