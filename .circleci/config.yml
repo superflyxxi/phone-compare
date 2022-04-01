@@ -6,10 +6,10 @@ orbs:
   sonarcloud: sonarsource/sonarcloud@1
 
 anchors:
-  executor: &node-executor
+  node-executor: &node-executor
     name: node/default
     tag: '16.14'
-  executor: &docker-executor
+  docker-executor: &docker-executor
     name: docker/machine
     dlc: false
 
