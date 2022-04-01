@@ -5,6 +5,14 @@ orbs:
   docker: circleci/docker@2
   sonarcloud: sonarsource/sonarcloud@1
 
+anchors:
+  node-executor: &node-executor
+    name: node/default
+    tag: '16.14'
+  docker-executor: &docker-executor
+    name: docker/machine
+    dlc: false
+
 commands:
   export-primary-docker-tag:
     # Assuming /tmp/workspace as the files required
@@ -78,10 +86,8 @@ commands:
 
 jobs:
   unit-test:
+    executor: *node-executor 
     resource_class: small
-    executor: 
-      name: node/default
-      tag: '16.5.0'
     steps:
       - checkout
       - node/install-packages
@@ -105,9 +111,7 @@ jobs:
       - sonarcloud/scan
 
   build-docker:
-    executor: 
-      name: docker/machine
-      dlc: false
+    executor: *docker-executor
     resource_class: medium
     steps:
       - run:
@@ -159,10 +163,8 @@ jobs:
             - images.tar*
 
   publish-docker:
+    executor: *docker-executor
     resource_class: medium
-    executor:
-      name: docker/machine
-      dlc: false
     parameters:
       registry-env:
         description: The registry envirnment variable to use to publish docker images.
@@ -219,9 +221,8 @@ jobs:
           tag: ${DOCKER_TAGS}
 
   release-notes:
+    executor: *node-executor 
     resource_class: small
-    docker:
-      - image: circleci/node
     parameters:
       prerelease:
         description: Whether it's a pre-release and not actually release.
@@ -348,9 +349,8 @@ jobs:
           command: ci-deploy-docker-compose.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
 
   integration-test:
-    executor: 
-      name: docker/machine
-      dlc: false
+    executor: *docker-executor
+    resource_class: medium
     steps:
       - attach_workspace:
           at: /tmp/workspace
