@@ -386,6 +386,10 @@ jobs:
 workflows:
   default:
     jobs:
+      - docker/hadolint:
+          name: validate-dockerfile
+          context: default
+          dockerfiles: Dockerfile
       - release-notes:
           name: pre-release
           context: default
@@ -397,6 +401,7 @@ workflows:
           requires:
             - unit-test
             - pre-release
+            - validate-dockerfile
       - publish-docker:
           name: publish-docker-private
           context: default
