@@ -8,7 +8,7 @@ orbs:
 anchors:
   executor: &node-executor
     name: node/default
-    tag: '16.5.0'
+    tag: '16.14'
 commands:
   export-primary-docker-tag:
     # Assuming /tmp/workspace as the files required
