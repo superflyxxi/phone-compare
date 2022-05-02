@@ -1,7 +1,7 @@
 import * as model from '../models/phones.js';
 import NotFoundError from '../error-handler/not-found-error.js';
 
-async function getAllPhones(req, res) {
+async function getAllPhones(_req, res) {
 	const phoneList = await model.getAllPhones();
 	res.set('cache-control', 'public, max-age=2419200').send(phoneList);
 }
