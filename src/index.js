@@ -18,7 +18,7 @@ app.use('/v1/phones', phoneRouter);
 app.use('/v1/phones/compare', compareRouter);
 app.use('/api-docs', apiDocsRouter);
 
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
 	next(new RouteNotFoundError(req));
 });
 app.use(errorHandler);

@@ -16,7 +16,7 @@ const openapispec = swaggerJsdoc({
 	apis: ['./src/routers/**/*.js', './src/error-handler/*.js'],
 });
 
-router.get('/json', (req, res) => res.send(openapispec));
+router.get('/json', (_req, res) => res.send(openapispec));
 router.use('/', swaggerUi.serve, swaggerUi.setup(openapispec));
 
 export default router;
