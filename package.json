@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/superflyxxi/phone-compare#readme",
   "dependencies": {
-    "axios": "0",
+    "axios": "1",
     "express": "4",
     "express-async-handler": "1",
     "jsdom": "20",
