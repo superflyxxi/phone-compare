@@ -116,12 +116,12 @@ describe('Phones positive tests', () => {
 						fingerprint: true,
 					},
 					price: {
-						usd: 650,
-						eur: 499.99,
+						usd: 250,
+						eur: 799,
 					},
 					year: 2020,
 					charging: {wireless: true},
-					android: {official: '11', lineageos: '11', max: '11'},
+					android: {official: '13', lineageos: '11', max: '13'},
 				});
 				expect(nock.pendingMocks.length).to.equal(0);
 				done();
