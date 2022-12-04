@@ -24,7 +24,7 @@ updates:
     schedule:
       interval: "monthly"
     commit-message:
-      prefix: "fix: "
+      prefix: "fix(ci): "
       prefix-development: "fix(ci): "
     reviewers:
       - superflyxxi

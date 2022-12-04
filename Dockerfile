@@ -8,5 +8,5 @@ WORKDIR /app
 ENTRYPOINT ["npm"]
 CMD ["start"]
 ADD package* /app/
-RUN npm install
+RUN npm ci
 ADD src /app/src
