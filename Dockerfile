@@ -1,4 +1,4 @@
-FROM node:16.13.0-alpine3.11
+FROM node:16.18.1-alpine3.16
 LABEL org.opencontainers.image.authors="SuperFlyXXI <superflyxxi@yahoo.com>"
 EXPOSE 3000
 ENV 	NODE_ENV=production \
@@ -8,5 +8,5 @@ WORKDIR /app
 ENTRYPOINT ["npm"]
 CMD ["start"]
 ADD package* /app/
-RUN npm install
+RUN npm ci
 ADD src /app/src

@@ -29,7 +29,7 @@ export default async function getGsmArenaData(gsmUrl) {
 function getWirelessCharging(document) {
 	const tdList = document.querySelectorAll('td.nfo');
 	for (const td of tdList) {
-		if (/wireless charg/i.test(td.innerHTML)) {
+		if (/wireless/i.test(td.innerHTML)) {
 			return {wireless: true};
 		}
 	}

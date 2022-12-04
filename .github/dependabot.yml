@@ -10,6 +10,8 @@ updates:
       prefix-development: "fix(ci): "
     reviewers:
       - superflyxxi
+    assignees:
+      - superflyxxi
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
@@ -19,12 +21,16 @@ updates:
       prefix-development: "fix(ci): "
     reviewers:
       - superflyxxi
+    assignees:
+      - superflyxxi
   - package-ecosystem: "docker"
     directory: "/int-test"
     schedule:
       interval: "monthly"
     commit-message:
-      prefix: "fix: "
+      prefix: "fix(ci): "
       prefix-development: "fix(ci): "
     reviewers:
+      - superflyxxi
+    assignees:
       - superflyxxi
