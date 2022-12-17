@@ -462,6 +462,10 @@ workflows:
           context: default
           requires:
             - release-notes
+          filters:
+            branches:
+              ignore:
+                - main
       - release-notes:
           prerelease: false
           context: default
