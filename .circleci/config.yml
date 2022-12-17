@@ -458,7 +458,7 @@ workflows:
       - snyk:
           context: default
           requires:
-            - publish-docker-private
+            - release-notes
       - release-notes:
           prerelease: false
           context: default
