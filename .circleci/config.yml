@@ -112,12 +112,13 @@ jobs:
       - sonarcloud/scan
 
   snyk:
-    executor: *node-executor
-    resource_class: small
+    executor: *docker-executor
+    resource_class: medium
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - checkout
+      - node/install
       - node/install-packages
       - export-primary-docker-tag
       - snyk/scan
