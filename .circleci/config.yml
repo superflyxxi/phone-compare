@@ -125,7 +125,7 @@ jobs:
           name: Load docker images
           command: |
             docker load -i /tmp/workspace/images.tar
-      - snyk/scan
+      - snyk/scan:
           docker-image-name: ${CIRCLE_PROJECT_REPONAME}:build
 
   build-docker:
