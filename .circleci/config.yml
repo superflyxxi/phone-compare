@@ -461,7 +461,7 @@ workflows:
       - snyk-scan:
           context: default
           requires:
-            - release-notes
+            - integration-test
           filters:
             branches:
               ignore:
