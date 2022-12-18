@@ -111,7 +111,7 @@ jobs:
           command: npm run xo
       - sonarcloud/scan
 
-  snyk:
+  snyk-scan:
     executor: *docker-executor
     resource_class: medium
     steps:
@@ -122,13 +122,13 @@ jobs:
       - node/install-packages
       - export-primary-docker-tag
       - snyk/scan:
-          project: ${CIRCLE_PROJECT_REPONAME}
+          project: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
       - run:
           name: Load docker images
           command: |
             docker load -i /tmp/workspace/images.tar
       - snyk/scan:
-          project: ${CIRCLE_PROJECT_REPONAME}
+          project: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
           docker-image-name: ${CIRCLE_PROJECT_REPONAME}:build
 
   build-docker:
@@ -458,7 +458,7 @@ workflows:
             branches:
               only:
                 - main
-      - snyk:
+      - snyk-scan:
           context: default
           requires:
             - release-notes
