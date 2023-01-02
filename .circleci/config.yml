@@ -4,6 +4,7 @@ orbs:
   node: circleci/node@5
   docker: circleci/docker@2.0
   sonarcloud: sonarsource/sonarcloud@1
+  snyk: snyk/snyk@1
 
 anchors:
   node-executor: &node-executor
@@ -109,6 +110,26 @@ jobs:
           name: Verify XO
           command: npm run xo
       - sonarcloud/scan
+
+  snyk-scan:
+    executor: *docker-executor
+    resource_class: medium
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
+      - node/install
+      - node/install-packages
+      - export-primary-docker-tag
+      - snyk/scan:
+          project: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+      - run:
+          name: Load docker images
+          command: |
+            docker load -i /tmp/workspace/images.tar
+      - snyk/scan:
+          project: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+          docker-image-name: ${CIRCLE_PROJECT_REPONAME}:build
 
   build-docker:
     executor: *docker-executor
@@ -419,6 +440,7 @@ workflows:
           requires:
             - build-docker
             - integration-test
+            - release-notes
           filters:
             branches:
               only:
@@ -433,18 +455,19 @@ workflows:
           requires:
             - build-docker
             - integration-test
+            - release-notes
           filters:
             branches:
               only:
                 - main
-      - release-notes:
-          prerelease: false
+      - snyk-scan:
           context: default
           requires:
-            - publish-docker-private
-            - publish-docker-ghcr
-            - publish-docker-dockerio
             - integration-test
+          filters:
+            branches:
+              ignore:
+                - main
       - deploy-k8s:
           context: default
           name: deploy-k8s-wip
@@ -471,3 +494,8 @@ workflows:
             branches:
               ignore:
                 - main
+      - release-notes:
+          prerelease: false
+          context: default
+          requires:
+            - integration-test
