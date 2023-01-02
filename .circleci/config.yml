@@ -431,7 +431,6 @@ workflows:
           docker-password-env: PRIVATE_DOCKER_PASSWORD
           requires:
             - build-docker
-            - release-notes
       - publish-docker:
           name: publish-docker-ghcr
           context: default
