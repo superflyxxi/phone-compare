@@ -431,6 +431,7 @@ workflows:
           docker-password-env: PRIVATE_DOCKER_PASSWORD
           requires:
             - build-docker
+            - release-notes
       - publish-docker:
           name: publish-docker-ghcr
           context: default
@@ -440,6 +441,7 @@ workflows:
           requires:
             - build-docker
             - integration-test
+            - release-notes
           filters:
             branches:
               only:
@@ -454,6 +456,7 @@ workflows:
           requires:
             - build-docker
             - integration-test
+            - release-notes
           filters:
             branches:
               only:
@@ -466,14 +469,6 @@ workflows:
             branches:
               ignore:
                 - main
-      - release-notes:
-          prerelease: false
-          context: default
-          requires:
-            - publish-docker-private
-            - publish-docker-ghcr
-            - publish-docker-dockerio
-            - integration-test
       - deploy-k8s:
           context: default
           name: deploy-k8s-wip
@@ -500,3 +495,8 @@ workflows:
             branches:
               ignore:
                 - main
+      - release-notes:
+          prerelease: false
+          context: default
+          requires:
+            - integration-test
