@@ -334,9 +334,12 @@ jobs:
           command: ci-deploy-k8s.sh << parameters.env >> phone-compare
 
   integration-test:
-    executor: *docker-executor
-    resource_class: medium
+    resource_class: small
+    docker:
+      - image: cimg/base:stable
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: false
       - attach_workspace:
           at: /tmp/workspace
       - export-primary-docker-tag
