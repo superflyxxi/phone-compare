@@ -10,9 +10,6 @@ anchors:
   node-executor: &node-executor
     name: node/default
     tag: '16.14'
-  docker-executor: &docker-executor
-    name: docker/machine
-    dlc: false
 
 commands:
   export-primary-docker-tag:
