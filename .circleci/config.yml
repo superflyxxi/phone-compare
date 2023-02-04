@@ -10,9 +10,6 @@ anchors:
   node-executor: &node-executor
     name: node/default
     tag: '16.14'
-  docker-executor: &docker-executor
-    name: docker/machine
-    dlc: false
 
 commands:
   export-primary-docker-tag:
@@ -112,9 +109,12 @@ jobs:
       - sonarcloud/scan
 
   snyk-scan:
-    executor: *docker-executor
-    resource_class: medium
+    resource_class: small
+    docker:
+      - image: cimg/base:stable
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: false
       - attach_workspace:
           at: /tmp/workspace
       - checkout
@@ -132,9 +132,12 @@ jobs:
           docker-image-name: ${CIRCLE_PROJECT_REPONAME}:build
 
   build-docker:
-    executor: *docker-executor
-    resource_class: medium
+    resource_class: small
+    docker:
+      - image: cimg/base:stable
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: false
       - run:
           name: Define cache env variables
           command: |
@@ -184,8 +187,9 @@ jobs:
             - images.tar*
 
   publish-docker:
-    executor: *docker-executor
-    resource_class: medium
+    resource_class: small
+    docker:
+      - image: cimg/base:stable
     parameters:
       registry-env:
         description: The registry envirnment variable to use to publish docker images.
@@ -200,6 +204,8 @@ jobs:
         type: string
         default: DOCKER_PASSWORD
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: false
       - attach_workspace:
           at: /tmp/workspace
       - export-primary-docker-tag
@@ -324,55 +330,13 @@ jobs:
       - execute-remote:
           command: ci-deploy-k8s.sh << parameters.env >> phone-compare
 
-  deploy-docker-compose:
-    parameters:
-      env:
-        description: Which environment to deploy
-        type: enum
-        default: "wip"
-        enum: ["wip", "prod"]
-    machine:
-      image: ubuntu-2004:202111-02
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - export-primary-docker-tag
-      - checkout
-      - when:
-          condition:
-            equal:
-              - prod
-              - << parameters.env >>
-          steps:
-            - run: |
-                echo "export DOCKER_REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
-                echo "export DOCKER_USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
-      - unless:
-          condition:
-            equal:
-              - prod
-              - << parameters.env >>
-          steps:
-            - run: |
-                echo "export DOCKER_REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
-                echo "export DOCKER_USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
-      - generate-file:
-          template_file: deployments/docker-compose-template.yml
-          output_file: docker-compose.<< parameters.env >>.yml
-          docker_registry: ${DOCKER_REGISTRY}
-          docker_username: ${DOCKER_USERNAME}
-          docker_tag: ${PRIMARY_DOCKER_TAG}
-          env: << parameters.env >>
-      - install-ssh-dependencies
-      - upload-file:
-          file: docker-compose.<< parameters.env >>.yml
-      - execute-remote:
-          command: ci-deploy-docker-compose.sh ${CIRCLE_PROJECT_REPONAME}-<< parameters.env >>
-
   integration-test:
-    executor: *docker-executor
-    resource_class: medium
+    resource_class: small
+    docker:
+      - image: cimg/base:stable
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: false
       - attach_workspace:
           at: /tmp/workspace
       - export-primary-docker-tag

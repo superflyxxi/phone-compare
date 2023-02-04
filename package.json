@@ -23,7 +23,7 @@
     "axios": "1",
     "express": "4",
     "express-async-handler": "1",
-    "jsdom": "20",
+    "jsdom": "21",
     "lodash": "4",
     "morgan": "1",
     "node-cache": "5",
