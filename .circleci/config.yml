@@ -72,15 +72,12 @@ commands:
         type: string
     steps:
       - run:
-          name: Generate env variables for file k8s file
+          name: Generate << parameters.output_file >>
           command: |
             export DOMAIN_POSTFIX=${DEPLOYMENT_INGRESS_DOMAIN}
             if [[ "<< parameters.env >>" != "prod" ]]; then
               export DOMAIN_POSTFIX="-<< parameters.env >>${DOMAIN_POSTFIX}"
             fi
-      - run:
-          name: Generate << parameters.output_file >>
-          command: |
             cat << parameters.template_file >> |\
               sed "s#\${DOMAIN_POSTFIX}#${DOMAIN_POSTFIX}#g" |\
               sed "s#\${DOCKER_REGISTRY}#<< parameters.docker_registry >>#g" |\
