@@ -74,7 +74,7 @@ commands:
       - run:
           name: Generate << parameters.output_file >>
           command: |
-            export DOMAIN_POSTFIX=${DEPLOYMENT_INGRESS_DOMAIN}
+            export DOMAIN_POSTFIX=".${DEPLOYMENT_INGRESS_DOMAIN}"
             if [[ "<< parameters.env >>" != "prod" ]]; then
               export DOMAIN_POSTFIX="-<< parameters.env >>${DOMAIN_POSTFIX}"
             fi
