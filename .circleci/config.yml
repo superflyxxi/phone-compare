@@ -126,8 +126,6 @@ jobs:
       - node/install
       - node/install-packages
       - export-primary-docker-tag
-      - snyk/scan:
-          project: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
       - run:
           name: Load docker images
           command: |
