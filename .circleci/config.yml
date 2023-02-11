@@ -123,8 +123,6 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - checkout
-      - node/install
-      - node/install-packages
       - export-primary-docker-tag
       - run:
           name: Load docker images
