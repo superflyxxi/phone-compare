@@ -439,7 +439,7 @@ workflows:
       - snyk-scan:
           context: default
           requires:
-            - integration-test
+            - build-docker
           filters:
             branches:
               ignore:
