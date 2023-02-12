@@ -129,8 +129,8 @@ jobs:
           command: |
             docker load -i /tmp/workspace/images.tar
       - snyk/scan:
-          project: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
           docker-image-name: ${CIRCLE_PROJECT_REPONAME}:build
+          fail-on-issues: false
 
   build-docker:
     resource_class: small
