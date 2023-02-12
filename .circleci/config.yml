@@ -364,20 +364,25 @@ jobs:
           dockerfile: int-test/Dockerfile
           extra_build_args: --build-arg FROM_IMAGE=${CIRCLE_PROJECT_REPONAME}:build
       - run:
-          name: Tag image for publishing
-          command: |
-            docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:inttest-${PRIMARY_DOCKER_TAG}
-      - run:
           name: Bring up and test
           command: |
             set +e
             docker-compose -f int-test/docker-compose.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
-            echo "export TEST_RESULTS=$?" >> ${BASH_ENV}
+            export TEST_RESULTS=$?
             set -e
+            if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ 0 -eq "${TEST_RESULTS}" ]]; then
+              # main passed, so just exit
+              exit ${TEST_RESULTS}
+            fi
+            echo "export TEST_RESULTS=${TEST_RESULTS}" >> ${BASH_ENV}
       - docker/check:
           registry: ${PRIVATE_DOCKER_REGISTRY}
           docker-username: PRIVATE_DOCKER_USERNAME
           docker-password: PRIVATE_DOCKER_PASSWORD
+      - run:
+          name: Tag image for publishing
+          command: |
+            docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:inttest-${PRIMARY_DOCKER_TAG}
       - docker/push:
           step-name: Push integration testing docker image
           image: "${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
