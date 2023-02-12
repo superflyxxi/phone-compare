@@ -370,7 +370,7 @@ jobs:
             docker-compose -f int-test/docker-compose.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
             export TEST_RESULTS=$?
             set -e
-            if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ 0 -eq "${TEST_RESULTS}" ]]; then
+            if [[ "<< pipeline.git.branch >>" =~ (main|dev) ]] && [[ 0 -eq "${TEST_RESULTS}" ]]; then
               # main passed, so just exit
               exit ${TEST_RESULTS}
             fi
