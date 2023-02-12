@@ -363,23 +363,29 @@ jobs:
           tag: inttest
           dockerfile: int-test/Dockerfile
           extra_build_args: --build-arg FROM_IMAGE=${CIRCLE_PROJECT_REPONAME}:build
-      - docker/check:
-          registry: ${PRIVATE_DOCKER_REGISTRY}
-          docker-username: PRIVATE_DOCKER_USERNAME
-          docker-password: PRIVATE_DOCKER_PASSWORD
       - run:
           name: Tag image for publishing
           command: |
             docker tag ${CIRCLE_PROJECT_REPONAME}:inttest ${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:inttest-${PRIMARY_DOCKER_TAG}
+      - run:
+          name: Bring up and test
+          command: |
+            set +e
+            docker-compose -f int-test/docker-compose.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
+            echo "export TEST_RESULTS=$?" >> ${BASH_ENV}
+            set -e
+      - docker/check:
+          registry: ${PRIVATE_DOCKER_REGISTRY}
+          docker-username: PRIVATE_DOCKER_USERNAME
+          docker-password: PRIVATE_DOCKER_PASSWORD
       - docker/push:
           step-name: Push integration testing docker image
           image: "${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
           registry: ${PRIVATE_DOCKER_REGISTRY}
           tag: inttest-${PRIMARY_DOCKER_TAG}
       - run:
-          name: Bring up
-          command: |
-            docker-compose -f int-test/docker-compose.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
+          name: Fail or Pass Build ${TEST_RESULTS}
+          command: exit ${TEST_RESULTS}
 
 workflows:
   default:
