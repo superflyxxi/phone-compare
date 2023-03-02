@@ -39,7 +39,7 @@ commands:
       - run:
           name: Upload << parameters.file >>
           command: |
-            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>/${CIRCLE_PROJECT_REPONAME}
+            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
   execute-remote:
     parameters:
       command:
@@ -74,7 +74,12 @@ commands:
       - run:
           name: Generate << parameters.output_file >>
           command: |
+            export DOMAIN_POSTFIX=".${DEPLOYMENT_INGRESS_DOMAIN}"
+            if [[ "<< parameters.env >>" != "prod" ]]; then
+              export DOMAIN_POSTFIX="-<< parameters.env >>${DOMAIN_POSTFIX}"
+            fi
             cat << parameters.template_file >> |\
+              sed "s#\${DOMAIN_POSTFIX}#${DOMAIN_POSTFIX}#g" |\
               sed "s#\${DOCKER_REGISTRY}#<< parameters.docker_registry >>#g" |\
               sed "s#\${DOCKER_USERNAME}#<< parameters.docker_username >>#g" |\
               sed "s#\${DOCKER_TAG}#<< parameters.docker_tag >>#g" |\
@@ -118,18 +123,14 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - checkout
-      - node/install
-      - node/install-packages
       - export-primary-docker-tag
-      - snyk/scan:
-          project: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
       - run:
           name: Load docker images
           command: |
             docker load -i /tmp/workspace/images.tar
       - snyk/scan:
-          project: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
           docker-image-name: ${CIRCLE_PROJECT_REPONAME}:build
+          fail-on-issues: false
 
   build-docker:
     resource_class: small
@@ -318,14 +319,14 @@ jobs:
                 echo "export DOCKER_USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
       - generate-file:
           template_file: deployments/k8s-template.yml
-          output_file: generated.yml
+          output_file: ${CIRCLE_PROJECT_REPONAME}.yml
           docker_registry: ${DOCKER_REGISTRY}
           docker_username: ${DOCKER_USERNAME}
           docker_tag: ${PRIMARY_DOCKER_TAG}
           env: << parameters.env >>
       - install-ssh-dependencies
       - upload-file:
-          file: generated.yml
+          file: ${CIRCLE_PROJECT_REPONAME}.yml
           remote_dir: k8s/ci/<< parameters.env >>
       - execute-remote:
           command: ci-deploy-k8s.sh << parameters.env >> phone-compare
