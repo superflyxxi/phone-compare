@@ -45,6 +45,7 @@ spec:
             port: web
             path: "/api-docs/"
             scheme: "HTTP"
+          initialDelaySeconds: 15
         livenessProbe:
           httpGet:
             port: web
