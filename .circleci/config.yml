@@ -37,8 +37,9 @@ commands:
         default: "."
     steps:
       - run:
-          name: Upload << parameters.file >>
+          name: Upload file
           command: |
+            echo Uploading << parameters.file >>
             sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
   execute-remote:
     parameters:
@@ -72,8 +73,9 @@ commands:
         type: string
     steps:
       - run:
-          name: Generate << parameters.output_file >>
+          name: Generating k8s manifest
           command: |
+            echo Generating << parameters.output_file >>
             export DOMAIN_POSTFIX=".${DEPLOYMENT_INGRESS_DOMAIN}"
             if [[ "<< parameters.env >>" != "prod" ]]; then
               export DOMAIN_POSTFIX="-<< parameters.env >>${DOMAIN_POSTFIX}"
