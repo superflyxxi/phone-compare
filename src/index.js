@@ -3,7 +3,6 @@ import morgan from 'morgan';
 import RouteNotFoundError from './error-handler/route-not-found-error.js';
 import {server} from './config/index.js';
 import errorHandler from './error-handler/index.js';
-
 import phoneRouter from './routers/v1/phones/index.js';
 import compareRouter from './routers/v1/phones/compare/index.js';
 import apiDocsRouter from './routers/api-docs/index.js';
