@@ -92,6 +92,6 @@ function getYearReleased(document) {
 function getAndroidVersion(document) {
 	const android = document.querySelector('[data-spec="os"]').innerHTML.match(/\d+(\.\d+)?/g);
 	return {
-		official: android[android.length - 1],
+		official: android.at(-1),
 	};
 }
