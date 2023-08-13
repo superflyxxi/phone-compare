@@ -40,7 +40,7 @@ commands:
           name: Upload file
           command: |
             echo Uploading << parameters.file >>
-            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
+            sshpass scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
   execute-remote:
     parameters:
       command:
