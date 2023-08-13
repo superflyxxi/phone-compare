@@ -299,8 +299,6 @@ jobs:
         enum: ["wip", "prod"]
     docker:
       - image: cimg/deploy:2023.08.1
-        #machine:
-        #image: ubuntu-2004:202111-02
     steps:
       - attach_workspace:
           at: /tmp/workspace
