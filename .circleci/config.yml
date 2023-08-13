@@ -27,7 +27,7 @@ commands:
       - run:
           name: Configure Known Hosts
           #command: "echo ${SSH_KNOWN_HOSTS} >> ~/.ssh/known_hosts"
-          command: ssh-keyscan -t rsa -p ${SSH_PORT} -H ${SSH_HOST} >> ~/.ssh/known_hosts
+          command: ssh-keyscan -t rsa -p ${SSH_PORT} -H ${SSH_SERVER} >> ~/.ssh/known_hosts
       - run:
           name: Install sshpass
           command: |
