@@ -337,9 +337,9 @@ jobs:
           docker_tag: ${PRIMARY_DOCKER_TAG}
           env: << parameters.env >>
       - install-ssh-dependencies
-        #- upload-file:
-        #  file: ${CIRCLE_PROJECT_REPONAME}.yml
-        #  remote_dir: k8s/ci/<< parameters.env >>
+      - upload-file:
+          file: ${CIRCLE_PROJECT_REPONAME}.yml
+          remote_dir: k8s/ci/<< parameters.env >>
       - execute-remote:
           command: ci-deploy-k8s.sh << parameters.env >> phone-compare
 
@@ -450,7 +450,7 @@ workflows:
           name: deploy-k8s-wip
           env: wip
           requires:
-            #- publish-docker-private
+            - publish-docker-private
             - pre-release
       - deploy-k8s:
           context: default
