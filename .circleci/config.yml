@@ -25,9 +25,8 @@ commands:
           fingerprints:
             - "0e:47:6e:75:d6:d4:5d:13:b7:e5:58:93:e8:0e:e9:b2"
       - run:
-        name: Configure Known Hosts
-        command: |
-          echo ${SSH_KNOWN_HOSTS} >> ~/.ssh/known_hosts
+          name: Configure Known Hosts
+          command: "echo ${SSH_KNOWN_HOSTS} >> ~/.ssh/known_hosts"
       - run:
           name: Install sshpass
           command: |
