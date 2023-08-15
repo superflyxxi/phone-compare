@@ -21,11 +21,13 @@ commands:
             echo "export PRIMARY_DOCKER_TAG=$(cat /tmp/workspace/short_version.txt | sed 's#/#-#g')" >> ${BASH_ENV}
   install-ssh-dependencies:
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "f7:1c:8a:07:bf:b1:47:57:c8:ae:b6:d8:16:dd:e3:26"
       - run:
-          name: Install sshpass
-          command: |
-            sudo apt-get update
-            sudo apt-get install sshpass
+          name: Configure Known Hosts
+          #command: "echo ${SSH_KNOWN_HOSTS} >> ~/.ssh/known_hosts"
+          command: ssh-keyscan -t rsa -p ${SSH_PORT} -H ${SSH_SERVER} >> ~/.ssh/known_hosts
   upload-file:
     parameters:
       file:
@@ -40,7 +42,7 @@ commands:
           name: Upload file
           command: |
             echo Uploading << parameters.file >>
-            sshpass -e scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
+            scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
   execute-remote:
     parameters:
       command:
@@ -50,7 +52,7 @@ commands:
       - run:
           name: Execute a remote command
           command: |
-            sshpass -e ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.command >>"
+            ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.command >>"
   generate-file:
     parameters:
       template_file:
@@ -294,8 +296,8 @@ jobs:
         type: enum
         default: "wip"
         enum: ["wip", "prod"]
-    machine:
-      image: ubuntu-2004:202111-02
+    docker:
+      - image: cimg/deploy:2023.08.1
     steps:
       - attach_workspace:
           at: /tmp/workspace
