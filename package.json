@@ -28,7 +28,7 @@
     "morgan": "1",
     "node-cache": "5",
     "swagger-jsdoc": "6",
-    "swagger-ui-express": "4",
+    "swagger-ui-express": "5",
     "uuid": "9",
     "validate.js": "0"
   },
