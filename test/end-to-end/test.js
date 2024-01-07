@@ -88,9 +88,9 @@ describe('End-to-end tests', () => {
 						},
 						{
 							href: '/v1/phones/manufacturers/google/models/g020i',
-							score: 155.1,
+							score: 129.5,
 							scoreBreakdown: {
-								'android.max': 128,
+								'android.max': 102.4,
 								'charging.wireless': 16,
 								'dimensions.height': 0,
 								nfc: 4,
