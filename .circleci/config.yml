@@ -140,11 +140,9 @@ jobs:
     resource_class: small
     docker:
       - image: cimg/base:stable
-      - setup_remote_docker:
-          docker_layer_caching: true
     steps:
       - setup_remote_docker:
-          docker_layer_caching: false
+          docker_layer_caching: true
       - run:
           name: Define cache env variables
           command: |
