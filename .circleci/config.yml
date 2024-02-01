@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   node: circleci/node@5
   docker: circleci/docker@2.0
-  sonarcloud: sonarsource/sonarcloud@1
+  sonarcloud: sonarsource/sonarcloud@2
   snyk: snyk/snyk@1
 
 anchors:
@@ -142,7 +142,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - setup_remote_docker:
-          docker_layer_caching: false
+          docker_layer_caching: true
       - run:
           name: Define cache env variables
           command: |
