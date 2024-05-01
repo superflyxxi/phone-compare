@@ -141,8 +141,18 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - when:
+        condition:
+          equal: [main, << pipeline.git.branch >>]
+        steps:
+        - setup_remote_docker:
+            docker_layer_caching: false
+      - unless:
+        condition:
+          equal: [main, << pipeline.git.branch >>]
+        steps:
+        - setup_remote_docker:
+            docker_layer_caching: true
       - run:
           name: Define cache env variables
           command: |
