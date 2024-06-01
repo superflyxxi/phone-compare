@@ -35,7 +35,7 @@
   "devDependencies": {
     "@semantic-release/exec": "6",
     "c8": "9",
-    "chai": "4",
+    "chai": "5",
     "chai-almost": "1",
     "chai-http": "4",
     "mocha": "10",
