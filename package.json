@@ -3,6 +3,9 @@
   "description": "Phone comparision RESTful tools",
   "main": "src/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=20.14"
+  },
   "scripts": {
     "start": "node src/index.js",
     "test": "DATA_DIR=$(mktemp -d) c8 mocha",
