@@ -6,7 +6,7 @@ import chaiAlmost from 'chai-almost';
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000';
 
 const chai = use(chaiHttp);
-chai.use(chaiAlmost(0.1));
+use(chaiAlmost(0.1));
 
 describe('End-to-end integration tests', () => {
 	it('Compare 3 phones', (done) => {
