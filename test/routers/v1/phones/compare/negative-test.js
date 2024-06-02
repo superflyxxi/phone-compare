@@ -1,11 +1,6 @@
-import chai from 'chai';
-import chaiHttp from 'chai-http';
+import {expect} from 'chai';
 import app from '../../../../../src/index.js';
-import cleanupEverything from '../../../../helpers/index.js';
-
-const {expect} = chai;
-
-chai.use(chaiHttp);
+import {chai, cleanupEverything} from '../../../../helpers/index.js';
 
 describe('Phone-compare negative tests', () => {
 	after(cleanupEverything);

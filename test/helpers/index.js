@@ -1,7 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import {use} from 'chai';
+import chaiHttp from 'chai-http';
+import chaiAlmost from 'chai-almost';
 import cache from '../../src/helpers/cache.js';
+
+export const chai = use(chaiHttp);
+use(chaiAlmost(0.1));
+console.log('getChai.chai=', chai);
 
 function cleanupCache() {
 	cache.flushAll();
@@ -13,7 +20,9 @@ function cleanupDataDir() {
 	}
 }
 
-export default function cleanupEverything() {
+export function cleanupEverything() {
 	cleanupCache();
 	cleanupDataDir();
 }
+
+export default cleanupEverything;
