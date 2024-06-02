@@ -1,13 +1,9 @@
-import chai from 'chai';
-import chaiHttp from 'chai-http';
+import {expect} from 'chai';
 import nock from 'nock';
 import app from '../../../../src/index.js';
-import cleanupEverything from '../../../helpers/index.js';
-
-const {expect} = chai;
+import {chai, cleanupEverything} from '../../../helpers/index.js';
 
 let pixel5Etag;
-chai.use(chaiHttp);
 
 describe('Phones positive tests', () => {
 	afterEach(() => nock.cleanAll());
