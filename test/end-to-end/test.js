@@ -1,13 +1,6 @@
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import chaiAlmost from 'chai-almost';
+import {expect} from 'chai';
 import app from '../../src/index.js';
-import cleanupEverything from '../helpers/index.js';
-
-const {expect} = chai;
-
-chai.use(chaiHttp);
-chai.use(chaiAlmost(0.1));
+import {cleanupEverything, chai} from '../helpers/index.js';
 
 describe('End-to-end tests', () => {
 	after(cleanupEverything);

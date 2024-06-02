@@ -1,10 +1,6 @@
-import chai from 'chai';
-import chaiHttp from 'chai-http';
+import {expect} from 'chai';
 import app from '../../src/index.js';
-
-const {expect} = chai;
-
-chai.use(chaiHttp);
+import {chai} from '../helpers/index.js';
 
 describe('Swagger test', () => {
 	it('Should get JSON', (done) => {
