@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import chaiAlmost from 'chai-almost';
 import app from '../../src/index.js';
