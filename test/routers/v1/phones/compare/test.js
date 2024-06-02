@@ -1,14 +1,7 @@
-import chai from 'chai';
-import chaiHttp from 'chai-http';
-import chaiAlmost from 'chai-almost';
+import {expect} from 'chai';
 import nock from 'nock';
 import app from '../../../../../src/index.js';
-import cleanupEverything from '../../../../helpers/index.js';
-
-const {expect} = chai;
-
-chai.use(chaiHttp);
-chai.use(chaiAlmost(0.1));
+import {chai, cleanupEverything} from '../../../../helpers/index.js';
 
 describe('Phone-compare positive tests', () => {
 	after(cleanupEverything);
@@ -138,7 +131,7 @@ describe('Phone-compare positive tests', () => {
 	 * So 0.15 per mm below max.
 	 * pixel5 = 144.7; 2.4*0.15 = 0.36pts
 	 * pixel4 = max; = 0pts
-	 * nexu4 = min; = 2pts
+	 * nexus4 = min; = 2pts
 	 */
 	it('Rank on a number (height)', (done) => {
 		chai
