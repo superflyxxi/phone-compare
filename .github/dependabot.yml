@@ -2,7 +2,6 @@ version: 2
 
 updates:
   - package-ecosystem: "npm"
-    open-pull-requests-limit: 1
     directory: "/"
     schedule:
       interval: "monthly"
@@ -15,7 +14,6 @@ updates:
     assignees:
       - superflyxxi
   - package-ecosystem: "docker"
-    open-pull-requests-limit: 1
     directory: "/"
     schedule:
       interval: "monthly"
@@ -28,7 +26,6 @@ updates:
     assignees:
       - superflyxxi
   - package-ecosystem: "docker"
-    open-pull-requests-limit: 1
     directory: "/int-test"
     schedule:
       interval: "monthly"
