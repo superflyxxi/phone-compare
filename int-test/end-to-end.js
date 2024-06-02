@@ -1,5 +1,5 @@
 import process from 'node:process';
-import {expect,use} from 'chai';
+import {expect, use} from 'chai';
 import chaiHttp from 'chai-http';
 import chaiAlmost from 'chai-almost';
 
