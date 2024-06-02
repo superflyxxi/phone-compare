@@ -8,7 +8,6 @@ import cache from '../../src/helpers/cache.js';
 
 export const chai = use(chaiHttp);
 use(chaiAlmost(0.1));
-console.log('getChai.chai=', chai);
 
 function cleanupCache() {
 	cache.flushAll();
