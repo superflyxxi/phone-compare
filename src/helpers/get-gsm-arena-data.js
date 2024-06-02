@@ -7,7 +7,7 @@ export default async function getGsmArenaData(gsmUrl) {
 	if (!data) {
 		const res = await axios.get(gsmUrl);
 		const dom = new jsdom.JSDOM(res.data);
-		const document = dom.window.document;
+		const {document} = dom.window;
 
 		data = {
 			dimensions: getDimensions(document),

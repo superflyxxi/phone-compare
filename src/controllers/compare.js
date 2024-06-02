@@ -11,7 +11,7 @@ const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + serve
 export default async function compare(req, res) {
 	validate(req.body);
 
-	const ranking = req.body.ranking;
+	const {ranking} = req.body;
 	const phoneScoreList = await getPhoneScoreList(req.body.phones);
 	const rankScale = await generateScoreScale(ranking, phoneScoreList);
 	await scoreAndSortPhones(phoneScoreList, rankScale);
@@ -138,7 +138,7 @@ function scoreBoolean(value, rankRule, rankScale) {
 
 function scoreVersion(value, rankRule, rankScale) {
 	const version = versions.getVersionObject(value);
-	const semantic = rankScale.semantic;
+	const {semantic} = rankScale;
 	if (version[semantic] && rankRule.scoreMethod === 'PREFER_HIGH') {
 		return (version[semantic] - rankScale[semantic].min) * rankScale.multiplier;
 	}
