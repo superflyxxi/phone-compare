@@ -51,8 +51,8 @@ async function getPhone(manufacturer, model) {
 
 async function savePhone(phone) {
 	validate(phone);
-	const manufacturer = phone.manufacturer;
-	const model = phone.model;
+	const {manufacturer} = phone;
+	const {model} = phone;
 	await fs.writeFile(
 		path.join(DATA_DIRECTORY, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'),
 		JSON.stringify(phone),
