@@ -488,4 +488,3 @@ workflows:
           context: default
           requires:
             - integration-test
-            - build-docker
