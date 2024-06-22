@@ -371,7 +371,7 @@ jobs:
             export TEST_RESULTS=$?
             set -e
             if [[ "<< pipeline.git.branch >>" =~ (main|dev) ]] && [[ 0 -eq "${TEST_RESULTS}" ]]; then
-              # main passed, so just exit
+              echo "<< pipeline.git.branch >> tests passed, so just exiting to not publish test image."
               exit ${TEST_RESULTS}
             fi
             echo "export TEST_RESULTS=${TEST_RESULTS}" >> ${BASH_ENV}
