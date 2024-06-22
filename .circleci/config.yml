@@ -390,8 +390,10 @@ jobs:
           registry: ${PRIVATE_DOCKER_REGISTRY}
           tag: inttest-${PRIMARY_DOCKER_TAG}
       - run:
-          name: Fail or Pass Build ${TEST_RESULTS}
-          command: exit ${TEST_RESULTS}
+          name: Fail or Pass Build
+          command: |
+            echo "Exiting with ${TEST_RESULTS}"
+            exit ${TEST_RESULTS}
 
 workflows:
   default:
