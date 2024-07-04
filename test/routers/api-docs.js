@@ -4,7 +4,8 @@ import {chai} from '../helpers/index.js';
 
 describe('Swagger test', () => {
 	it('Should get JSON', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.get('/api-docs/json')
 			.end((error, res) => {
 				expect(res).to.have.status(200);

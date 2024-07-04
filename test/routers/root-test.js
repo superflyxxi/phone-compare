@@ -4,7 +4,8 @@ import app from '../../src/index.js';
 
 describe('Root test', () => {
 	it('Should get 404', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.get('/')
 			.end((error, res) => {
 				expect(res).to.have.status(404);

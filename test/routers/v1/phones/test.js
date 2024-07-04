@@ -9,7 +9,8 @@ describe('Phones positive tests', () => {
 	afterEach(() => nock.cleanAll());
 	after(cleanupEverything);
 	before(() => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.put('/v1/phones/manufacturers/LG/models/E960')
 			.send({
 				name: 'LG Nexus 4',
@@ -20,7 +21,8 @@ describe('Phones positive tests', () => {
 	});
 
 	it('Create pixel5 phone', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.put('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.send({
 				name: 'Google Pixel 5 Initial',
@@ -34,7 +36,8 @@ describe('Phones positive tests', () => {
 	});
 
 	it('Replace pixel5 phone', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.put('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.send({
 				name: 'Google Pixel 5',
@@ -51,7 +54,8 @@ describe('Phones positive tests', () => {
 		nock('http://www.gsmarena.test')
 			.get('/lg_nexus_4_e960-5048.php')
 			.replyWithFile(200, 'test/resources/lg_nexus_4_e960-5048.html');
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.get('/v1/phones/manufacturers/LG/models/E960')
 			.end((error, res) => {
 				expect(nock.pendingMocks.length).to.equal(0);
@@ -85,7 +89,8 @@ describe('Phones positive tests', () => {
 		nock('http://www.gsmarena.test')
 			.get('/google_pixel_5-10386.php')
 			.replyWithFile(200, 'test/resources/google_pixel_5-10386.html');
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.get('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.end((error, res) => {
 				pixel5Etag = res.get('etag');
@@ -123,7 +128,8 @@ describe('Phones positive tests', () => {
 		nock('http://www.gsmarena.test')
 			.get('/google_pixel_5-10386.php')
 			.replyWithFile(200, 'test/resources/google_pixel_5-10386.html');
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.get('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
@@ -134,7 +140,8 @@ describe('Phones positive tests', () => {
 	});
 
 	it('Get all phones', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.get('/v1/phones')
 			.send()
 			.end((error, res) => {
@@ -151,7 +158,8 @@ describe('Phones positive tests', () => {
 describe('Phones negative tests', () => {
 	after(cleanupEverything);
 	it('Ensure ETag for diff URL returns 404', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.get('/v1/phones/manufacturers/Google/models/pixel4')
 			.set('if-none-match', pixel5Etag)
 			.end((error, res) => {
@@ -161,7 +169,8 @@ describe('Phones negative tests', () => {
 	});
 
 	it('Missing gsmArena', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.put('/v1/phones/manufacturers/test/models/missing')
 			.send({
 				name: 'Test Missing Input',

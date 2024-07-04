@@ -134,7 +134,8 @@ describe('Phone-compare positive tests', () => {
 	 * nexus4 = min; = 2pts
 	 */
 	it('Rank on a number (height)', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [
@@ -168,7 +169,8 @@ describe('Phone-compare positive tests', () => {
 	 * pixel5=0.72+0
 	 */
 	it('Rank on two numbers (height, width)', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [
@@ -240,7 +242,8 @@ describe('Phone-compare positive tests', () => {
 	 * pixel4=0+4+2
 	 */
 	it('Rank on number and boolean (height, fingerprint, nfc)', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [
@@ -297,7 +300,8 @@ describe('Phone-compare positive tests', () => {
 	});
 
 	it('Rank on a number (height) against all (3) phones', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				ranking: ['dimensions.height'],
@@ -310,7 +314,8 @@ describe('Phone-compare positive tests', () => {
 	});
 
 	it('Rank on a major version (lineageos)', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [
@@ -351,7 +356,8 @@ describe('Phone-compare positive tests', () => {
 	});
 
 	it('Rank on a minor version (lineageos)', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [
@@ -434,7 +440,8 @@ describe('Phone-compare positive tests', () => {
 				charging: {wireless: true},
 				android: {official: '11', lineageos: '11', max: '11'},
 			});
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [
@@ -475,7 +482,8 @@ describe('Phone-compare positive tests', () => {
 	});
 
 	it('Rank everything', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [{manufacturer: 'Google', model: 'GD1YQ'}],
