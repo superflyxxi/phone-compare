@@ -24,6 +24,7 @@ commands:
       - add_ssh_keys:
           fingerprints:
             - "SHA256:K1kowcyvmG5stCZAjRqwJCtFpJ+dpBIDP/sks1erWvk"
+            - "SHA256:sAaBX0MwaNoPzbM9YwyWwwQQlKKK+8Ljb+kTzuPU2to"
       - run:
           name: Configure Known Hosts
           #command: "echo ${SSH_KNOWN_HOSTS} >> ~/.ssh/known_hosts"
