@@ -23,7 +23,8 @@ commands:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "f7:1c:8a:07:bf:b1:47:57:c8:ae:b6:d8:16:dd:e3:26"
+            - "SHA256:K1kowcyvmG5stCZAjRqwJCtFpJ+dpBIDP/sks1erWvk"
+            - "SHA256:sAaBX0MwaNoPzbM9YwyWwwQQlKKK+8Ljb+kTzuPU2to"
       - run:
           name: Configure Known Hosts
           #command: "echo ${SSH_KNOWN_HOSTS} >> ~/.ssh/known_hosts"
@@ -42,7 +43,7 @@ commands:
           name: Upload file
           command: |
             echo Uploading << parameters.file >>
-            scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
+            scp -P ${SSH_PORT} -v << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
   execute-remote:
     parameters:
       command:
@@ -363,6 +364,19 @@ jobs:
           tag: inttest
           dockerfile: int-test/Dockerfile
           extra_build_args: --build-arg FROM_IMAGE=${CIRCLE_PROJECT_REPONAME}:build
+      - run:
+          name: Bring up and test
+          command: |
+            set +e
+            docker-compose -f int-test/docker-compose.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
+            export TEST_RESULTS=$?
+            echo "TEST_RESULTS=${TEST_RESULTS}"
+            set -e
+            if [[ "<< pipeline.git.branch >>" =~ (main|dev) ]] && [[ 0 -eq "${TEST_RESULTS}" ]]; then
+              echo "<< pipeline.git.branch >> tests passed, so just exiting to not publish test image."
+              exit ${TEST_RESULTS}
+            fi
+            echo "export TEST_RESULTS=${TEST_RESULTS}" >> ${BASH_ENV}
       - docker/check:
           registry: ${PRIVATE_DOCKER_REGISTRY}
           docker-username: PRIVATE_DOCKER_USERNAME
@@ -377,9 +391,10 @@ jobs:
           registry: ${PRIVATE_DOCKER_REGISTRY}
           tag: inttest-${PRIMARY_DOCKER_TAG}
       - run:
-          name: Bring up
+          name: Fail or Pass Build
           command: |
-            docker-compose -f int-test/docker-compose.yml up --abort-on-container-exit --exit-code-from ${CIRCLE_PROJECT_REPONAME}-ci-test
+            echo "Exiting with ${TEST_RESULTS}"
+            exit ${TEST_RESULTS}
 
 workflows:
   default:
@@ -440,7 +455,7 @@ workflows:
       - snyk-scan:
           context: default
           requires:
-            - integration-test
+            - build-docker
           filters:
             branches:
               ignore:
@@ -476,4 +491,3 @@ workflows:
           context: default
           requires:
             - integration-test
-            - build-docker
