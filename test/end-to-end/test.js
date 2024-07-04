@@ -7,7 +7,8 @@ describe('End-to-end tests', () => {
 
 	it('Compare 3 phones', (done) => {
 		// Create the pixel 5
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.put('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.send({
 				name: 'Google Pixel 5',
@@ -18,7 +19,8 @@ describe('End-to-end tests', () => {
 				expect(res).to.have.status(204);
 			});
 		// Create the pixel 4
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.put('/v1/phones/manufacturers/Google/models/G020I')
 			.send({
 				name: 'Google Pixel 4',
@@ -29,7 +31,8 @@ describe('End-to-end tests', () => {
 				expect(res).to.have.status(204);
 			});
 		// Create the nexus 4
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.put('/v1/phones/manufacturers/LG/models/E960')
 			.send({
 				name: 'LG Nexus 4',
@@ -40,7 +43,8 @@ describe('End-to-end tests', () => {
 				expect(res).to.have.status(204);
 			});
 
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				ranking: ['android.max', 'dimensions.height', 'sensors.fingerprint', 'charging.wireless', 'ram', 'nfc', 'year'],

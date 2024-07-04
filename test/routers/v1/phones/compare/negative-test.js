@@ -5,7 +5,8 @@ import {chai, cleanupEverything} from '../../../../helpers/index.js';
 describe('Phone-compare negative tests', () => {
 	after(cleanupEverything);
 	it('Unsupport ranking only', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [{manufacturer: 'google', model: 'gd1yq'}],
@@ -18,7 +19,8 @@ describe('Phone-compare negative tests', () => {
 	});
 
 	it('Unsupport ranking with supported', (done) => {
-		chai.request.execute(app)
+		chai.request
+			.execute(app)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [{manufacturer: 'google', model: 'gd1yq'}],
