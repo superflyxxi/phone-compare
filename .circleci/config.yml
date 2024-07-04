@@ -42,7 +42,7 @@ commands:
           name: Upload file
           command: |
             echo Uploading << parameters.file >>
-            scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
+            scp -P ${SSH_PORT} -v << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
   execute-remote:
     parameters:
       command:
