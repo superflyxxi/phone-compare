@@ -11,8 +11,8 @@ use(chaiAlmost(0.1));
 describe('End-to-end integration tests', () => {
 	it('Compare 3 phones', (done) => {
 		// Create the pixel 5
-		chai
-			.request(BASE_URL)
+		chai.request
+			.execute(BASE_URL)
 			.put('/v1/phones/manufacturers/Google/models/GD1YQ')
 			.send({
 				name: 'Google Pixel 5',
@@ -24,8 +24,8 @@ describe('End-to-end integration tests', () => {
 				expect(res.status).to.equal(204);
 			});
 		// Create the pixel 4
-		chai
-			.request(BASE_URL)
+		chai.request
+			.execute(BASE_URL)
 			.put('/v1/phones/manufacturers/Google/models/G020I')
 			.send({
 				name: 'Google Pixel 4',
@@ -37,8 +37,8 @@ describe('End-to-end integration tests', () => {
 				expect(res.status).to.equal(204);
 			});
 		// Create the nexus 4
-		chai
-			.request(BASE_URL)
+		chai.request
+			.execute(BASE_URL)
 			.put('/v1/phones/manufacturers/LG/models/E960')
 			.send({
 				name: 'LG Nexus 4',
@@ -50,8 +50,8 @@ describe('End-to-end integration tests', () => {
 				expect(res.status).to.equal(204);
 			});
 
-		chai
-			.request(BASE_URL)
+		chai.request
+			.execute(BASE_URL)
 			.post('/v1/phones/compare')
 			.send({
 				phones: [
