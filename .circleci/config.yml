@@ -23,7 +23,8 @@ commands:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "f7:1c:8a:07:bf:b1:47:57:c8:ae:b6:d8:16:dd:e3:26"
+            - "SHA256:K1kowcyvmG5stCZAjRqwJCtFpJ+dpBIDP/sks1erWvk"
+            - "SHA256:sAaBX0MwaNoPzbM9YwyWwwQQlKKK+8Ljb+kTzuPU2to"
       - run:
           name: Configure Known Hosts
           #command: "echo ${SSH_KNOWN_HOSTS} >> ~/.ssh/known_hosts"
@@ -42,7 +43,7 @@ commands:
           name: Upload file
           command: |
             echo Uploading << parameters.file >>
-            scp -P ${SSH_PORT} << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
+            scp -P ${SSH_PORT} -v << parameters.file >> ${SSH_USER}@${SSH_SERVER}:${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.remote_dir >>
   execute-remote:
     parameters:
       command:
