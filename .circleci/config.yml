@@ -490,4 +490,4 @@ workflows:
           prerelease: false
           context: default
           requires:
-            - integration-test
+            - publish-docker-private
