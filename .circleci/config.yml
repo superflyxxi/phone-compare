@@ -466,14 +466,12 @@ workflows:
           env: wip
           requires:
             - publish-docker-private
-            - pre-release
       - deploy-k8s:
           context: default
           name: deploy-k8s-prod
           env: prod
           requires:
             - publish-docker-dockerio
-            - pre-release
           filters:
             branches:
               only:
