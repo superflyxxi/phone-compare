@@ -432,7 +432,6 @@ workflows:
           requires:
             - build-docker
             - integration-test
-            - release-notes
           filters:
             branches:
               only:
@@ -447,7 +446,6 @@ workflows:
           requires:
             - build-docker
             - integration-test
-            - release-notes
           filters:
             branches:
               only:
