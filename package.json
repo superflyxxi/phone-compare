@@ -32,7 +32,7 @@
     "node-cache": "5",
     "swagger-jsdoc": "6",
     "swagger-ui-express": "5",
-    "uuid": "10",
+    "uuid": "11",
     "validate.js": "0"
   },
   "devDependencies": {
