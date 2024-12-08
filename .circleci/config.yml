@@ -98,21 +98,9 @@ jobs:
     resource_class: small
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - &npm-cache-key npm-cache
-      - restore_cache:
-          keys:
-            - &node-modules-key node-modules-{{ checksum "package-lock.json" }}
-      - node/install-packages
-      - save_cache:
-          key: *node-modules-key
-          paths:
-            - node_modules/
-      - save_cache:
-          key: *npm-cache-key
-          paths:
-            - ~/.npm/_cacache/
+      - node/install-packages:
+          override-ci-command: npm install
+          include-branch-in-cache-key: false
       - run:
           name: Unit Tests
           command: npm test -- --forbid-pending --forbid-only --reporter mocha-junit-reporter
