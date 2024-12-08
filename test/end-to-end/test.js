@@ -1,9 +1,15 @@
 import {expect} from 'chai';
+import nock from 'nock';
 import app from '../../src/index.js';
 import {cleanupEverything, chai} from '../helpers/index.js';
 
 describe('End-to-end tests', () => {
 	after(cleanupEverything);
+	beforeEach(() => {
+		nock('https://www.gsmarena.com').get('/google_pixel_5-10386.php').replyWithFile(200, 'test/data/pixel5.html');
+		nock('https://www.gsmarena.com').get('/google_pixel_4-9896.php').replyWithFile(200, 'test/data/pixel4.html');
+		nock('https://www.gsmarena.com').get('/lg_nexus_4_e960-5048.php').replyWithFile(200, 'test/data/nexus4.html');
+	});
 
 	it('Compare 3 phones', (done) => {
 		// Create the pixel 5
