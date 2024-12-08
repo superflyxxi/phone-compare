@@ -98,7 +98,21 @@ jobs:
     resource_class: small
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - &npm-cache-key npm-cache
+      - restore_cache:
+          keys:
+            - &node-modules-key node-modules-{{ checksum "package-lock.json" }}
       - node/install-packages
+      - save_cache:
+          key: *node-modules-key
+          paths:
+            - node_modules/
+      - save_cache:
+          key: *npm-cache-key
+          paths:
+            - ~/.npm/_cacache/
       - run:
           name: Unit Tests
           command: npm test -- --forbid-pending --forbid-only --reporter mocha-junit-reporter
@@ -306,7 +320,7 @@ jobs:
         default: "wip"
         enum: ["wip", "prod"]
     docker:
-      - image: cimg/deploy:2023.08.1
+      - image: cimg/base:stable
     steps:
       - attach_workspace:
           at: /tmp/workspace
