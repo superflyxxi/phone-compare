@@ -99,7 +99,7 @@ jobs:
     steps:
       - checkout
       - node/install-packages:
-          override-ci-command: npm install
+          override-ci-command: npm install --include=dev
           include-branch-in-cache-key: false
       - run:
           name: Unit Tests
@@ -273,7 +273,9 @@ jobs:
         default: false
     steps:
       - checkout
-      - run: npm ci --include=dev
+      - node/install-packages:
+          override-ci-command: npm install --include=dev
+          include-branch-in-cache-key: false
       - attach_workspace:
           at: /tmp/workspace
       - when:
