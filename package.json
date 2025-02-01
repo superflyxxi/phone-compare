@@ -41,7 +41,7 @@
     "chai": "5",
     "chai-almost": "1",
     "chai-http": "5",
-    "mocha": "10",
+    "mocha": "11",
     "mocha-junit-reporter": "2",
     "nock": "13",
     "xo": "0"
