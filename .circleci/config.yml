@@ -178,12 +178,18 @@ jobs:
             if ! [[ "<< pipeline.git.branch >>" =~ (main|release-.*|dev) ]]; then
               export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${CACHE_REGISTRY}/${CACHE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:dev"
             fi
+            if [[ "<< pipeline.git.branch >>" == "dev" ]]; then
+              export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${CACHE_REGISTRY}/${CACHE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest"
+            fi
 
             if [[ "main" == "<< pipeline.git.branch >>" ]] && [[ "main" != "${PRIMARY_DOCKER_TAG}" ]]; then
-              for A in $(echo ${PRIMARY_DOCKER_TAG} | tr "." "\n"); do 
-                NOW="$PREV.$A"
-                export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${CACHE_REGISTRY}/${CACHE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${NOW:1}"
+              NOW=${PRIMARY_DOCKER_TAG:0:1}
+              echo "Handling TAG=${PRIMARY_DOCKER_TAG}"
+              for A in $(echo ${PRIMARY_DOCKER_TAG:1} | tr "." "\n"); do 
+                echo "Dealing with ${NOW}; ${PREV}"
+                export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${CACHE_REGISTRY}/${CACHE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${NOW}"
                 PREV=$NOW
+                NOW="$NOW.$A"
               done
             fi
             echo "export CACHE_FROM_IMAGES=${CACHE_FROM_IMAGES}" >> ${BASH_ENV}
@@ -196,6 +202,7 @@ jobs:
           name: Docker pull cache images
           command: |
             for I in $(echo ${CACHE_FROM_IMAGES} | tr "," "\n"); do
+              echo "Pulling $I"
               docker pull $I
             done
       - docker/build:
