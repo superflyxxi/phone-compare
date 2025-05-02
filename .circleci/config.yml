@@ -175,10 +175,7 @@ jobs:
           name: Custom enviroment variables
           command: |
             export CACHE_FROM_IMAGES=$(grep "^FROM " Dockerfile | sed 's/FROM //g')
-            if ! [[ "<< pipeline.git.branch >>" =~ (main|release-.*|dev) ]]; then
-              export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${CACHE_REGISTRY}/${CACHE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:dev"
-            fi
-            if [[ "<< pipeline.git.branch >>" == "dev" ]]; then
+            if [[ "<< pipeline.git.branch >>" != "main" ]]; then
               export CACHE_FROM_IMAGES="${CACHE_FROM_IMAGES},${CACHE_REGISTRY}/${CACHE_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest"
             fi
 
@@ -391,10 +388,6 @@ jobs:
             export TEST_RESULTS=$?
             echo "TEST_RESULTS=${TEST_RESULTS}"
             set -e
-            if [[ "<< pipeline.git.branch >>" =~ (main|dev) ]] && [[ 0 -eq "${TEST_RESULTS}" ]]; then
-              echo "<< pipeline.git.branch >> tests passed, so just exiting to not publish test image."
-              exit ${TEST_RESULTS}
-            fi
             echo "export TEST_RESULTS=${TEST_RESULTS}" >> ${BASH_ENV}
       - docker/check:
           registry: ${PRIVATE_DOCKER_REGISTRY}
@@ -455,7 +448,6 @@ workflows:
             branches:
               only:
                 - main
-                - dev
       - publish-docker:
           name: publish-docker-dockerio
           context: default
