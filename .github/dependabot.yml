@@ -2,6 +2,7 @@ version: 2
 
 updates:
   - package-ecosystem: "npm"
+    target-branch: "dependabot"
     directory: "/"
     schedule:
       interval: "monthly"
@@ -14,6 +15,7 @@ updates:
     assignees:
       - superflyxxi
   - package-ecosystem: "docker"
+    target-branch: "dependabot"
     directory: "/"
     schedule:
       interval: "monthly"
@@ -26,6 +28,7 @@ updates:
     assignees:
       - superflyxxi
   - package-ecosystem: "docker"
+    target-branch: "dependabot"
     directory: "/int-test"
     schedule:
       interval: "monthly"
