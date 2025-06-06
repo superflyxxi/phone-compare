@@ -10,7 +10,7 @@
     "start": "node src/index.js",
     "test": "DATA_DIR=$(mktemp -d) c8 mocha",
     "int-test": "sleep 10s; mocha int-test/",
-    "xo": "xo"
+    "xo": "xo src/"
   },
   "repository": {
     "type": "git",
@@ -45,5 +45,32 @@
     "mocha-junit-reporter": "2",
     "nock": "14",
     "xo": "1"
-  }
+  },
+  "xo":{
+	"ignores":[],
+	"prettier": true,
+	"rules":{
+		"unicorn/prevent-abbreviations":[
+			"error",
+			{
+				"replacements":{
+					"res": false,
+					"req": false,
+					"i": false,
+					"dir": false,
+					"docs": false
+				}
+			}
+		],
+		"new-cap":[
+			"error",
+			{
+				"capIsNewExceptions":[
+					"Router"
+				]
+			}
+		],
+		"guard-for-in":["off"]
+	}
+}
 }
