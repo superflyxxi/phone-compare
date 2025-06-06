@@ -9,7 +9,7 @@ orbs:
 anchors:
   node-executor: &node-executor
     name: node/default
-    tag: '20.14'
+    tag: '22.16'
 
 commands:
   export-primary-docker-tag:
