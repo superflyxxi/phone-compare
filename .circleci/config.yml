@@ -473,12 +473,14 @@ workflows:
           context: default
           name: deploy-k8s-wip
           env: wip
+          serial-group: << pipeline.project.slug >>/deploy/wip
           requires:
             - publish-docker-private
       - deploy-k8s:
           context: default
           name: deploy-k8s-prod
           env: prod
+          serial-group: << pipeline.project.slug >>/deploy/prod
           requires:
             - publish-docker-dockerio
           filters:
