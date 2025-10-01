@@ -1,4 +1,4 @@
-FROM node:24.7.0
+FROM node:24.9.0
 LABEL org.opencontainers.image.authors="SuperFlyXXI <superflyxxi@yahoo.com>"
 EXPOSE 3000
 ENV 	NODE_ENV=production \
