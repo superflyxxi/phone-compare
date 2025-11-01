@@ -1,4 +1,5 @@
-FROM node:24.9.0
+ARG NODE_VERSION
+FROM node:${NODE_VERSION}-alpine
 LABEL org.opencontainers.image.authors="SuperFlyXXI <superflyxxi@yahoo.com>"
 EXPOSE 3000
 ENV 	NODE_ENV=production \
