@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   node: circleci/node@7
   docker: circleci/docker@2
-  sonarcloud: sonarsource/sonarcloud@2
+  sonarcloud: sonarsource/sonarcloud@4
   snyk: snyk/snyk@2
 
 variables:
