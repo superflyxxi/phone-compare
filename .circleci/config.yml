@@ -123,6 +123,9 @@ jobs:
       - run:
           name: Verify XO
           command: npm run xo
+      - run:
+          name: Fetch all blobs before sonar scan
+          command: git fetch --filter=blob:none --refetch
       - sonarcloud/scan
 
   snyk-scan:
