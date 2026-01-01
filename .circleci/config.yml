@@ -123,6 +123,12 @@ jobs:
       - run:
           name: Verify XO
           command: npm run xo
+      - run:
+          name: Workaround cloning issues
+          command: |
+            git config remote.origin.partialclonefilter ""
+            git config remote.origin.promisor ""
+            git fetch --refetch
       - sonarcloud/scan
 
   snyk-scan:
