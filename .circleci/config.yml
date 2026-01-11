@@ -504,15 +504,7 @@ workflows:
           context: default
           requires:
             - build-docker
-          filters:
-            branches:
-              ignore:
-                - main
       - release-notes:
           context: default
           requires:
             - integration-test
-          filters:
-            branches:
-              only:
-                - main
