@@ -114,6 +114,11 @@ jobs:
       - run:
           name: Tar coverage
           command: tar -jvcf coverage.tar.bz2 coverage/
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - coverage.tar.bz2
+            - mocha/test-results.xml
       - store_test_results:
           path: ./mocha
       - store_artifacts:
@@ -123,16 +128,19 @@ jobs:
       - run:
           name: Verify XO
           command: npm run xo
-      - when:
-          condition:
-            equal: [main, << pipeline.git.branch >>]
-          steps:
-            - run:
-                name: Workaround cloning issues
-                command: |
-                  git config remote.origin.partialclonefilter ""
-                  git config remote.origin.promisor ""
-                  git fetch --refetch
+
+  sonar-scan:
+    resource_class: small
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout:
+          method: full
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Extract coverage
+          command: tar -xvf /tmp/workspace/coverage.tar.bz2
       - sonarcloud/scan
 
   snyk-scan:
@@ -436,6 +444,10 @@ workflows:
           prerelease: true
       - unit-test:
           context: default
+      - sonar-scan:
+          context: default
+          requires:
+            - unit-test
       - build-docker:
           context: default
           requires:
