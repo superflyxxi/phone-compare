@@ -300,11 +300,6 @@ jobs:
   release-notes:
     executor: *node-executor 
     resource_class: small
-    parameters:
-      prerelease:
-        description: Whether it's a pre-release and not actually release.
-        type: boolean
-        default: false
     steps:
       - checkout
       - node/install-packages:
@@ -312,24 +307,19 @@ jobs:
           include-branch-in-cache-key: false
       - attach_workspace:
           at: /tmp/workspace
-      - when:
-          condition: << parameters.prerelease >>
-          steps:
-            run:
-              name: Define additional args
-              command: |
-                echo "export ADDITIONAL_ARGS=--dry-run" >> ${BASH_ENV}
       - run:
           name: Run semantic-release
           command: |
-            npx semantic-release ${ADDITIONAL_ARGS}
-            if [[ "" == "$(cat version.txt)" ]]; then 
+            npx semantic-release
+            if [[ ! -f version.txt ]] || [[ "" == "$(cat version.txt)" ]]; then 
               printf "%s-%s" ${CIRCLE_BRANCH} ${CIRCLE_SHA1:0:7} | sed 's#/#-#g' > /tmp/workspace/full_version.txt
               printf "${CIRCLE_BRANCH}" | sed 's#/#-#g' > /tmp/workspace/short_version.txt
             else
               cp -v version.txt /tmp/workspace/full_version.txt
               cp -v version.txt /tmp/workspace/short_version.txt
             fi
+            printf "Short version"
+            cat /tmp/workspace/short_version.txt
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
@@ -438,10 +428,6 @@ workflows:
           context: default
           dockerfiles: Dockerfile
           hadolint-tag: v2.12.0-debian
-      - release-notes:
-          name: pre-release
-          context: default
-          prerelease: true
       - unit-test:
           context: default
       - sonar-scan:
@@ -452,7 +438,6 @@ workflows:
           context: default
           requires:
             - unit-test
-            - pre-release
             - validate-dockerfile
       - publish-docker:
           name: publish-docker-private
@@ -523,7 +508,6 @@ workflows:
               ignore:
                 - main
       - release-notes:
-          prerelease: false
           context: default
           requires:
             - publish-docker-private
