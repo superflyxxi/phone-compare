@@ -170,12 +170,17 @@ jobs:
           docker_layer_caching: true
       - attach_workspace:
           at: /tmp/workspace
+      - docker/check:
+          registry: ${PRIVATE_DOCKER_REGISTRY}
+          docker-username: PRIVATE_DOCKER_USERNAME
+          docker-password: PRIVATE_DOCKER_PASSWORD
       - checkout
       - docker/build:
           step-name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           tag: build
           extra_build_args: --build-arg NODE_VERSION=<< pipeline.parameters.node-version >>
+          cache_from: ${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}
       - run:
           name: Save docker image
           command: docker save -o images.tar ${CIRCLE_PROJECT_REPONAME}:build
