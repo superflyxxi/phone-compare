@@ -132,7 +132,7 @@ jobs:
   sonar-scan:
     resource_class: small
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
     steps:
       - checkout:
           method: full
@@ -146,7 +146,7 @@ jobs:
   snyk-scan:
     resource_class: small
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
     steps:
       - setup_remote_docker
       - attach_workspace:
@@ -164,7 +164,7 @@ jobs:
   build-docker:
     resource_class: small
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
@@ -192,7 +192,7 @@ jobs:
   publish-docker:
     resource_class: small
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
     parameters:
       registry-env:
         description: The registry envirnment variable to use to publish docker images.
@@ -286,7 +286,7 @@ jobs:
         default: "wip"
         enum: ["wip", "prod"]
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -327,7 +327,7 @@ jobs:
   integration-test:
     resource_class: small
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
