@@ -445,4 +445,4 @@ workflows:
       - release-notes:
           context: default
           requires:
-            - integration-test
+            - unit-test
