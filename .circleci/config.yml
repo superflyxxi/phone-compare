@@ -377,6 +377,23 @@ workflows:
           requires:
             - unit-test
             - validate-dockerfile
+      - snyk-scan:
+          context: default
+          requires:
+            - build-docker
+          filters:
+            branches:
+              ignore:
+                - main
+      - integration-test:
+          context: default
+          requires:
+            - build-docker
+      - release-notes:
+          context: default
+          requires:
+            - build-docker
+            - unit-test
       - publish-docker:
           name: publish-docker-private
           context: default
@@ -384,7 +401,7 @@ workflows:
           docker-username-env: PRIVATE_DOCKER_USERNAME
           docker-password-env: PRIVATE_DOCKER_PASSWORD
           requires:
-            - integration-test
+            - build-docker
             - release-notes
       - publish-docker:
           name: publish-docker-ghcr
@@ -393,7 +410,7 @@ workflows:
           docker-username-env: GHCR_USERNAME
           docker-password-env: GHCR_TOKEN
           requires:
-            - integration-test
+            - build-docker
             - release-notes
           filters:
             branches:
@@ -406,19 +423,11 @@ workflows:
           docker-username-env: DOCKER_IO_USERNAME
           docker-password-env: DOCKER_IO_PASSWORD
           requires:
+            - build-docker
             - release-notes
-            - integration-test
           filters:
             branches:
               only:
-                - main
-      - snyk-scan:
-          context: default
-          requires:
-            - build-docker
-          filters:
-            branches:
-              ignore:
                 - main
       - deploy-k8s:
           context: default
@@ -438,11 +447,3 @@ workflows:
             branches:
               only:
                 - main
-      - integration-test:
-          context: default
-          requires:
-            - build-docker
-      - release-notes:
-          context: default
-          requires:
-            - unit-test
