@@ -392,6 +392,10 @@ workflows:
           context: default
           requires:
             - build-docker
+          filters:
+            branches:
+              ignore:
+                - /^dependabot.*/ # skip dependanbot
       - release-notes:
           context: default
           requires:
