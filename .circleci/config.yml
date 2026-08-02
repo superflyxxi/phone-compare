@@ -183,7 +183,7 @@ jobs:
           image: ${CIRCLE_PROJECT_REPONAME}
           tag: build
           extra_build_args: --cache-to type=inline --build-arg NODE_VERSION=<< pipeline.parameters.node-version >>
-          cache_from: ${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
+          cache_from: ${PRIVATE_DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:latest
       - run:
           name: Save docker image
           command: docker save -o images.tar ${CIRCLE_PROJECT_REPONAME}:build
@@ -227,7 +227,11 @@ jobs:
               export DOCKER_TAGS="${DOCKER_TAGS},main,latest"
             fi
             echo "export DOCKER_TAGS=${DOCKER_TAGS}" >> ${BASH_ENV}
-            echo "export FINAL_IMAGE_NAME=${<< parameters.docker-username-env >>}/${CIRCLE_PROJECT_REPONAME}" >> ${BASH_ENV}
+            if [[ "PRIVATE_DOCKER_USERNAME" == "<< parameters.docker-username-env >>" ]]; then
+              echo "export FINAL_IMAGE_NAME=${CIRCLE_PROJECT_REPONAME}" >> ${BASH_ENV}
+            else
+              echo "export FINAL_IMAGE_NAME=${<< parameters.docker-username-env >>}/${CIRCLE_PROJECT_REPONAME}" >> ${BASH_ENV}
+            fi
             cat ${BASH_ENV}
       - docker/check:
           registry: ${<< parameters.registry-env >>}
@@ -358,7 +362,7 @@ jobs:
           when: on_fail
           name: Push integration testing docker image
           command: |
-            IMAGE=${PRIVATE_DOCKER_REGISTRY}/${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:inttest-${CIRCLE_BRANCH/\//-}
+            IMAGE=${PRIVATE_DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}:inttest-${CIRCLE_BRANCH/\//-}
             docker tag ${CIRCLE_PROJECT_REPONAME}:inttest $IMAGE
             docker push $IMAGE
 
