@@ -182,7 +182,7 @@ jobs:
           step_name: Build application docker image
           image: ${CIRCLE_PROJECT_REPONAME}
           tag: build
-          extra_build_args: --build-arg NODE_VERSION=<< pipeline.parameters.node-version >>
+          extra_build_args: --cache-to type=inline --build-arg NODE_VERSION=<< pipeline.parameters.node-version >>
           cache_from: ${PRIVATE_DOCKER_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
       - run:
           name: Save docker image
