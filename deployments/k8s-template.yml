@@ -32,7 +32,7 @@ spec:
           claimName: phone-compare-data
       containers:
       - name: phone-compare
-        image: ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/phone-compare:${DOCKER_TAG}
+        image: ${DOCKER_IMAGE}
         imagePullPolicy: Always
         ports:
           - containerPort: 3000
