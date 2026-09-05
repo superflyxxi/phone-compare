@@ -22,7 +22,10 @@ async function getPhone(manufacturer, model) {
 	let phone;
 	try {
 		phone = JSON.parse(
-			await fs.readFile(path.join(DATA_DIRECTORY, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json')),
+			await fs.readFile(
+				path.join(DATA_DIRECTORY, manufacturer.toLowerCase() + '.' + model.toLowerCase() + '.json'),
+				'utf8',
+			),
 		);
 	} catch (error) {
 		throw new NotFoundError(error.message);
