@@ -45,32 +45,5 @@
     "mocha-junit-reporter": "2",
     "nock": "14",
     "xo": "4"
-  },
-  "xo":{
-	"ignores":[],
-	"prettier": true,
-	"rules":{
-		"unicorn/prevent-abbreviations":[
-			"error",
-			{
-				"replacements":{
-					"res": false,
-					"req": false,
-					"i": false,
-					"dir": false,
-					"docs": false
-				}
-			}
-		],
-		"new-cap":[
-			"error",
-			{
-				"capIsNewExceptions":[
-					"Router"
-				]
-			}
-		],
-		"guard-for-in":["off"]
-	}
-}
+  }
 }
