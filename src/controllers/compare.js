@@ -22,10 +22,7 @@ export default async function compare(req, res) {
 }
 
 async function scoreAndSortPhones(phoneScoreList, rankScale) {
-	const promises = [];
-	for (const phoneScore of phoneScoreList) {
-		promises.push(getFinalScore(rankScale, phoneScore));
-	}
+	const promises = Array.from(phoneScoreList, (phoneScore) => getFinalScore(rankScale, phoneScore));
 
 	await Promise.all(promises);
 
@@ -72,10 +69,7 @@ async function getPhoneScoreList(phones) {
 		}
 	}
 
-	const promises = [];
-	for (const phone of phoneList) {
-		promises.push(getPhoneScore(phone));
-	}
+	const promises = Array.from(phoneList, (phone) => getPhoneScore(phone));
 
 	return Promise.all(promises);
 }
@@ -85,6 +79,8 @@ async function getPhoneScoreList(phones) {
  * For example, if the min height in the phone list is 130 and the max height is 150, then for
  * each mm, it would be equal to X points. If the min height is 140 and the max is 145, then
  * each mm is worth Y points, where Y > X.
+ * @param rankList
+ * @param phoneScoreList
  */
 async function generateScoreScale(rankList, phoneScoreList) {
 	const scales = {};
@@ -206,7 +202,6 @@ function initScoreScaleForRank(rank, rankRule, phoneScoreList) {
 		const value = lodash.get(phoneScore.phone, rank);
 
 		if (value) {
-			let version;
 			switch (rankRule.type) {
 				case 'number': {
 					mapValues.values.push(value);
@@ -214,10 +209,19 @@ function initScoreScaleForRank(rank, rankRule, phoneScoreList) {
 				}
 
 				case 'version': {
-					version = versions.getVersionObject(value);
-					if (version?.major) mapValues.major.push(version.major);
-					if (version?.minor) mapValues.minor.push(version.minor);
-					if (version?.patch) mapValues.patch.push(version.patch);
+					const version = versions.getVersionObject(value);
+					if (version?.major) {
+						mapValues.major.push(version.major);
+					}
+
+					if (version?.minor) {
+						mapValues.minor.push(version.minor);
+					}
+
+					if (version?.patch) {
+						mapValues.patch.push(version.patch);
+					}
+
 					break;
 				}
 
