@@ -44,34 +44,5 @@
     "mocha": "12",
     "nock": "14",
     "xo": "5"
-  },
-  "xo": {
-    "ignores": [],
-    "prettier": true,
-    "rules": {
-      "unicorn/prevent-abbreviations": [
-        "error",
-        {
-          "replacements": {
-            "res": false,
-            "req": false,
-            "i": false,
-            "dir": false,
-            "docs": false
-          }
-        }
-      ],
-      "new-cap": [
-        "error",
-        {
-          "capIsNewExceptions": [
-            "Router"
-          ]
-        }
-      ],
-      "guard-for-in": [
-        "off"
-      ]
-    }
   }
 }
