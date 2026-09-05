@@ -1,6 +1,10 @@
 import process from 'node:process';
 import {v4 as uuidv4} from 'uuid';
 /**
+ * @param error
+ * @param _req
+ * @param res
+ * @param next
  * @openapi
  * components:
  *   schemas:
