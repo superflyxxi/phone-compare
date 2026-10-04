@@ -103,9 +103,7 @@ jobs:
           include-branch-in-cache-key: false
       - run:
           name: Unit Tests
-          command: npm test -- --forbid-pending --forbid-only --reporter mocha-junit-reporter
-          environment:
-            MOCHA_FILE: ./mocha/test-results.xml
+          command: npm test -- --forbid-pending --forbid-only --reporter xunit --reporter-option output=./mocha/test-results.xml
       - run:
           name: Tar coverage
           command: tar -jvcf coverage.tar.bz2 coverage/
