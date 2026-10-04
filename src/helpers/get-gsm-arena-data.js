@@ -51,8 +51,8 @@ function getRAM(document) {
 	return Number.parseFloat(
 		document
 			.querySelector('[data-spec="internalmemory"]')
-			.innerHTML.match(/\d+GB RAM/g)[0]
-			.match(/\d/g)[0],
+			.innerHTML.match(/\d+GB RAM/)[0]
+			.match(/\d/)[0],
 	);
 }
 
@@ -83,7 +83,7 @@ function getPrice(document) {
 function getYearReleased(document) {
 	const releasedHtml = document.querySelector('[data-spec="released-hl"]')?.innerHTML;
 	if (releasedHtml) {
-		return Number.parseInt(releasedHtml.match(/\d+/g)[0], 10);
+		return Number.parseInt(releasedHtml.match(/\d+/)[0], 10);
 	}
 
 	return undefined;
