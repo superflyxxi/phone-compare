@@ -51,7 +51,7 @@ function getRAM(document) {
 	return Number(
 		document
 			.querySelector('[data-spec="internalmemory"]')
-			.innerHTML.match(/\d+GB RAM/v)[0]
+			.innerHTML.match(/\b\d+GB RAM\b/v)[0]
 			.match(/\d/v)[0],
 	);
 }
@@ -71,9 +71,10 @@ function getSensors(document) {
 function getPrice(document) {
 	const priceHtml = document.querySelector('[data-spec="price"]')?.querySelector('a')?.innerHTML;
 	if (priceHtml) {
+		const matches = priceHtml.match(/\b\d+\.\d+\b/gv);
 		return {
-			usd: Number(priceHtml.match(/\d+\.\d+/gv)[0]),
-			eur: Number(priceHtml.match(/\d+\.\d+/gv)[1]),
+			usd: Number(matches[0]),
+			eur: Number(matches[1]),
 		};
 	}
 
@@ -90,7 +91,7 @@ function getYearReleased(document) {
 }
 
 function getAndroidVersion(document) {
-	const android = document.querySelector('[data-spec="os"]').innerHTML.match(/\d+(\.\d+)?/gv);
+	const android = document.querySelector('[data-spec="os"]').innerHTML.match(/\d+(?:\.\d+)?/gv);
 	return {
 		official: android.at(-1),
 	};
