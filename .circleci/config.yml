@@ -93,6 +93,17 @@ commands:
             cat << parameters.output_file >>
 
 jobs:
+  lint:
+    executor: *node-executor 
+    resource_class: small
+    steps:
+      - checkout
+      - node/install-packages:
+          override-ci-command: npm install --include=dev
+          include-branch-in-cache-key: false
+      - run:
+          name: Verify XO
+          command: npm run xo
   unit-test:
     executor: *node-executor 
     resource_class: small
@@ -118,9 +129,6 @@ jobs:
           path: ./mocha/test-results.xml
       - store_artifacts:
           path: ./coverage.tar.bz2
-      - run:
-          name: Verify XO
-          command: npm run xo
 
   sonar-scan:
     resource_class: small
@@ -363,6 +371,8 @@ workflows:
           name: validate-dockerfile
           context: default
           dockerfiles: Dockerfile
+      - lint:
+          context: default
       - unit-test:
           context: default
       - sonar-scan:
@@ -373,6 +383,7 @@ workflows:
           context: default
           requires:
             - unit-test
+            - lint
             - validate-dockerfile
       - snyk-scan:
           context: default
