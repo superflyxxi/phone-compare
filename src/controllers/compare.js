@@ -64,7 +64,7 @@ async function getPhoneScoreList(phones) {
 		if (!phoneList) {
 			const res = await axios.get(PHONE_BASE_URL + '/v1/phones');
 			phoneList = res.data;
-			const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/i)[1] : 600;
+			const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/iv)[1] : 600;
 			cache.set('/v1/phones', phoneList, ttl);
 		}
 	}
@@ -105,7 +105,7 @@ async function getPhoneScore(phone) {
 	if (!data) {
 		const res = await axios.get(PHONE_BASE_URL + url);
 		data = res.data;
-		const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/i)[1] : 600;
+		const ttl = res.headers['cache-control'] ? res.headers['cache-control'].match(/max-age=(\d+)/iv)[1] : 600;
 		cache.set(url, data, ttl);
 	}
 
