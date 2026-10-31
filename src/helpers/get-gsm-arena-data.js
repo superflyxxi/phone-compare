@@ -41,14 +41,14 @@ function getDimensions(document) {
 	let dimensions = document.querySelector('[data-spec="dimensions"]').innerHTML;
 	dimensions = dimensions.match(/\d+\.*\d*/g);
 	return {
-		height: Number.parseFloat(dimensions[0]),
-		width: Number.parseFloat(dimensions[1]),
-		depth: Number.parseFloat(dimensions[2]),
+		height: Number(dimensions[0]),
+		width: Number(dimensions[1]),
+		depth: Number(dimensions[2]),
 	};
 }
 
 function getRAM(document) {
-	return Number.parseFloat(
+	return Number(
 		document
 			.querySelector('[data-spec="internalmemory"]')
 			.innerHTML.match(/\d+GB RAM/)[0]
@@ -72,8 +72,8 @@ function getPrice(document) {
 	const priceHtml = document.querySelector('[data-spec="price"]')?.querySelector('a')?.innerHTML;
 	if (priceHtml) {
 		return {
-			usd: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[0]),
-			eur: Number.parseFloat(priceHtml.match(/\d+\.\d+/g)[1]),
+			usd: Number(priceHtml.match(/\d+\.\d+/g)[0]),
+			eur: Number(priceHtml.match(/\d+\.\d+/g)[1]),
 		};
 	}
 
@@ -83,7 +83,7 @@ function getPrice(document) {
 function getYearReleased(document) {
 	const releasedHtml = document.querySelector('[data-spec="released-hl"]')?.innerHTML;
 	if (releasedHtml) {
-		return Number.parseInt(releasedHtml.match(/\d+/)[0], 10);
+		return Number(releasedHtml.match(/\d+/)[0], 10);
 	}
 
 	return undefined;
