@@ -151,33 +151,34 @@ async function getFinalScore(rankScale, phoneScore) {
 	phoneScore.score = 0;
 	for (const rank in rankScale) {
 		const value = lodash.get(phoneScore.phone, rank);
-		let score = 0;
-		switch (rankRules[rank].type) {
-			case 'number': {
-				score = scoreNumber(value, rankRules[rank], rankScale[rank]);
-				break;
-			}
-
-			case 'boolean': {
-				score = scoreBoolean(value, rankRules[rank], rankScale[rank]);
-				break;
-			}
-
-			case 'version': {
-				score = scoreVersion(value, rankRules[rank], rankScale[rank]);
-				break;
-			}
-
-			default: {
-				console.error('Invalid type configured: rank=', rank, 'type=', rankRules[rank].type);
-			}
-		}
-
+		const score = scoreRank(rankRules[rank], rankScale[rank], value);
 		phoneScore.scoreBreakdown[rank] = score;
 		phoneScore.score += score;
 	}
 
 	delete phoneScore.phone;
+}
+
+function scoreRank(rankRule, rankScale, value) {
+	switch (rankRule.type) {
+		case 'number': {
+			return scoreNumber(value, rankRule, rankScale);
+		}
+
+		case 'boolean': {
+			return scoreBoolean(value, rankRule, rankScale);
+		}
+
+		case 'version': {
+			return scoreVersion(value, rankRule, rankScale);
+		}
+
+		default: {
+			console.error('Invalid type configured: rankRule=', rankRule, 'type=', rankRule.type);
+		}
+	}
+
+	return 0;
 }
 
 function initScoreScaleForRank(rank, rankRule, phoneScoreList) {
@@ -206,31 +207,21 @@ function initScoreScaleForRank(rank, rankRule, phoneScoreList) {
 		const value = lodash.get(phoneScore.phone, rank);
 
 		if (value) {
-			switch (rankRule.type) {
-				case 'number': {
-					mapValues.values.push(value);
-					break;
+			if (rankRule.type === 'number') {
+				mapValues.values.push(value);
+			} else if (rankRule.type === 'version') {
+				const version = versions.getVersionObject(value);
+				if (version?.major) {
+					mapValues.major.push(version.major);
 				}
 
-				case 'version': {
-					const version = versions.getVersionObject(value);
-					if (version?.major) {
-						mapValues.major.push(version.major);
-					}
-
-					if (version?.minor) {
-						mapValues.minor.push(version.minor);
-					}
-
-					if (version?.patch) {
-						mapValues.patch.push(version.patch);
-					}
-
-					break;
+				if (version?.minor) {
+					mapValues.minor.push(version.minor);
 				}
 
-				default:
-				// Should never get here
+				if (version?.patch) {
+					mapValues.patch.push(version.patch);
+				}
 			}
 		}
 	}
