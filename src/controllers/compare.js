@@ -6,7 +6,7 @@ import validation from '../helpers/validation.js';
 import * as versions from '../helpers/versions.js';
 import cache from '../helpers/cache.js';
 
-const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? 'http://localhost:' + server.port;
+const PHONE_BASE_URL = process.env.PHONE_BASE_URL ?? `http://localhost:${server.port}`;
 
 export default async function compare(req, res) {
 	validate(req.body);
@@ -100,7 +100,7 @@ async function generateScoreScale(rankList, phoneScoreList) {
 async function getPhoneScore(phone) {
 	const url =
 		'/v1/phones/' +
-		(phone.href ?? 'manufacturers/' + phone.manufacturer.toLowerCase() + '/models/' + phone.model.toLowerCase());
+		(phone.href ?? `manufacturers/${phone.manufacturer.toLowerCase()}/models/${phone.model.toLowerCase()}`);
 	let data = cache.get(url);
 	if (!data) {
 		const res = await axios.get(PHONE_BASE_URL + url);
