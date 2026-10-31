@@ -231,10 +231,10 @@ function initScoreScaleForRank(rank, rankRule, phoneScoreList) {
 		}
 	}
 
-	for (const item of Object.keys(mapValues)) {
-		result[item] = {};
-		result[item].max = Math.max(...mapValues[item]);
-		result[item].min = Math.min(...mapValues[item]);
+	for (const [k, v] of Object.entries(mapValues)) {
+		result[k] = {};
+		result[k].max = Math.max(...v);
+		result[k].min = Math.min(...v);
 	}
 
 	return result;
