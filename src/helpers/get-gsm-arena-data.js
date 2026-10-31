@@ -29,7 +29,7 @@ export default async function getGsmArenaData(gsmUrl) {
 function getWirelessCharging(document) {
 	const tdList = document.querySelectorAll('td.nfo');
 	for (const td of tdList) {
-		if (/wireless/i.test(td.innerHTML)) {
+		if (/wireless/iv.test(td.innerHTML)) {
 			return {wireless: true};
 		}
 	}
@@ -39,7 +39,7 @@ function getWirelessCharging(document) {
 
 function getDimensions(document) {
 	let dimensions = document.querySelector('[data-spec="dimensions"]').innerHTML;
-	dimensions = dimensions.match(/\d+\.*\d*/g);
+	dimensions = dimensions.match(/\d+\.*\d*/gv);
 	return {
 		height: Number(dimensions[0]),
 		width: Number(dimensions[1]),
@@ -51,18 +51,18 @@ function getRAM(document) {
 	return Number(
 		document
 			.querySelector('[data-spec="internalmemory"]')
-			.innerHTML.match(/\d+GB RAM/)[0]
-			.match(/\d/)[0],
+			.innerHTML.match(/\d+GB RAM/v)[0]
+			.match(/\d/v)[0],
 	);
 }
 
 function getNFC(document) {
-	const nfcMatch = document.querySelector('[data-spec="nfc"]').innerHTML.match(/yes/i);
+	const nfcMatch = document.querySelector('[data-spec="nfc"]').innerHTML.match(/yes/iv);
 	return nfcMatch !== undefined && nfcMatch !== null;
 }
 
 function getSensors(document) {
-	const fingerprintMatch = document.querySelector('[data-spec="sensors"]').innerHTML.match(/fingerprint/i);
+	const fingerprintMatch = document.querySelector('[data-spec="sensors"]').innerHTML.match(/fingerprint/iv);
 	return {
 		fingerprint: fingerprintMatch !== undefined && fingerprintMatch !== null,
 	};
@@ -72,8 +72,8 @@ function getPrice(document) {
 	const priceHtml = document.querySelector('[data-spec="price"]')?.querySelector('a')?.innerHTML;
 	if (priceHtml) {
 		return {
-			usd: Number(priceHtml.match(/\d+\.\d+/g)[0]),
-			eur: Number(priceHtml.match(/\d+\.\d+/g)[1]),
+			usd: Number(priceHtml.match(/\d+\.\d+/gv)[0]),
+			eur: Number(priceHtml.match(/\d+\.\d+/gv)[1]),
 		};
 	}
 
@@ -83,14 +83,14 @@ function getPrice(document) {
 function getYearReleased(document) {
 	const releasedHtml = document.querySelector('[data-spec="released-hl"]')?.innerHTML;
 	if (releasedHtml) {
-		return Number(releasedHtml.match(/\d+/)[0], 10);
+		return Number(releasedHtml.match(/\d+/v)[0], 10);
 	}
 
 	return undefined;
 }
 
 function getAndroidVersion(document) {
-	const android = document.querySelector('[data-spec="os"]').innerHTML.match(/\d+(\.\d+)?/g);
+	const android = document.querySelector('[data-spec="os"]').innerHTML.match(/\d+(\.\d+)?/gv);
 	return {
 		official: android.at(-1),
 	};
