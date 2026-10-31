@@ -28,6 +28,9 @@ export default {
       "definedTags": ["openapi"],
     }],
     'jsdoc/require-asterisk-prefix': ['error', 'always'],
+    'jsdoc/require-param-type': 'off',
+    'jsdoc/require-param-description': 'off',
+    'jsdoc/require-description': 'off',
   }
 };
 
