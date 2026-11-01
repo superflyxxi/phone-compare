@@ -83,11 +83,7 @@ function getPrice(document) {
 
 function getYearReleased(document) {
 	const releasedHtml = document.querySelector('[data-spec="released-hl"]')?.innerHTML;
-	if (releasedHtml) {
-		return Number(releasedHtml.match(/\d+/v)[0], 10);
-	}
-
-	return undefined;
+	return releasedHtml ? Number(releasedHtml.match(/\d+/v)[0], 10) : undefined;
 }
 
 function getAndroidVersion(document) {

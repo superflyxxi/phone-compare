@@ -121,29 +121,19 @@ function scoreNumber(value, rankRule, rankScale) {
 		return (rankScale.values.max - value) * rankScale.multiplier;
 	}
 
-	if (rankRule.scoreMethod === 'PREFER_HIGH') {
-		return (value - rankScale.values.min) * rankScale.multiplier;
-	}
-
-	return 0;
+	return rankRule.scoreMethod === 'PREFER_HIGH' ? (value - rankScale.values.min) * rankScale.multiplier : 0;
 }
 
 function scoreBoolean(value, rankRule, rankScale) {
-	if (value && rankRule.scoreMethod === 'PREFER_TRUE') {
-		return rankScale.multiplier;
-	}
-
-	return 0;
+	return value && rankRule.scoreMethod === 'PREFER_TRUE' ? rankScale.multiplier : 0;
 }
 
 function scoreVersion(value, rankRule, rankScale) {
 	const version = versions.getVersionObject(value);
 	const {semantic} = rankScale;
-	if (Object.hasOwn(version, semantic) && rankRule.scoreMethod === 'PREFER_HIGH') {
-		return (version[semantic] - rankScale[semantic].min) * rankScale.multiplier;
-	}
-
-	return 0;
+	return Object.hasOwn(version, semantic) && rankRule.scoreMethod === 'PREFER_HIGH'
+		? (version[semantic] - rankScale[semantic].min) * rankScale.multiplier
+		: 0;
 }
 
 async function getFinalScore(rankScale, phoneScore) {
