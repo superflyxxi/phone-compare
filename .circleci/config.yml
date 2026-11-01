@@ -415,6 +415,10 @@ workflows:
           requires:
             - build-docker
             - release-notes
+          filters:
+            branches:
+              ignore:
+                - /^dependabot.*/ # skip dependanbot
       - publish-docker:
           name: publish-docker-ghcr
           context: default
