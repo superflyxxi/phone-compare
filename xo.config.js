@@ -30,6 +30,7 @@ export default [
       'jsdoc/require-param-type': 'off',
       'jsdoc/require-param-description': 'off',
       'jsdoc/require-description': 'off',
+      "unicorn/prefer-dom-node-html-methods": "off", // innerHTML required
     },
   },
 ];
