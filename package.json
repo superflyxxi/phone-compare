@@ -43,7 +43,7 @@
     "chai-http": "5",
     "mocha": "12",
     "nock": "14",
-    "xo": "1"
+    "xo": "5"
   },
   "xo": {
     "ignores": [],
