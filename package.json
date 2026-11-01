@@ -42,7 +42,7 @@
     "chai-almost": "1",
     "chai-http": "5",
     "mocha": "12",
-    "nock": "14",
+    "nock": "15",
     "xo": "5"
   }
 }
