@@ -319,7 +319,7 @@ jobs:
                 echo "export FINAL_IMAGE_NAME=${PRIVATE_DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}" >> ${BASH_ENV}
       - install-ssh-dependencies
       - execute-remote:
-          command: ci-deploy-k8s.sh << paramters.env >> phone-compare $FINAL_IMAGE_NAME
+          command: ci-deploy-k8s.sh << parameters.env >> phone-compare $FINAL_IMAGE_NAME
 
   integration-test:
     resource_class: small
