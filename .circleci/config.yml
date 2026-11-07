@@ -61,7 +61,7 @@ commands:
       - run:
           name: Execute a remote command
           command: |
-            ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "${SSH_DOCKER_COMPOSE_REMOTE_DIR}/<< parameters.command >>"
+            ssh ${SSH_USER}@${SSH_SERVER} -p ${SSH_PORT} "./deployment/<< parameters.command >>"
   generate-file:
     parameters:
       template_file:
@@ -297,29 +297,9 @@ jobs:
           at: /tmp/workspace
       - export-primary-docker-tag
       - checkout
-      - when:
-          condition:
-            equal:
-              - prod
-              - << parameters.env >>
-          steps:
-            - run: |
-                echo "export DOCKER_REGISTRY=${DOCKER_IO_REGISTRY}" >> ${BASH_ENV}
-                echo "export DOCKER_USERNAME=${DOCKER_IO_USERNAME}" >> ${BASH_ENV}
-                echo "export FINAL_IMAGE_NAME=${DOCKER_IO_REGISTRY}/${DOCKER_IO_USERNAME}/${CIRCLE_PROJECT_REPONAME}" >> ${BASH_ENV}
-      - unless:
-          condition:
-            equal:
-              - prod
-              - << parameters.env >>
-          steps:
-            - run: |
-                echo "export DOCKER_REGISTRY=${PRIVATE_DOCKER_REGISTRY}" >> ${BASH_ENV}
-                echo "export DOCKER_USERNAME=${PRIVATE_DOCKER_USERNAME}" >> ${BASH_ENV}
-                echo "export FINAL_IMAGE_NAME=${PRIVATE_DOCKER_REGISTRY}/${CIRCLE_PROJECT_REPONAME}" >> ${BASH_ENV}
       - install-ssh-dependencies
       - execute-remote:
-          command: ci-deploy-k8s.sh << parameters.env >> phone-compare $FINAL_IMAGE_NAME
+          command: ci-deploy-k8s.sh << parameters.env >> phone-compare ${PRIMARY_DOCKER_TAG}
 
   integration-test:
     resource_class: small
